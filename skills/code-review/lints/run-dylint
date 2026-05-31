@@ -1,0 +1,185 @@
+#!/usr/bin/env bash
+#
+# Bootstrap dylint and run the bundled code-review lints against the caller's
+# project. Mirrors the symbiote tools/lints/run-dylint pattern but anchors all
+# paths to this script's own location (the skill directory) instead of `git
+# rev-parse`, since the skill is invoked from arbitrary consumer projects.
+#
+# First call: clones upstream dylint at a pinned revision, applies one
+# compatibility patch, builds `cargo-dylint` and `dylint-link` from source.
+# Subsequent calls reuse the cached build.
+#
+# Usage:
+#   run-dylint                         # lint the workspace at the caller's CWD
+#   run-dylint -- --workspace          # forward args to `cargo dylint -- ...`
+#   run-dylint -- --workspace --all-targets
+
+set -o errexit
+set -o errtrace
+set -o nounset
+set -o pipefail
+
+readonly DYLINT_REPO='https://github.com/trailofbits/dylint.git'
+readonly DYLINT_REV='2c20d164e06c446de2cecadff0c55e16a877c006'
+# The lint toolchain — the nightly the dylint cdylibs and the rustc_private
+# driver are built with. It must be one that DYLINT_REV's dylint_linting still
+# compiles against; nightly-2026-05-31 is verified to work and is kept in sync
+# with the project pin (rust-toolchain.toml) so there is no delta. Keep the
+# cdylibs and driver on ONE nightly (mixing produces E0514 crate-metadata
+# mismatches). If a future project-pin bump breaks the dylint build, pin this
+# back to a compatible nightly and/or bump DYLINT_REV. An env var overrides.
+readonly DYLINT_TOOLCHAIN="${DYLINT_TOOLCHAIN:-nightly-2026-05-31}"
+
+# Locate the skill directory (parent of this script's directory).
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly script_dir
+readonly skill_lints_dir="${script_dir}"
+readonly dylint_root="${skill_lints_dir}/target/dylint"
+readonly dylint_src="${dylint_root}/source"
+readonly dylint_target="${dylint_root}/target"
+readonly dylint_bin="${dylint_root}/bin"
+readonly dylint_symbol_patch="${skill_lints_dir}/patches/filter-to-owned-method-extra-symbol.patch"
+
+# Caller's invocation directory.
+caller_cwd="${DYLINT_CALLER_CWD:-${PWD}}"
+readonly caller_cwd
+
+mkdir -p "${dylint_root}"
+
+ensure_dylint_toolchain() {
+  if rustup run "${DYLINT_TOOLCHAIN}" rustc --version >/dev/null 2>&1 \
+    && rustup component list --toolchain "${DYLINT_TOOLCHAIN}" --installed \
+      | grep --quiet '^llvm-tools-' \
+    && rustup component list --toolchain "${DYLINT_TOOLCHAIN}" --installed \
+      | grep --quiet '^rustc-dev-'; then
+    return
+  fi
+
+  printf 'first-run setup: installing %s toolchain (one-time, ~1 min)...\n' \
+    "${DYLINT_TOOLCHAIN}" >&2
+  rustup toolchain install "${DYLINT_TOOLCHAIN}" \
+    --profile minimal \
+    --component llvm-tools-preview \
+    --component rustc-dev
+}
+
+apply_dylint_patches() {
+  if git -C "${dylint_src}" apply --check "${dylint_symbol_patch}" >/dev/null 2>&1; then
+    git -C "${dylint_src}" apply "${dylint_symbol_patch}"
+    return
+  fi
+
+  if git -C "${dylint_src}" apply --reverse --check "${dylint_symbol_patch}" >/dev/null 2>&1; then
+    return
+  fi
+
+  printf 'error: failed to apply Dylint compatibility patch: %s\n' "${dylint_symbol_patch}" >&2
+  exit 1
+}
+
+ensure_dylint_toolchain
+
+if [[ ! -d "${dylint_src}/.git" ]]; then
+  printf 'first-run setup: cloning dylint upstream (one-time)...\n' >&2
+  git clone --quiet "${DYLINT_REPO}" "${dylint_src}"
+fi
+
+if ! git -C "${dylint_src}" rev-parse --verify --quiet "${DYLINT_REV}^{commit}" >/dev/null; then
+  git -C "${dylint_src}" fetch --quiet origin "${DYLINT_REV}"
+fi
+
+git -C "${dylint_src}" checkout --detach --quiet "${DYLINT_REV}"
+apply_dylint_patches
+
+# Build dylint-link from upstream source.
+if [[ ! -x "${dylint_target}/debug/dylint-link" ]]; then
+  printf 'first-run setup: building dylint-link...\n' >&2
+fi
+CARGO_TARGET_DIR="${dylint_target}" rustup run "${DYLINT_TOOLCHAIN}" cargo build \
+  --quiet \
+  --manifest-path "${dylint_src}/dylint-link/Cargo.toml" \
+  --bin dylint-link
+
+# Resolve the toolchain triple so the custom linker is set against the right target.
+dylint_toolchain_bin="$(dirname "$(rustup which --toolchain "${DYLINT_TOOLCHAIN}" cargo)")"
+readonly dylint_toolchain_bin
+dylint_toolchain_host="$(rustup run "${DYLINT_TOOLCHAIN}" rustc -Vv | sed -n 's/^host: //p')"
+readonly dylint_toolchain_host
+if [[ "${DYLINT_TOOLCHAIN}" == *-"${dylint_toolchain_host}" ]]; then
+  readonly dylint_resolved_toolchain="${DYLINT_TOOLCHAIN}"
+else
+  readonly dylint_resolved_toolchain="${DYLINT_TOOLCHAIN}-${dylint_toolchain_host}"
+fi
+
+mkdir -p "${dylint_bin}"
+cat >"${dylint_bin}/dylint-link" <<EOF
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+export RUSTUP_TOOLCHAIN="${dylint_resolved_toolchain}"
+exec "${dylint_target}/debug/dylint-link" "\$@"
+EOF
+chmod +x "${dylint_bin}/dylint-link"
+
+# cargo-dylint builds the rustc_private driver with `env -u RUSTUP_TOOLCHAIN
+# cargo build`, expecting a bare `cargo` that is a rustup proxy to re-derive
+# the toolchain from a temp rust-toolchain file. This machine has no working
+# rustup proxy (the ~/.cargo/bin shims are dangling; symlink and hardlink both
+# run as rustup), so the driver's build.rs fails reading RUSTUP_TOOLCHAIN.
+# Shim `cargo` (dylint_bin is first on PATH for the cargo-dylint step) to
+# re-inject RUSTUP_TOOLCHAIN and hand off to the pinned toolchain's real cargo.
+cat >"${dylint_bin}/cargo" <<EOF
+#!/usr/bin/env bash
+set -o errexit
+set -o nounset
+set -o pipefail
+
+export RUSTUP_TOOLCHAIN="${dylint_resolved_toolchain}"
+exec "${dylint_toolchain_bin}/cargo" "\$@"
+EOF
+chmod +x "${dylint_bin}/cargo"
+
+dylint_linker_env_var="CARGO_TARGET_$(
+  printf '%s' "${dylint_toolchain_host}" | tr '[:lower:]-' '[:upper:]_'
+)_LINKER"
+readonly dylint_linker_env_var
+export "${dylint_linker_env_var}=${dylint_bin}/dylint-link"
+
+# Build every lint cdylib in the bundled lints workspace.
+# `rust-toolchain.toml` only resolves when cargo is invoked from the
+# workspace directory tree, so we cd in and also pass `rustup run`
+# explicitly for robustness. RUSTFLAGS replaces any inherited
+# `--forbid unsafe_code` from a parent .cargo/config.toml (cargo
+# concatenates config rustflags but env-var RUSTFLAGS overrides).
+# CLIPPY_CONF_DIR points clippy at the bundled disallowed-methods
+# config so the symbiote-pattern `#![expect(...)]` annotations on
+# copied lint crates are fulfilled.
+# PATH prepends the toolchain bin so `cargo` resolves the matching
+# `rustc` even when a non-rustup rustc (e.g. Homebrew) shadows it on
+# PATH; `rustup run` alone does not guarantee this on every install.
+readonly LINT_BUILD_RUSTFLAGS="--deny unsafe_code --deny warnings"
+(
+  cd "${skill_lints_dir}"
+  PATH="${dylint_toolchain_bin}:${PATH}" \
+  CARGO_TARGET_DIR="${dylint_target}" \
+  RUSTFLAGS="${LINT_BUILD_RUSTFLAGS}" \
+  CLIPPY_CONF_DIR="${skill_lints_dir}" \
+  rustup run "${DYLINT_TOOLCHAIN}" cargo build \
+    --workspace \
+    --release \
+    --quiet
+)
+
+# Run cargo-dylint from source, against the caller's CWD project.
+# `--all` discovers every library in DYLINT_LIBRARY_PATH.
+export DYLINT_LIBRARY_PATH="${dylint_target}/release"
+
+cd "${caller_cwd}"
+PATH="${dylint_bin}:${dylint_target}/debug:${dylint_toolchain_bin}:${PATH}" \
+CARGO_TARGET_DIR="${dylint_target}" \
+rustup run "${DYLINT_TOOLCHAIN}" cargo run \
+  --quiet \
+  --manifest-path "${dylint_src}/cargo-dylint/Cargo.toml" \
+  -- dylint --all -- --workspace --all-targets "$@"

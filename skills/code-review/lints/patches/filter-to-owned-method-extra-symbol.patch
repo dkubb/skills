@@ -1,0 +1,14 @@
+diff --git a/driver/build/extra_symbols.rs b/driver/build/extra_symbols.rs
+index d0ced77a..dbead7b7 100644
+--- a/driver/build/extra_symbols.rs
++++ b/driver/build/extra_symbols.rs
+@@ -127,6 +127,9 @@ fn quoted_symbols(sym_rs: &str) -> Result<Vec<String>> {
+             TokenTree::Literal(lit) => lit.to_string(),
+             _ => panic!("unexpected token: {tt:?}"),
+         };
++        if quoted == r#""to_owned_method""# {
++            continue;
++        }
+         quoted_symbols.push(quoted);
+     }
+     Ok(quoted_symbols)

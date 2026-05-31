@@ -1,0 +1,89 @@
+# Workspace root for the code-review skill's bundled Dylint lints.
+#
+# Detached from the parent agent-skills workspace (its `members` glob is
+# `skills/*/Cargo.toml`, one level only). Lint crates live as members
+# here and inherit the strict lint policy mirrored from
+# `~/workspace/dkubb/symbiote/Cargo.toml` so symbiote lints copy in
+# without source edits.
+
+[workspace]
+members = [
+    "assert_contains",
+    "assert_ends_with",
+    "assert_starts_with",
+    "bare_clone",
+    "bare_loop",
+    "env_var",
+    "expect_justified",
+    "fuzzy_matcher_assertion",
+    "get_or_insert",
+    "inline_attr",
+    "or_default",
+    "result_string_error",
+    "serde_xor_derive",
+    "sibling_option_fields",
+    "tag_only_assertion",
+    "unbounded_io_accumulator",
+    "unwrap_or",
+    "unwrap_or_default",
+    "unwrap_or_else",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+publish = false
+
+# Strict workspace lints mirrored from symbiote, sufficient for the
+# `#![expect(...)]` annotations on copied symbiote lint crates to be
+# fulfilled. Keep this in sync with symbiote's `[workspace.lints]`
+# when copying additional lints in.
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+warnings = "deny"
+future_incompatible = { level = "deny", priority = -1 }
+missing_docs = "deny"
+let_underscore_drop = "deny"
+unreachable_pub = "deny"
+unused = { level = "deny", priority = -1 }
+rust_2018_idioms = { level = "deny", priority = -1 }
+rust_2024_compatibility = { level = "deny", priority = -1 }
+missing_debug_implementations = "deny"
+missing_copy_implementations = "deny"
+unused_crate_dependencies = "allow"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+cargo = { level = "deny", priority = -1 }
+complexity = { level = "deny", priority = -1 }
+correctness = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+
+blanket_clippy_restriction_lints = "allow"
+restriction = { level = "deny", priority = -1 }
+
+assertions_on_result_states = "allow"
+error_impl_error = "allow"
+expect_used = "allow"
+implicit_return = "allow"
+inline_modules = "allow"
+min_ident_chars = "allow"
+multiple_crate_versions = "allow"
+pub_with_shorthand = "allow"
+question_mark_used = "allow"
+self_named_module_files = "allow"
+separated_literal_suffix = "allow"
+std_instead_of_alloc = "allow"
+single_call_fn = "allow"
+pub_use = "allow"
+
+[workspace.lints.rustdoc]
+all = { level = "deny", priority = -1 }
+missing_crate_level_docs = "deny"
+private_doc_tests = "deny"
+unescaped_backticks = "deny"
