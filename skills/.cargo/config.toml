@@ -1,0 +1,25 @@
+[alias]
+clippy-all = ["clippy", "--all-features", "--all-targets", "--tests"]
+fmt-all = ["fmt", "--all"]
+test-all = ["test", "--all-targets", "--all-features", "--workspace"]
+# Doctests separately: --all-targets (in test-all) skips them.
+test-doc = ["test", "--doc", "--all-features", "--workspace"]
+# Coverage ratchet ceilings for lines, regions, and functions. Each
+# `--fail-uncovered-*` fails when more than N are uncovered; lower them toward
+# 0 as coverage improves (0 == 100%) and never raise them. src/main.rs (the
+# thin binary entry) is excluded — its behavior is gated by CLI tests, not
+# line coverage. Invoke via `just coverage`, which supplies the pinned
+# toolchain for llvm-tools-preview.
+coverage = ["llvm-cov", "--quiet", "--workspace", "--summary-only", "--ignore-filename-regex", "src/main\\.rs$", "--fail-uncovered-lines", "12", "--fail-uncovered-regions", "36", "--fail-uncovered-functions", "1"]
+
+[build]
+rustflags = ["--forbid", "unsafe_code", "--deny", "warnings"]
+
+[deny]
+config = ".cargo/deny.toml"
+
+[env]
+CLIPPY_CONF_DIR = { value = ".cargo", relative = true }
+# Match the macOS version the Homebrew dylibs are built for, so the linker
+# does not warn about a deployment-target mismatch during the dylint build.
+MACOSX_DEPLOYMENT_TARGET = "26.0"

@@ -1,0 +1,97 @@
+disallowed-methods = [
+  { path = "std::option::Option::unwrap", reason = "Use expect(\"explain why None is impossible\") to document the invariant." },
+  { path = "std::result::Result::unwrap", reason = "Use expect(\"explain why Err(E) is impossible\") to document the invariant." },
+  { path = "std::result::Result::unwrap_err", reason = "Use expect(\"explain why Ok(T) is impossible\") to document the invariant." },
+
+  # ---------------------------------------------------------------------------
+  # saturating_* methods silently clip on overflow / underflow. They are
+  # disabled across every primitive integer (i8..i128, u8..u128, isize, usize)
+  # and across the generic `core::num::NonZero<T>` wrapper (covers every
+  # NonZeroI*/NonZeroU* alias). Use `checked_*` with explicit error handling,
+  # `wrapping_*` if wrapping is intentional, or construct via `NonZero::new()`
+  # with a documented invariant.
+  # ---------------------------------------------------------------------------
+
+  # saturating_add
+  { path = "i8::saturating_add",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i16::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i32::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i64::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i128::saturating_add",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "isize::saturating_add",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u8::saturating_add",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u16::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u32::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u64::saturating_add",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u128::saturating_add",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "usize::saturating_add",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "core::num::NonZero::saturating_add", reason = "Silently clips on overflow. Use checked_* with explicit error handling, or construct via NonZero::new() with a documented invariant." },
+
+  # saturating_sub (NonZero has no saturating_sub since the result could be zero)
+  { path = "i8::saturating_sub",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i16::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i32::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i64::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i128::saturating_sub",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "isize::saturating_sub",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u8::saturating_sub",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u16::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u32::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u64::saturating_sub",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u128::saturating_sub",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "usize::saturating_sub",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+
+  # saturating_mul
+  { path = "i8::saturating_mul",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i16::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i32::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i64::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "i128::saturating_mul",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "isize::saturating_mul",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u8::saturating_mul",       reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u16::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u32::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u64::saturating_mul",      reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "u128::saturating_mul",     reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "usize::saturating_mul",    reason = "Silently clips on overflow. Use checked_* with explicit error handling, or wrapping_* if wrapping is intentional." },
+  { path = "core::num::NonZero::saturating_mul", reason = "Silently clips on overflow. Use checked_* with explicit error handling, or construct via NonZero::new() with a documented invariant." },
+
+  # saturating_div (signed primitives only; unsigned div cannot overflow)
+  { path = "i8::saturating_div",       reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+  { path = "i16::saturating_div",      reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+  { path = "i32::saturating_div",      reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+  { path = "i64::saturating_div",      reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+  { path = "i128::saturating_div",     reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+  { path = "isize::saturating_div",    reason = "Silently clips signed MIN / -1 to signed MAX. Use checked_div with explicit error handling." },
+
+  # saturating_pow
+  { path = "i8::saturating_pow",       reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "i16::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "i32::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "i64::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "i128::saturating_pow",     reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "isize::saturating_pow",    reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "u8::saturating_pow",       reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "u16::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "u32::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "u64::saturating_pow",      reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "u128::saturating_pow",     reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "usize::saturating_pow",    reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+  { path = "core::num::NonZero::saturating_pow", reason = "Silently clips on overflow. Use checked_pow with explicit error handling." },
+
+  # saturating_abs / saturating_neg (signed primitives + NonZero<I*>)
+  { path = "i8::saturating_abs",       reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "i16::saturating_abs",      reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "i32::saturating_abs",      reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "i64::saturating_abs",      reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "i128::saturating_abs",     reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "isize::saturating_abs",    reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+  { path = "core::num::NonZero::saturating_abs", reason = "Silently clips signed MIN to signed MAX. Use checked_abs with explicit error handling." },
+
+  { path = "i8::saturating_neg",       reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+  { path = "i16::saturating_neg",      reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+  { path = "i32::saturating_neg",      reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+  { path = "i64::saturating_neg",      reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+  { path = "i128::saturating_neg",     reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+  { path = "isize::saturating_neg",    reason = "Silently clips signed MIN negation. Use checked_neg with explicit error handling." },
+]

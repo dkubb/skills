@@ -1,0 +1,105 @@
+[package]
+name = "skill"
+description = "Unified agent skills CLI"
+version = "0.1.0"
+repository = "https://github.com/dkubb/agents"
+authors = ["Dan Kubb <github@dan.kubb.ca>"]
+edition = "2024"
+license = "LicenseRef-Private"
+publish = false
+
+[[bin]]
+name = "skill"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[workspace]
+members = [".", "*/Cargo.toml"]
+exclude = ["code-review/lints"]
+
+[workspace.package]
+edition = "2024"
+publish = false
+license = "LicenseRef-Private"
+
+[workspace.dependencies]
+clap = { version = "4.5.56", features = ["derive", "env"] }
+pretty_assertions = "1.4.1"
+skill-core = { path = "core" }
+thiserror = "2.0.18"
+
+[dependencies]
+clap = { workspace = true }
+skill-core = { workspace = true }
+skill-code-review = { path = "code-review" }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+
+[workspace.lints.rust]
+# Core rust lints
+unsafe_code = "forbid"                                      # Strictest setting not covered by groups
+warnings = "deny"                                           # Base warnings group
+future_incompatible = { level = "deny", priority = -1 }     # Future compatibility lints
+unexpected_cfgs = { level = "deny", check-cfg = ['cfg(coverage)', 'cfg(coverage_nightly)'] }
+missing_docs = "deny"                                       # Enforce documentation
+let_underscore_drop = "deny"                                # Catch unintentional drops
+unreachable_pub = "deny"                                    # Unnecessary public items
+unused = { level = "deny", priority = -1 }                  # Unused code
+rust_2018_idioms = { level = "deny", priority = -1 }        # Require idiomatic 2018 edition code
+rust_2024_compatibility = { level = "deny", priority = -1 } # Enforce compatibility with Rust 2024 edition
+missing_debug_implementations = "deny"                      # Require Debug impl for types
+missing_copy_implementations = "deny"                       # Types that could be Copy but aren't
+
+unused_crate_dependencies = "allow" # Allow unused dependencies in Cargo.toml
+
+[workspace.lints.clippy]
+# Base clippy groups
+all = { level = "deny", priority = -1 }         # All Clippy lints
+pedantic = { level = "deny", priority = -1 }    # Stricter style lints
+nursery = { level = "deny", priority = -1 }     # Experimental lints
+cargo = { level = "deny", priority = -1 }       # Cargo.toml lints
+complexity = { level = "deny", priority = -1 }  # Code complexity lints
+correctness = { level = "deny", priority = -1 } # Correctness lints
+perf = { level = "deny", priority = -1 }        # Performance lints
+style = { level = "deny", priority = -1 }       # Style lints
+suspicious = { level = "deny", priority = -1 }  # Suspicious code constructs
+
+# Restricted clippy group
+blanket_clippy_restriction_lints = "allow"      # Allow restricted lint groups to be blanket denied
+restriction = { level = "deny", priority = -1 } # Ultra-strict lints (deliberately opted in)
+
+# Allow specific lints
+allow_attributes_without_reason = "allow"   # Reasons on #[expect] are good but not required
+arbitrary_source_item_ordering = "allow"    # Alphabetical ordering too strict for struct fields
+arithmetic_side_effects = "allow"           # Simple arithmetic (counting) is safe
+assertions_on_result_states = "allow"       # Allow assert!(result.is_ok()) or assert!(result.is_err())
+error_impl_error = "allow"                  # Allow implementing Error for error types
+expect_used = "allow"                       # Allow expect() for better error messages and reasoning
+field_scoped_visibility_modifiers = "allow" # pub(crate) on fields is fine
+filetype_is_file = "allow"                  # is_file() is intentional (skip dirs and symlinks)
+implicit_return = "allow"                   # Allow implicit return
+min_ident_chars = "allow"                   # Allow short identifiers
+missing_inline_in_public_items = "allow"    # Internal crates don't need inline hints
+multiple_crate_versions = "allow"           # Allow multiple versions of the same crate
+partial_pub_fields = "allow"                # Mixed field visibility is sometimes intentional
+pattern_type_mismatch = "allow"             # Match ergonomics are idiomatic Rust
+print_stderr = "allow"                      # CLI tool needs stderr output
+print_stdout = "allow"                      # CLI tool needs stdout output
+pub_with_shorthand = "allow"                # Allow pub with shorthand syntax
+question_mark_used = "allow"                # Allow ? operator
+redundant_pub_crate = "allow"               # Conflicts with unreachable_pub rustc lint
+ref_option = "allow"                        # &Option<T> is cleaner than Option<&T> in many cases
+self_named_module_files = "allow"           # Allow named module files instead of mod.rs files
+single_call_fn = "allow"                    # Allow single-call helpers
+std_instead_of_alloc = "allow"              # Allow using std instead of alloc
+std_instead_of_core = "allow"               # Use std, not no_std
+
+[workspace.lints.rustdoc]
+# Rustdoc lints
+all = { level = "deny", priority = -1 } # All rustdoc lints
+missing_crate_level_docs = "deny"       # Enforce crate-level docs
+private_doc_tests = "deny"              # No private doc tests
+unescaped_backticks = "deny"            # No unescaped backticks
