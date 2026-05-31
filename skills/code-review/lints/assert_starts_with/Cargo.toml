@@ -1,0 +1,18 @@
+[package]
+name = "assert_starts_with"
+description = "Deny direct assert starts_with prefix matchers in tests."
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+dylint_linting = { git = "https://github.com/trailofbits/dylint.git", rev = "2c20d164e06c446de2cecadff0c55e16a877c006" }
+
+[package.metadata.rust-analyzer]
+rustc_private = true
+
+[lints]
+workspace = true
