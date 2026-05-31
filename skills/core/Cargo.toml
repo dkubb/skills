@@ -1,0 +1,16 @@
+[package]
+name = "skill-core"
+description = "Shared types for the unified agent skills CLI"
+version = "0.1.0"
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+thiserror = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
