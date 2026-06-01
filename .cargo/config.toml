@@ -1,5 +1,5 @@
 [alias]
-clippy-all = ["clippy", "--all-features", "--all-targets", "--tests"]
+clippy-all = ["clippy", "--workspace", "--all-features", "--all-targets", "--tests"]
 fmt-all = ["fmt", "--all"]
 test-all = ["test", "--all-targets", "--all-features", "--workspace"]
 # Doctests separately: --all-targets (in test-all) skips them.

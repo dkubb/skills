@@ -123,6 +123,8 @@ fn lints_dir() -> PathBuf {
 
 #[cfg(test)]
 mod tests {
+    use std::env;
+    use std::ffi::OsStr;
     use std::os::unix::process::ExitStatusExt as _;
     use std::path::Path;
     use std::process::ExitStatus;
@@ -133,7 +135,7 @@ mod tests {
         Args, CommandOutcome, SkillError, failure_outcome, lints_dir, report, require_runner,
         resolve_cwd, run,
     };
-    use clap::Parser;
+    use clap::Parser as _;
 
     #[test]
     fn run_without_subcommand_returns_unit_success() {
@@ -148,7 +150,7 @@ mod tests {
     fn lints_dir_ends_with_lints() {
         let dir = lints_dir();
 
-        assert_eq!(dir.file_name(), Some(std::ffi::OsStr::new("lints")));
+        assert_eq!(dir.file_name(), Some(OsStr::new("lints")));
     }
 
     #[test]
@@ -176,14 +178,15 @@ mod tests {
     fn resolve_cwd_none_returns_current_dir() {
         let result = resolve_cwd(None);
 
-        assert_eq!(result.ok(), std::env::current_dir().ok());
+        assert_eq!(result.ok(), env::current_dir().ok());
     }
 
     #[test]
     fn failure_outcome_some_is_exited() {
-        let outcome = failure_outcome(Some(1));
+        let code: i32 = 1;
+        let outcome = failure_outcome(Some(code));
 
-        assert_eq!(outcome, CommandOutcome::Exited(1));
+        assert_eq!(outcome, CommandOutcome::Exited(code));
     }
 
     #[test]
@@ -202,14 +205,15 @@ mod tests {
 
     #[test]
     fn report_nonzero_exit_returns_command_error() {
+        let code: i32 = 1;
         let result = report(ExitStatus::from_raw(256), Path::new("/tmp"));
 
         assert!(matches!(
             result,
             Err(SkillError::Command {
-                outcome: CommandOutcome::Exited(1),
+                outcome: CommandOutcome::Exited(c),
                 ..
-            })
+            }) if c == code
         ));
     }
 
