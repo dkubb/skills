@@ -1,0 +1,24 @@
+[package]
+name = "skill"
+description = "Unified agent skills CLI"
+version = "0.1.0"
+repository = "https://github.com/dkubb/agents"
+authors = ["Dan Kubb <github@dan.kubb.ca>"]
+edition = "2024"
+license = "LicenseRef-Private"
+publish = false
+
+[[bin]]
+name = "skill"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+clap = { workspace = true }
+skill-core = { workspace = true }
+skill-code-review = { path = "../skills/code-review" }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

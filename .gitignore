@@ -1,8 +1,8 @@
 # Coverage profiling data (llvm-cov normally writes these under target/).
 *.profraw
 
-# Cargo build artifacts (the workspace lives in skills/).
-/skills/target/
+# Cargo build artifacts (the workspace is rooted at the repo root).
+/target/
 
 # Dylint bootstrap + build caches (cargo-dylint clone, lint cdylibs, and the
 # rustc_private driver build) — rebuilt on demand by `code-review lint`.

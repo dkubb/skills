@@ -1,23 +1,10 @@
-[package]
-name = "skill"
-description = "Unified agent skills CLI"
-version = "0.1.0"
-repository = "https://github.com/dkubb/agents"
-authors = ["Dan Kubb <github@dan.kubb.ca>"]
-edition = "2024"
-license = "LicenseRef-Private"
-publish = false
-
-[[bin]]
-name = "skill"
-path = "src/main.rs"
-
-[lints]
-workspace = true
-
 [workspace]
-members = [".", "*/Cargo.toml"]
-exclude = ["code-review/lints"]
+resolver = "3"
+members = ["skill-cli", "skill-cli/core", "skills/code-review"]
+# Bare `cargo build`/`run` default to the binary for convenience; the CI
+# gate aliases pass `--workspace` to cover every member.
+default-members = ["skill-cli"]
+exclude = ["skills/code-review/lints"]
 
 [workspace.package]
 edition = "2024"
@@ -27,16 +14,8 @@ license = "LicenseRef-Private"
 [workspace.dependencies]
 clap = { version = "4.5.56", features = ["derive", "env"] }
 pretty_assertions = "1.4.1"
-skill-core = { path = "core" }
+skill-core = { path = "skill-cli/core" }
 thiserror = "2.0.18"
-
-[dependencies]
-clap = { workspace = true }
-skill-core = { workspace = true }
-skill-code-review = { path = "code-review" }
-
-[dev-dependencies]
-pretty_assertions = { workspace = true }
 
 [workspace.lints.rust]
 # Core rust lints

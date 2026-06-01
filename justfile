@@ -55,7 +55,7 @@ lint-rust *args:
 
 # The bundled code-review dylint lints, against this workspace.
 lint-dylint:
-    rustup run {{ TOOLCHAIN }} cargo run --quiet code-review lint
+    rustup run {{ TOOLCHAIN }} cargo run -p skill --quiet code-review lint
 
 # Run tests: the suite, then doctests (test-all uses --all-targets, which
 # skips doctests, so run them explicitly).
@@ -69,10 +69,7 @@ validate-skills:
     set -euo pipefail
     IFS=$'\n\t'
     failed=0
-    for skill_dir in */; do
-        case "${skill_dir}" in
-            core/|src/|target/|tests/) continue ;;
-        esac
+    for skill_dir in skills/*/; do
         if [[ ! -f "${skill_dir}SKILL.md" ]]; then
             echo "ERROR: ${skill_dir}SKILL.md missing"
             failed=1
