@@ -2,7 +2,7 @@
 name = "skill"
 description = "Unified agent skills CLI"
 version = "0.1.0"
-repository = "https://github.com/dkubb/agents"
+repository = "https://github.com/dkubb/skills"
 authors = ["Dan Kubb <github@dan.kubb.ca>"]
 edition = "2024"
 license = "LicenseRef-Private"
