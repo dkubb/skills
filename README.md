@@ -12,10 +12,10 @@ lint suite.
 
 | Skill | Kind | What it gives you |
 |---|---|---|
-| [`code-review`](skills/code-review/SKILL.md) | guidance + CLI | A clear, cross-language code-review discipline — and the rules for changing the rules. Ships a bundled lint suite you can run with `skill code-review lint`. |
 | [`state-space-minimization`](skills/state-space-minimization/SKILL.md) | guidance | Make invalid states unrepresentable. Shrink what a program *can* express until whole classes of bugs have nowhere to live. |
 | [`state-space-minimization-formal`](skills/state-space-minimization-formal/SKILL.md) | guidance | The same idea as a compact formal calculus: domains, ranges, invariants, morphisms, normal forms, and proof-preserving boundaries. |
 | [`atomic-changes`](skills/atomic-changes/SKILL.md) | guidance | Break work into the smallest steps that each leave the system valid or better — foundation first, ordered so partial progress is never a regression. |
+| [`code-review`](skills/code-review/SKILL.md) | guidance + CLI | A clear, cross-language code-review discipline — and the rules for changing the rules. Ships a bundled lint suite you can run with `skill code-review lint`. |
 
 ## Use them
 
