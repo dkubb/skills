@@ -9,7 +9,7 @@ exclude = ["skills/code-review/lints"]
 [workspace.package]
 edition = "2024"
 publish = false
-license = "LicenseRef-Private"
+license = "MIT"
 
 [workspace.dependencies]
 clap = { version = "4.5.56", features = ["derive", "env"] }
