@@ -2,8 +2,8 @@
 
 These rules apply to tests across languages.
 
-- When TDD workflow or commit sequencing for tests is in scope, load
-  `../../tdd/references/tdd.md`.
+- When TDD workflow or commit sequencing for tests is in scope, use a TDD
+  workflow skill if one is available (such as `tdd`).
 
 ## Structure
 
