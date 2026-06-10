@@ -18,8 +18,10 @@ These rules apply across languages. Keep them here to avoid drift.
   truth.
 - Treat every interaction as part of an ongoing review. Capture new guidance
   and preferences promptly so the system improves with every exchange.
-- When the user states code review preferences, add all of them to
-  `~/.agents/skills/code-review/references/` every time.
+- When the user states code review preferences, record each one in the
+  owning reference module of this skill (the language file, `testing.md`,
+  `github-pr-comments.md`, `cli.md`, or this file) — never in a catch-all
+  log.
 - Prefer to provide command steps for the user to run. Execute them only when
   the user asks, and keep monitoring for completion.
 - Prefer a sub-agent for review if the harness supports it. Share key context
