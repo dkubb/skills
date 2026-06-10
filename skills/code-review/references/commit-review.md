@@ -20,7 +20,8 @@ is the review lens on that form: what to check and how to report it.
   - broad edits across unrelated modules without a single purpose
 - Prefer series of commits that can be reviewed independently, in order.
 - If a single commit is too large to review, recommend splitting it. Use
-  `git-factor` when the user asks to split a commit.
+  a commit-splitting tool (such as `git-factor`, when available) when the
+  user asks to split a commit.
 
 ## Diff size thresholds
 
