@@ -7,8 +7,12 @@
 
 ## Review Steps
 
-1. Do not allow coverage to decrease.
-2. If coverage increases, lock the new value.
+1. Do not allow coverage to decrease. This is the coverage instance of the
+   ratchet — floor semantics in `state-space-minimization`
+   `references/ratchet.md` (the floor only tightens; weakening only on
+   explicit user request).
+2. If coverage increases, lock the new value. Do not block locking in an
+   improvement on reaching 100%; ratchet from the current value.
 3. Use exact numeric values.
 4. Use all metrics the tool reports.
 5. Use branch coverage when the tool supports it.
