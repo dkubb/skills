@@ -61,20 +61,10 @@ These rules apply to tests across languages.
 - Use fixed unit tests for known-bad inputs and boundary crossings around
   fixed points; reserve property tests and fuzzing for exploration.
 
-## Property test invariants
-
-- 100% of valid inputs must be accepted. 100% of invalid inputs must be
-  rejected. Property tests verify this on every run with fresh samples.
-- Treat database constraints as part of the validity contract. Property tests
-  for boundary parsers, validators, and smart constructors should match the
-  database model so accepted application values are insertable and rejected
-  values fail before they reach the database.
-- When in doubt, bias toward rejection. "Too strong" is self-correcting
-  (real inputs expose blocked valid cases). "Too weak" is silent until
-  invalid data propagates downstream far from the entry point.
-- The valid range is bounded; the invalid range is effectively unbounded.
-  Broad invalid sampling is nearly worthless because the space is too vast.
-  This asymmetry justifies 80% biased weighting for both sides.
+The property-test strategy — core invariants, the allowlist model,
+generator construction and 80/20 bias, round-trip properties, and
+exploration vs validation — is owned by `property-based-testing.md`.
+This file owns test structure and the review requirements.
 
 ## Smart constructors and property tests
 
@@ -101,20 +91,8 @@ These rules apply to tests across languages.
       above min (valid), below max (valid), at max (valid), above max
       (invalid).
   - Do this even for simple rules like `>= 1` to catch spec drift.
-  - Property tests explore the interior of the state space.
-- For property tests, build four building-block generators per type:
-  `*_valid_broad`, `*_valid_biased`, `*_invalid_broad`, `*_invalid_biased`.
-  Compose them into two primary generators for use in tests:
-  - `*_valid` = 20% broad, 80% biased.
-  - `*_invalid` = 20% broad, 80% biased.
-  - Both sides use the same 80/20 rule: 80% biased toward boundaries
-    where bugs cluster, 20% broad for full-range sanity coverage.
-  Tests use `*_valid()` and `*_invalid()` directly.
-- Prefer an explicit inverse generator when possible; otherwise construct a
-  complementary generator for invalid values.
-- Invalid generators must be independent of the code under test. Do not use
-  the constructor, validator, or parser in a `prop_filter` to create invalid
-  cases. Use an inverse regex or explicit invalid strategy instead.
+  - Property tests explore the interior of the state space; generator
+    construction is owned by `property-based-testing.md`.
 - Treat observable behavior as contractual (Hyrum’s Law). If behavior changes,
   tests should fail so the change is explicit.
 - When a review finds a test issue, search for similar patterns and fix them.
@@ -122,22 +100,6 @@ These rules apply to tests across languages.
   boundary contracts.
 - Integration tests should assert full contracts where applicable:
   exit code, stdout, stderr, and side effects.
-
-## Exploration vs validation
-
-- Property tests are for **exploration**: they discover failures through
-  combinatorial coverage across many inputs that no one would write by hand.
-  Biased generators deliberately overlap with boundary unit tests because the
-  value is in the combinations — boundary-adjacent values mixed with other
-  inputs surface interactions that single-dimension unit tests miss.
-- Unit tests are for **validation**: they pin known-good and known-bad
-  behavior with deterministic, minimal reproductions.
-- When a property test discovers a failure, reduce it to a minimal
-  reproduction and encode it as a unit test. The unit test becomes the
-  permanent regression guard; the property test continues exploring.
-- When real data forces a constraint relaxation, add tests for the newly valid
-  case before loosening the constructor, parser, or database constraint. Keep
-  the feedback loop explicit.
 
 ## Complexity thresholds (strict defaults)
 

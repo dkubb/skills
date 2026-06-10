@@ -89,10 +89,11 @@ Use one combined command to decrease shell calls.
    rules not in `references/core-principles.md`.
 9. Load the applicable language references from `references/languages/` for
    the file types and internal parts in the change set.
-10. Load `references/testing.md` when tests are in scope and enforce its
-   property-testing guidance (valid/invalid generators, boundary-biased
-   sampling, and round-trip/inverse properties when serializers/parsers are
-   involved).
+10. Load `references/testing.md` when tests are in scope. Load
+   `references/property-based-testing.md` when property tests, generators,
+   or smart constructors are in scope, and enforce its strategy
+   (valid/invalid generators, boundary-biased sampling, and
+   round-trip/inverse properties when serializers/parsers are involved).
 11. Load `references/coverage.md` when coverage is in scope.
 12. For user-visible behavior changes, require integration test backfill for
     the changed contract (inputs, outputs, side effects).

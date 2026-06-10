@@ -69,6 +69,11 @@ Every property test suite must continuously verify these properties:
   after.
 - Tests use `*_valid()` and `*_invalid()`. The building-block generators
   exist for composition but are not typically used directly in tests.
+- Prefer an explicit inverse generator when possible; otherwise construct a
+  complementary generator for invalid values.
+- Invalid generators must be independent of the code under test. Do not use
+  the constructor, validator, or parser in a `prop_filter` to create invalid
+  cases. Use an inverse regex or explicit invalid strategy instead.
 
 ## Serialization and deserialization properties
 
@@ -104,4 +109,5 @@ above.
   test for that input before relaxing the constructor, parser, or DB
   constraint. Then keep the property test exploring the updated boundary.
 
-Also note MadSim is integrated; use it to reproduce rare cases.
+When deterministic simulation (madsim-style) is available, use it to
+reproduce rare cases (see `determinism.md`).
