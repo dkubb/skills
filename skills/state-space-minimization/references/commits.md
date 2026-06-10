@@ -89,8 +89,10 @@ must be reasoned about.
    the diff is purely the dependency bump plus any required adapter
    changes.
 
-A new transformation that does not appear here can be slotted by
-asking: does it reduce, preserve, or expand the state space?
+To see where a candidate new verb would sit, ask: does it reduce,
+preserve, or expand the state space? The verb set itself stays
+closed — extending it is a deliberate change to the canonical
+table, not an ad hoc choice in one commit.
 
 ## Subject line
 
