@@ -88,7 +88,14 @@ behavior preservation must be reasoned about.
 - A subject verb that does not match the diff's effect.
 - WIP commits on a shipped branch — squash or rewrite before merge.
 - `--no-verify` — bypasses the gates unconditionally; never use it.
+- `--amend` for content changes — the change is invisible until already
+  folded into history, can quietly turn one commit into two
+  transformations, and can land on a commit when an earlier one was the
+  right target. Put the correction in a `fixup!` commit aimed at the
+  right commit; it stays auditable until autosquash folds it in on
+  request. Gate-trailer amends on unshared commits are metadata-only and
+  exempt.
 - `--amend` or rebase of commits already shared — rewrites a state
-  others may depend on. (Amending unshared commits is fine.)
+  others may depend on.
 - Mixing a refactor with a behavior change in one commit — the
   behavior-preservation guarantee no longer holds.

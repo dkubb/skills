@@ -196,7 +196,12 @@ Emit in this order:
    dependencies.
 10. Record what each step verified. Commit atomically: each commit passes
     the full gate set and is merge-ready and deployable on its own. Do not
-    amend unless asked.
+    amend unless asked: an amend folds a change into history before it can
+    be audited, can quietly make one commit carry two transformations, and
+    can land on the wrong commit when an earlier one was the right target.
+    Put the correction in a `fixup!` commit aimed at the right commit so it
+    stays visible for audit; autosquash folds it in only on request.
+    Gate-trailer amends on unshared commits are metadata-only and exempt.
 
 ## Validation Checklist
 
