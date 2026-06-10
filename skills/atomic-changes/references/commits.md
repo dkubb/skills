@@ -84,7 +84,10 @@ behavior preservation must be reasoned about.
    frame of reference that proves the behavior survived. Code and
    tests may each be refactored back-to-back — separate commits,
    either order, gates passing between — but a single diff editing
-   both has no oracle, and is a Change.
+   both has no oracle, and is a Change. A true refactor pair
+   commutes: gates pass for both orderings, because each commit is
+   verified against an oracle the other does not touch. An ordering
+   that fails exposes structure-coupled tests or a disguised Change.
 6. **Change** — shifts observable behavior; callers may break.
 7. **Add** — expands the state space; the largest source of new bugs.
 8. **Upgrade** — a dependency bump, isolated in its own commit.
