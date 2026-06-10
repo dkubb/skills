@@ -1,6 +1,13 @@
 ---
 name: state-space-minimization
-description: Minimize representable states so invalid states are impossible.
+description: >-
+  Minimize representable states so invalid states are impossible.
+  Parse, don't validate: replace primitive obsession with domain
+  types, smart constructors, and boundary parsing; bound every range
+  and cardinality; tighten test matchers; normalize so each fact has
+  one determinant; ratchet tooling thresholds so the state space only
+  narrows. Applies to types, signatures, tests, commits,
+  documentation, and tooling configuration.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
