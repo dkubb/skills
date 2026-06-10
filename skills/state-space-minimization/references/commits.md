@@ -12,6 +12,13 @@ plausible intents the diff could have realized. The message's job is
 to narrow that codomain to the *range* — the specific transformation
 the author actually intended. Codomain ≈ range is the goal.
 
+The canonical commit form — the type and verb sets, transformation
+priority, subject / body / action-line rules, size bounds, and
+anti-patterns — is `atomic-changes` `references/commits.md`. This
+module is determinant for the state-space reading of that form and
+for the gate-trailer machinery built on it; where the two state the
+same fact, the `atomic-changes` file is the determinant.
+
 ## Vocabulary applied to commits
 
 | Term | Meaning in the commit context |
@@ -23,44 +30,23 @@ the author actually intended. Codomain ≈ range is the goal.
 | Type signature | the commit message |
 | Function body | the diff |
 
-## Closed sets
+## Closed sets, read as narrowings
 
-Two enums govern every commit. Each is exhaustive: every real
-transformation maps to exactly one type and one action verb.
-
-### Commit type
-
-Use one of: `feat`, `fix`, `refactor`, `perf`, `style`, `test`,
-`docs`, `build`, `ci`, `chore`, `revert`. A `!` between the type
-(and optional scope) and the colon marks a breaking change in the
-public contract. The type is the outermost narrowing of the
-codomain; picking the wrong type widens the codomain to "unspecified
-transformation."
-
-### Action verb
-
-Action lines in the body start with one of:
-
-| Verb | Meaning |
-|---|---|
-| Remove | Delete unused code, dependencies, or features |
-| Fix | Correct a regression, bug, or constraint violation |
-| Move | Relocate code (a refactor that changes path, not shape) |
-| Rename | Change identifiers (a refactor that changes name, not shape) |
-| Refactor | Restructure without behavioral change |
-| Change | Modify existing observable behavior |
-| Add | Introduce new public API or capability |
-| Upgrade | Bump a dependency to a newer version |
-| Downgrade | Revert a dependency to an older version |
-
-These verbs partition the transformation space into disjoint regions.
-A commit whose action cannot be expressed with one of these verbs is
-trying to do more than one transformation — split it.
+The canonical sets — eleven commit types and nine action verbs —
+are in `atomic-changes` `references/commits.md`. Each is
+exhaustive: every real transformation maps to exactly one type and
+one action verb. The type is the outermost narrowing of the
+codomain; picking the wrong type widens the codomain to
+"unspecified transformation." The verbs partition the
+transformation space into disjoint regions; a commit whose action
+cannot be expressed with one verb is trying to do more than one
+transformation — split it.
 
 ## Transformation priority
 
-Ship commits in this order when there is no functional dependency
-forcing another sequence. The ordering is a state-space gradient:
+The canonical shipping order is in `atomic-changes`
+`references/commits.md` § "Ordering (transformation priority)";
+this section derives it. The ordering is a state-space gradient:
 each tier reduces or preserves the state space before the next tier
 expands it. Within a tier, order by disruption — mechanical,
 compiler-checked changes before changes whose behavior preservation
@@ -94,77 +80,32 @@ preserve, or expand the state space? The verb set itself stays
 closed — extending it is a deliberate change to the canonical
 table, not an ad hoc choice in one commit.
 
-## Subject line
+## The message as type signature
 
-The subject line is the most-read part of the commit. It must
-narrow the codomain to a single transformation in a single short
-sentence.
+The concrete rules — subject format and length, imperative voice,
+body wrap, action-line form — are canonical in `atomic-changes`
+`references/commits.md`. Their state-space reading:
 
-Rules:
+- The subject's `type` is the outermost narrowing; the verb in the
+  description is the innermost. Together they pin the
+  transformation precisely enough that a reader who never opens
+  the diff knows what kind of state transition happened.
+- "and" / "or" in a subject is a Cartesian product of two
+  transformations — the codomain just doubled. Split.
+- Past tense and gerund forms admit ambiguity about whether the
+  work is done, planned, or hypothetical; the imperative excludes
+  those readings.
+- A subject whose verb does not match the diff's actual effect is
+  a divergent type signature (see `principles.md` § "Types as
+  hypotheses"); bisect and review signals degrade across the whole
+  branch when messages cannot be trusted.
+- The body asserts the *range* the author was targeting so the
+  reader can confirm the diff lands on it. Action lines keep each
+  observation independently parseable; explicit `What:` / `Why:` /
+  `How:` labels are redundant with the role each action-line
+  clause already carries.
 
-- Format: `type: imperative description` or `type(scope)!: …` for
-  breaking changes.
-- Total length ≤ 70 characters including the type prefix.
-- Description starts with a lowercase verb in imperative present
-  tense ("add", not "added" or "adds"). Past tense and gerund forms
-  admit ambiguity about whether the work is done, planned, or
-  hypothetical; the imperative excludes those readings.
-- No trailing period.
-- No "and" / "or" in the description. A compound subject is a
-  Cartesian product of two transformations — the codomain just
-  doubled. Split into two commits.
-- Subject verb must match the diff's actual effect. A subject
-  `refactor: …` whose diff changes behavior is a divergent type
-  signature (see `principles.md` § "Types as hypotheses"); bisect
-  and review signals degrade across the whole branch when messages
-  cannot be trusted.
-
-The subject's `type` is the outermost narrowing; the verb in the
-description is the innermost narrowing. Together they pin the
-transformation precisely enough that a reader who never opens the
-diff knows what kind of state transition happened.
-
-## Body
-
-The body explains the **why** — the intent or constraint behind the
-change. The diff is the *what*; reading the diff shows what changed.
-The body asserts the *range* the author was targeting so the reader
-can confirm the diff lands on it.
-
-Rules:
-
-- One blank line after the subject.
-- Wrap lines at 72 characters (fits inside an 80-column terminal
-  with the indentation `git log` applies; also fits inside
-  `git format-patch` email rendering).
-- Be specific about the constraint, requirement, or invariant that
-  motivated the change. Reference issue or ticket identifiers when
-  the external context is non-obvious.
-- Omit explicit labels like `What:`, `Why:`, `How:`. The structure
-  of action lines (below) carries the role of each clause.
-
-## Action lines
-
-When the body contains more than one observation, use action lines
-to keep each one independently parseable. An action line is a
-bulleted statement starting with one of the closed-set verbs above:
-
-```text
-- <Verb> <reason>.
-  <how>
-- <Verb> <reason>.
-```
-
-- The **verb** is from the closed set: `Remove`, `Fix`, `Move`,
-  `Rename`, `Refactor`, `Change`, `Add`, `Upgrade`, `Downgrade`.
-- The **reason** is the *why* — the constraint or intent that
-  motivated the action. Ends with a period.
-- The **how** is optional. When the implementation choice is
-  load-bearing or non-obvious, follow the reason with an indented
-  block. For source examples, use triple-backtick fenced blocks
-  with a language tag so renderers can syntax-highlight.
-
-Example:
+Example (action lines narrowing a two-observation body):
 
 ```text
 fix: handle null user references during registration
@@ -176,10 +117,6 @@ fix: handle null user references during registration
 - Remove the legacy fallback path that masked the null with a
   default user record.
 ```
-
-When the body has only one observation, prose is fine. Action lines
-are for the multi-point case where each point would otherwise blur
-into the next.
 
 ## Atomicity
 
@@ -203,45 +140,32 @@ Atomicity rules:
   invalid states (broken tests, broken lint) in the history are
   representable-but-invalid — eliminate them at write time, not by
   rewriting after the fact.
-- Diff size is a hard upper bound on preimage cardinality. Typical
-  defaults when there is no project-specific rule:
+- Diff size is a hard upper bound on preimage cardinality. The
+  canonical size bounds are in `atomic-changes`
+  `references/commits.md`; they include both source and test
+  changes. If source and tests for one behavior do not fit the
+  bounds, the behavior probably isn't atomic.
 
-  | Size | Status |
-  |---|---|
-  | ≤ 30 changed lines | ideal for review |
-  | 30–50 lines | maximum for confident human review |
-  | 50–300 lines | review quality drops, requires justification |
-  | 300–1000 lines | not reviewable in a single pass; split |
-  | ≥ 1000 lines | not reviewable; split before review |
+## Anti-patterns, read as state-space failures
 
-  These thresholds include both source and test changes. If both
-  must change for one behavior, the commit may still be small;
-  if it isn't, the behavior probably isn't atomic.
+The canonical anti-pattern list is in `atomic-changes`
+`references/commits.md`. What each one is in state-space terms:
 
-## Anti-patterns
+- **Vague subjects** ("misc", "cleanup") — inhabited but useless
+  types; they describe no specific transformation.
+- **WIP commits on shipped branches** — invalid intermediate
+  states in the public history.
+- **`--no-verify`** — a smart-constructor backdoor: lets an
+  invalid commit-state be constructed past the trusted boundary.
+- **`--amend` on shared commits** — rewrites a state other callers
+  may already depend on.
+- **Mixing refactor with behavior change** — the refactor's
+  information-preservation guarantee no longer holds, and the
+  preimage of any post-merge regression is the union of both
+  transformations.
 
-- **Compound subjects with "and" / "or"** — two transformations,
-  one message. Split.
-- **Vague subjects** ("misc", "cleanup", "stuff", "various") —
-  inhabited but useless types. They describe no specific
-  transformation.
-- **Past-tense or gerund subjects** ("fixed", "fixing", "adding") —
-  voice ambiguity widens the codomain.
-- **Subject verb mismatches diff effect** — divergent type
-  signatures: the message claims one transformation, the diff
-  performs another. Even a single such commit makes the whole
-  branch's history harder to trust.
-- **WIP commits on shipped branches** — invalid intermediate states
-  in the public history. Squash or rewrite before merge.
-- **`--no-verify`** — bypasses pre-commit and commit-msg hooks.
-  Equivalent to a smart-constructor backdoor: lets an invalid
-  commit-state be constructed.
-- **`--amend` on commits that have been shared** — rewrites a state
-  that other callers may already depend on.
-- **Mixing refactor with behavior change in one commit** — the
-  refactor's information-preservation guarantee no longer holds,
-  and the preimage of any post-merge regression is the union of
-  both transformations.
+Compound and past-tense subjects are covered in § "The message as
+type signature" above.
 
 ## Trailers as typed proof of validity
 
@@ -343,6 +267,8 @@ and in any order without losing the proof of validity.
 
 ## Cross-references
 
+- `atomic-changes` `references/commits.md` — the canonical commit
+  form this module reads in state-space terms.
 - `principles.md` — domain, codomain, range, preimage; the
   bilateral goal; the six operations; dictates / stipulates /
   eliminates as roles of a function.
