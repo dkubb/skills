@@ -6,8 +6,8 @@ constrains the reader's mental model of what a function, module, or
 system does. The reader codes against whatever the documentation
 declares; if the declaration is wider than the real behavior, the
 caller's call-site state space widens to match. Same vocabulary
-from `principles.md` (domain, codomain, range), same four
-techniques, same audit questions — applied at the level of
+from `principles.md` (domain, codomain, range), same six
+operations, same audit questions — applied at the level of
 human-inferred contracts rather than machine-checked types.
 
 ## Vocabulary applied to documentation
@@ -76,7 +76,7 @@ auto-generated reference pages disconnected from the code) sits
 below this hierarchy. Drift is structural: nothing breaks when the
 code changes, so nothing forces the docs to follow.
 
-## Applying the four techniques
+## Applying the operations
 
 ### Shrink the domain
 
@@ -276,7 +276,7 @@ In these cases:
 ## Cross-references
 
 - `principles.md` — the vocabulary (domain, codomain, range) and
-  the four techniques this file applies; the burndown-priority
+  the six operations this file applies; the burndown-priority
   framing.
 - `testing.md` § "Test corpus as production specification" — the
   parallel failure on the test side; same chain, different actor.

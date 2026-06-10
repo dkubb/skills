@@ -67,7 +67,7 @@ codebase can be expressed in. The objective is to minimize the
 count of representable-but-invalid states. The hard constraint is
 that every genuinely valid behavior must remain representable.
 The local moves are tightening, weakening, restructuring, and
-lifting to a boundary; the four techniques below name them
+lifting to a boundary; the six operations below name them
 operationally. The oracle is the set of real-world tests, property
 generators, mutation runs, type-checker errors, and production
 traffic that reveals when a candidate configuration either rejects
@@ -182,7 +182,7 @@ A field of type "integer in 1..=5" represented as a 32-bit integer has a
 waste ratio of `(2^32 − 5) / 2^32 ≈ 99.9999998%`. The same value as a
 five-variant enum has waste ratio `0`.
 
-## Four techniques
+## Six operations
 
 ### Shrink the domain
 
@@ -286,12 +286,34 @@ returns a typed proof of validity; validation returns a boolean
 and discards the proof. Prefer parse APIs so callers cannot
 forget to enforce checks.
 
+### Normalize
+
+- Decompose facts into atoms; give each fact exactly one
+  determinant; remove transitively derivable copies; recompose
+  along use.
+- Each redundant copy of a fact is state: a copy that can disagree
+  with its determinant is a representable-but-invalid state of the
+  artifact.
+- Applies to data schemas, code, commits, and documentation alike.
+
+`normalization.md` is the deep module.
+
+### Ratchet
+
+- Replace a threshold `t` with a stricter `t'` once current
+  evidence satisfies `t'`.
+- Each ratchet step records the search trajectory and prevents
+  silent regression past an already-achieved tightness.
+
+`ratchet.md` is the deep module, including the rules for when a
+threshold may move the other way.
+
 ## Match representation to use pattern
 
 A program is a set of transformations between values. Each
 transformation creates an intermediate state, and the runtime
 state space is the union of every state the program passes
-through. The four techniques above narrow the **static** state
+through. The six operations above narrow the **static** state
 space — what each type can represent at any given point. This
 section narrows the **trajectory** — what the program actually
 passes through during execution.

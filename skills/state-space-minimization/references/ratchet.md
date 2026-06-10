@@ -3,7 +3,7 @@
 The project's threshold configuration is a state space, and the
 ratcheting process is the state-space-minimization process applied
 to that state space. Same vocabulary from `principles.md`, same
-four techniques, same audit questions — applied at the level of
+six operations, same audit questions — applied at the level of
 project tooling configuration rather than at the level of types or
 runtime behavior.
 
@@ -39,7 +39,7 @@ the gains.
    heading; new code aims for that target so the range can tighten
    and the floor follows.
 
-## The four techniques applied here
+## The other operations applied here
 
 - **Shrink the input domain.** The ratchet rejects regressions;
   only narrowing changes are accepted at all. Same move as

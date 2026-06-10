@@ -2,7 +2,7 @@
 
 A test's accepted-behavior set is a state space. Same vocabulary
 from `principles.md` (domain, codomain, range, preimage), same
-four techniques, same audit questions — applied at the test level
+six operations, same audit questions — applied at the test level
 rather than at production types or runtime state. The matcher is
 the codomain; the system's actual behavior is the range; the goal
 is to close the gap.
@@ -173,7 +173,7 @@ other path."
 Matcher precision narrows the *accepted-output* state space (covered
 above). Test files themselves are also code, with their own input
 domain (fixtures), structural shape (test-function bodies), and
-per-test isolation invariant. The four techniques from
+per-test isolation invariant. The six operations from
 `principles.md` apply symmetrically.
 
 Apply these rules to tests in the task scope, or to the whole suite only

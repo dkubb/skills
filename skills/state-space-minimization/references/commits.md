@@ -2,7 +2,7 @@
 
 A commit is a function from a parent repository state to a child
 repository state. Same vocabulary from `principles.md` (domain,
-codomain, range, preimage), same four techniques, same audit
+codomain, range, preimage), same six operations, same audit
 questions — applied at the level of repository state transitions
 rather than at types or runtime behavior. The commit message is
 the type signature; the diff is the function body.
@@ -342,7 +342,7 @@ and in any order without losing the proof of validity.
 ## Cross-references
 
 - `principles.md` — domain, codomain, range, preimage; the
-  bilateral goal; the four techniques; dictates / stipulates /
+  bilateral goal; the six operations; dictates / stipulates /
   eliminates as roles of a function.
 - `proof-preservation.md` — typed proofs that survive across
   conversions; trailers are the same idea applied to commits.

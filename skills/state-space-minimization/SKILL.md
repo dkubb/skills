@@ -383,7 +383,7 @@ the sections within each module.
 ### Foundation — always load
 
 1. `references/principles.md` — vocabulary (domain, codomain, range,
-   preimage), four narrowing techniques, encoding ladder, decision
+   preimage), six operations, encoding ladder, decision
    rubric, types as hypotheses, self-similarity.
 
 ### Cross-cutting lenses — load early when relevant
@@ -568,9 +568,9 @@ apply, compose their outputs without adding unrelated checklist items.
 
 ## Process
 
-1. Read `references/principles.md`. Use the four-technique frame
-   (shrink domain, bound ranges, shrink codomain, remove intermediate)
-   as the universal checklist.
+1. Read `references/principles.md`. Use the six-operation frame
+   (shrink domain, bound ranges, shrink codomain, remove intermediate,
+   normalize, ratchet) as the universal checklist.
 2. Classify the task into output profile(s). If the task is only
    formatting, naming, or summary, stop without loading more modules.
 3. Load only the profile's dependency modules, in router order. Load

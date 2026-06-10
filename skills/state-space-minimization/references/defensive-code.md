@@ -1,9 +1,9 @@
 # Defensive code as state-space expansion
 
-Defensive code is the inverse of narrowing. Each technique in
+Defensive code is the inverse of narrowing. Each operation in
 `principles.md` reduces the representable state space; each
 defensive check re-introduces a state the narrowing should have
-eliminated. Same vocabulary, same four techniques applied as their
+eliminated. Same vocabulary, same six operations applied as their
 inverse — at the level of inserted runtime checks rather than at
 the type level.
 

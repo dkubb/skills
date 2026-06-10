@@ -7,7 +7,7 @@ whose enforcement cannot be circumvented. Pretending such a tool
 exists is state-space minimization applied to design decisions:
 the imagined enforcer fixes the shape of the code, the tests, and
 the *real* tool you eventually build to approximate it. Same
-vocabulary from `principles.md`, same four techniques, same audit
+vocabulary from `principles.md`, same six operations, same audit
 questions — applied to the design loop rather than to runtime
 types or project configuration.
 

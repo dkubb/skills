@@ -4,8 +4,8 @@ Normalization is state-space minimization applied to *information
 placement*: the same fact carried in two locations creates a state
 space — the disagreement between the copies — that did not exist
 when the fact lived in one place. Same vocabulary from
-`principles.md` (domain, codomain, range, preimage), same four
-techniques, same audit questions — applied at the level of how
+`principles.md` (domain, codomain, range, preimage), same six
+operations, same audit questions — applied at the level of how
 information is distributed across the artifacts that carry it,
 rather than at the level of types or runtime state.
 
@@ -100,7 +100,7 @@ to import results from outside.
    match exactly the atoms it owns. Locations no longer
    return values that another location could equally claim.
 
-## The four techniques applied here
+## The other operations applied here
 
 ### Shrink the domain — eliminate redundancy
 
