@@ -1,9 +1,11 @@
 ---
 name: state-space-minimization-formal
 description: >-
-  Apply state-space minimization as a compact formal calculus: domains,
-  codomains, ranges, invariants, morphisms, normal forms, and
-  proof-preserving boundaries.
+  Notation and inference rules for state-space minimization:
+  S/C/I_repr/I_reach state sets, boundary morphisms, strictness and
+  dominance rules, the encoding order, and proof obligations.
+  Definition-only output; semantics live in the
+  state-space-minimization skill's reference modules.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -11,17 +13,12 @@ metadata:
 triggers:
   - "state-space-minimization-formal"
   - "formal state-space minimization"
-  - "formal illegal states unrepresentable"
-  - "formal invalid states impossible"
-  - "formal parse don't validate"
-  - "formal domain codomain range"
-  - "formal invariant encoding"
-  - "formal proof preservation"
-  - "formal normal form"
-  - "formal refinement type"
-  - "formal typestate"
-  - "formal capability"
-  - "formal least power"
+  - "proof obligation"
+  - "inference rule"
+  - "calculus"
+  - "artifact calculus"
+  - "definition-only"
+  - "denotational"
 ---
 
 # State Space Minimization Formal
