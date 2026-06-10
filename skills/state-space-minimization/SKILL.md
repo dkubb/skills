@@ -279,6 +279,10 @@ ordinary refactoring).
 - The task does not change domain invariants, data boundaries, or test
   precision.
 - The user wants a short summary only, not design guidance.
+- The required output is formal, proof-like, or definition-only — use
+  `state-space-minimization-formal`, the notation and inference-rule
+  layer over this skill's modules. Semantics stay here; load the
+  formal skill for the requested form.
 
 ## How to use this skill
 
