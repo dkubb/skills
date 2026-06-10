@@ -157,6 +157,10 @@ The canonical anti-pattern list is in `atomic-changes`
   states in the public history.
 - **`--no-verify`** — a smart-constructor backdoor: lets an
   invalid commit-state be constructed past the trusted boundary.
+- **Content amends** — replace a state transition in place,
+  discarding the audit trail of the previous state; a `fixup!`
+  commit represents the correction as its own visible transition
+  until autosquash folds it in.
 - **`--amend` on shared commits** — rewrites a state other callers
   may already depend on.
 - **Mixing refactor with behavior change** — the refactor's
