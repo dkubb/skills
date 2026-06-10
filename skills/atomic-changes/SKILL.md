@@ -111,9 +111,20 @@ Emit in this order:
   and verb sets, transformation-priority ordering, and the subject, body, and
   action-line rules used to classify, order, and write each step.
 - Related skills in this repo:
+  - `state-space-minimization` (`references/commits.md`) — the state-space
+    reading of the commit form, and the gate-trailer / incremental-gate
+    machinery behind step 10.
   - `state-space-minimization` (`references/normalization.md`) — decompose
     into atoms, then recompose along use.
   - `code-review` — verify each step against the review rules.
+- Adjacent roles other skill collections may fill — match by role, not
+  name:
+  - A narrative-ordering skill owns the *readability* of a sequence;
+    this skill owns the *validity and recoverability* of each step.
+  - A fixup-folding tool owns incorporating audited `fixup!` commits
+    via autosquash; this skill only creates them.
+  - Red/green and checkpoint workflow skills (TDD, WIP modes) are
+    specializations of this loop with their own gates.
 
 ## Process
 
