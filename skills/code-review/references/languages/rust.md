@@ -96,8 +96,11 @@ covers the rationale; the bullets here are Rust-specific checklist items.
 
 - Focus on correctness, safety, API design, tests, docs, and style.
 - Do not re-check what Clippy can catch. Require running Clippy instead.
-- Lint suppression policy (Rust):
-  Load `references/allow-vs-expect.md` and apply it when lint configuration or lint suppressions are in scope.
+- Lint suppression policy: do not use `#![allow(...)]`. Use
+  `#![expect(..., reason = "...")]` instead, with a clear reason — `expect`
+  forces suppressions to be removed once they are no longer needed, so
+  improvements cannot silently backslide. Treat this as a cargo restriction
+  for lint configuration.
 - Arithmetic policy (Rust):
   Prefer `checked_*` math. Treat overflow/underflow as an error signal.
   If a clamp-to-zero behavior is required (for example, scanning a substring that may start mid-context), do it explicitly and document why.
@@ -144,3 +147,6 @@ covers the rationale; the bullets here are Rust-specific checklist items.
 - Prefer `expect(...)` with a clear message when a value is required.
 - Avoid `#[cfg(test)]` outside test modules; when sharing helpers across
   modules, place them in a `test_support` module instead.
+- Prefer separate `mod tests` and `mod proptests` modules, so unit and
+  integration coverage can be measured independently from property-based
+  tests.

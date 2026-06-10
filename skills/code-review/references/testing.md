@@ -48,6 +48,19 @@ These rules apply to tests across languages.
   tests do not need madsim/DST coverage by default. Reserve DST requirements for
   unit tests and internal test helpers unless explicitly requested.
 
+## Bug-fix testing discipline
+
+- For bug fixes, reproduce the exact failure with a test before changing
+  code. Fix only after the failure is reproducible; keep all tests passing.
+- Assume failures are non-deterministic until verified by re-running the
+  seed before investigating. After the fix is committed, re-run the harness
+  with the same seed (fast-forwarded to the same iteration) to confirm the
+  deterministic reproduction is fixed.
+- Refactor either the test or the fix, but not both at once — the
+  code-or-tests rule in `atomic-changes` `references/commits.md` § "Ordering".
+- Use fixed unit tests for known-bad inputs and boundary crossings around
+  fixed points; reserve property tests and fuzzing for exploration.
+
 ## Property test invariants
 
 - 100% of valid inputs must be accepted. 100% of invalid inputs must be

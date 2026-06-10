@@ -66,6 +66,19 @@ produce the same results.
   needed to reproduce the issue.
 - Prefer small repro artifacts on failure; avoid logging on success.
 
+## When DST is the project goal
+
+When project rules or the user state DST as a goal, treat it as a hard
+constraint rather than a suggestion:
+
+- All dependencies must be injectable (Env traits, executors, deterministic
+  seeds). Prefer deterministic simulation testing across the codebase
+  (madsim-style).
+- Preserve the "world" isolation pattern; avoid tying core logic directly to
+  runtime-specific APIs.
+- Be cautious with tokio integration; keep async boundaries testable and
+  prefer simulation-friendly abstractions.
+
 ## Review Guidance
 
 - Determinism is a quality goal; DST is optional unless specified.
