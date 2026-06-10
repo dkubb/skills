@@ -168,6 +168,27 @@ threshold admits invalid configurations silently; strengthening it
 later requires auditing every state that slipped through under the
 loose value.
 
+## Estimated bounds: the ratchet's mirror
+
+A bound chosen without a spec (`principles.md` § "Bound ranges and
+cardinality": a plausible limit rounded up to the nearest power of
+two) runs the ratchet in reverse. Start strict, then widen on
+evidence: a rejection at an estimated bound is signal about the
+real domain, and widening is contract-preserving — every previously
+accepted value stays accepted. This is the same
+weaken-before-strengthen asymmetry as above, applied to a bound
+whose true value is unknown rather than a threshold whose value is
+chosen.
+
+Provenance decides which regime a bound is in. A spec-derived bound
+is fixed: it never ratchets and never widens. An estimated bound is
+provisional in both directions: widen it when real valid traffic
+hits it; tighten it (ordinary ratchet direction) when evidence
+shows the estimate was too generous. Widening an estimated bound on
+concrete evidence is correction of a refuted estimate, not a
+regression — record the evidence and the new value where the bound
+is enforced.
+
 ## New project vs existing project
 
 - **New project.** Set the floor at the strongest available value
