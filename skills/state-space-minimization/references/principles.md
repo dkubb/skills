@@ -214,11 +214,35 @@ For each primitive and collection, ask four questions:
 - How many entries may this collection contain?
 
 If a protocol, provider, database, file format, or user-facing contract
-publishes a maximum, use that maximum. If no external maximum exists,
-estimate the absolute maximum the system should reasonably accept, double
-for headroom, and make that the hard limit. Revisit the estimate when
-production evidence or a stronger contract appears, but do not leave the
-type unbounded while waiting for perfect information.
+publishes a maximum, use that maximum as-is. If no external maximum
+exists, choose an explicit bound anyway: estimate a plausible maximum
+the system should accept, round it up to the nearest power of two, and
+make that the hard limit. Adjust on evidence — a rejection at an
+estimated bound is signal about the real domain, not noise. Do not
+leave the type unbounded while waiting for perfect information: an
+implicit hardware or runtime limit (memory, storage, a database
+default) is a predicative situation — the bound exists, but it lives
+outside the contract and varies by machine.
+
+When the true limit is unknown, over-constraining is the cheap
+direction to be wrong in. Loosening an estimated bound later is
+contract-widening: every previously valid value stays valid and no
+caller breaks. Tightening later is breaking: existing data may violate
+the new constraint and needs remediation.
+
+Record each bound's provenance alongside the bound:
+
+- **Spec-derived** — published by a protocol, provider, or format
+  (an RFC field size, a DNS label length). Fixed; not negotiable;
+  excluded from the ratchet.
+- **Estimated** — chosen by the heuristic above. Provisional; move it
+  when evidence arrives (`ratchet.md` covers the direction rules).
+
+Record the unit, too. A character count and a byte count are different
+contracts: a 256-character UTF-8 string can be a kilobyte. The same
+number enforced at two layers in different units agrees only on ASCII —
+a silent `I_reach` gap between the layers (see
+`constructive-vs-predicative.md` for the formal names).
 
 **When replacing `String` or `Vec`, go directly to the bounded form.**
 Prefer `BoundedString` / `BoundedVec` over `NonEmptyString` / `NonEmpty`
