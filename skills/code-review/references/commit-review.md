@@ -2,6 +2,11 @@
 
 Review commits as artifacts, not only the aggregate diff.
 
+The canonical commit form — type and verb sets, subject / body /
+action-line rules, size bounds, transformation priority, and
+anti-patterns — is `atomic-changes` `references/commits.md`. This file
+is the review lens on that form: what to check and how to report it.
+
 ## Commit size and granularity
 
 - Treat reviewability as a hard constraint. If a commit is too large, it is a
@@ -19,21 +24,18 @@ Review commits as artifacts, not only the aggregate diff.
 
 ## Diff size thresholds
 
-Use these as defaults when there is no repo-specific rule:
-
-- 10-20 changed lines: ideal for review.
-- 30-50 changed lines: maximum for good human understanding.
-- Above 50 lines: expect review quality to drop; require justification.
-- Above 300 lines: near zero review quality in one pass. Treat as a blocker.
-- Above 1000 lines: not reviewable. Split before review.
-
-These numbers include both code and tests. If both change in one commit, the
-commit should still be small and linear.
+Apply the canonical size bounds from `atomic-changes`
+`references/commits.md` § "Atomic" as the review defaults when there is
+no repo-specific rule. A commit in the needs-justification band without
+a stated reason is a finding; a commit above the split threshold is a
+blocker.
 
 ## Commit message quality
 
-- Prefer conventional commits. Subject line should explain why, not how.
-- Subject line must not include "and" or "or". Split into separate commits.
+- Review subjects and bodies against the canonical rules in
+  `atomic-changes` `references/commits.md`: conventional-commit form,
+  imperative subject naming the transformation, no "and" / "or", the
+  subject verb matching the diff's actual effect.
 - Messages must make the series reviewable:
   - stable ordering in dependency order
   - later commits rely on earlier commits in obvious ways
