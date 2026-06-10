@@ -25,7 +25,6 @@ bisect` lands on a single transformation instead of a tangle.
   period.
 - No "and" / "or" — a compound subject is two transformations. Split.
 - The subject verb must match what the diff actually does.
-- Say *why*, not a restatement of the diff.
 
 ## Body
 
