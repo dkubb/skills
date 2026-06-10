@@ -2,13 +2,19 @@
 
 These rules apply across languages. Keep them here to avoid drift.
 
-## Review workflow
+## Cross-language review rules
 
-- Run the review after a successful `fixup-commit` or `git conventional-commit`.
+The review workflow itself (scope, flow, rule capture, sub-agents) lives in
+`SKILL.md`; these are the rules applied across languages.
+
 - Default to review blockers for guideline violations unless the user says
   otherwise.
-- Scan the repo for guidance (README, AGENTS, docs, and other files). Record
-  rules that are not in the core principles.
+- Prefer to provide command steps for the user to run. Execute them only when
+  the user asks, and keep monitoring for completion.
+- When the user states code review preferences, record each one in the
+  owning reference module of this skill (the language file, `testing.md`,
+  `github-pr-comments.md`, `cli.md`, or this file) — never in a catch-all
+  log.
 - For setup docs, prefer CLI/API steps and capture the commands. Use the web UI
   only when no CLI/API exists.
 - Keep setup docs, commit sequences, and guides linear so each step builds on
@@ -16,29 +22,6 @@ These rules apply across languages. Keep them here to avoid drift.
 - Prefer polling as the primary mechanism for state changes. Use event
   notifications only as a latency-reduction layer, not as the single source of
   truth.
-- Treat every interaction as part of an ongoing review. Capture new guidance
-  and preferences promptly so the system improves with every exchange.
-- When the user states code review preferences, record each one in the
-  owning reference module of this skill (the language file, `testing.md`,
-  `github-pr-comments.md`, `cli.md`, or this file) — never in a catch-all
-  log.
-- Prefer to provide command steps for the user to run. Execute them only when
-  the user asks, and keep monitoring for completion.
-- Prefer a sub-agent for review if the harness supports it. Share key context
-  only.
-- Record automation candidates. If a rule can be automated, remove it from
-  human review and add it to tooling.
-- If guidelines conflict, ask the user which condition applies before adding
-  to global guidance. Do not drop rules.
-- Prefer stronger constraints first. Relax or remove them later if real usage
-  proves they are too tight. Adding constraints after data drifts is harder.
-- Capture new guidance immediately when the user provides it. When a change
-  touches project guidelines, prefer to do it during a review and keep it in a
-  separate atomic commit. If the repo is not under the `dkubb` GitHub org, ask
-  before updating project guidelines.
-- Prefer the project’s `just` workflow when it exists. Note missing wrappers as
-  review feedback.
-- Stop here unless the user asks for further follow-up.
 
 ## Automation first
 
@@ -190,7 +173,3 @@ during review.
 - If constraints tighten later, migrate or repair old data; do not keep
   invalid states around.
 
-## Sub-agent review
-
-- Prefer a sub-agent for review to avoid context poisoning.
-- Share only the necessary context and let the reviewer decide.
