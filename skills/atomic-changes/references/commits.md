@@ -55,7 +55,7 @@ period. A single-observation body can stay prose.
 | Fix | Correct a regression, bug, or constraint violation |
 | Move | Relocate code (a refactor that changes path, not shape) |
 | Rename | Change identifiers (a refactor that changes name, not shape) |
-| Refactor | Restructure without behavioral change |
+| Refactor | Restructure without behavioral change; touches code or tests, not both |
 | Change | Modify existing observable behavior |
 | Add | Introduce new public API or capability |
 | Upgrade | Bump a dependency to a newer version |
@@ -79,7 +79,12 @@ behavior preservation must be reasoned about.
    stay. Mechanical and compiler-checked, but shifts the codebase's
    vocabulary at every use site.
 5. **Refactor** — preserves behavior, reshapes structure; preservation
-   must be reasoned about, not compiler-checked.
+   must be reasoned about, not compiler-checked. Touches code or
+   tests, never both: the untouched half is the fixed frame of
+   reference proving the behavior survived. Code and tests may each
+   be refactored back-to-back — separate commits, either order, gates
+   passing between — but a single diff editing both has no frame, and
+   is a Change.
 6. **Change** — shifts observable behavior; callers may break.
 7. **Add** — expands the state space; the largest source of new bugs.
 8. **Upgrade** — a dependency bump, isolated in its own commit.
@@ -106,3 +111,7 @@ behavior preservation must be reasoned about.
   others may depend on.
 - Mixing a refactor with a behavior change in one commit — the
   behavior-preservation guarantee no longer holds.
+- A refactor commit that edits code and tests together — with neither
+  half held fixed there is no frame of reference, so no proof the
+  behavior survived. Reclassify as Change, or split into back-to-back
+  refactor commits (either order) with gates passing between.
