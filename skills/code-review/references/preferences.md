@@ -71,8 +71,6 @@
 - When requested, use code-review core principles and Markdown guidance.
 - When requested, review Markdown diffs for clarity, accuracy, and edge cases;
   provide findings with severity.
-- Prefer long-form CLI options in docs/examples; avoid single-letter flags
-  (reserve them for repeated interactive use).
 - When requested, use minimal context and read files directly instead of relying
   on extra references.
 - When requested, treat tests as strict contracts; avoid fallback accessors (for

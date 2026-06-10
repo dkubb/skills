@@ -10,6 +10,8 @@
   env vars (for example `env -u HTTP_PROXY -u HTTPS_PROXY -u ALL_PROXY`)
   to avoid proxy interference.
 - Clap help/doc strings should start with a lowercase letter and end with a period.
+- Prefer long-form CLI options in docs and examples; avoid single-letter flags
+  (reserve them for repeated interactive use).
 
 ## Subcommand output contract
 
