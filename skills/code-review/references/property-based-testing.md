@@ -71,9 +71,19 @@ Every property test suite must continuously verify these properties:
   exist for composition but are not typically used directly in tests.
 - Prefer an explicit inverse generator when possible; otherwise construct a
   complementary generator for invalid values.
-- Invalid generators must be independent of the code under test. Do not use
-  the constructor, validator, or parser in a `prop_filter` to create invalid
-  cases. Use an inverse regex or explicit invalid strategy instead.
+- Invalid generators must be independent of the code under test. Deriving
+  invalid cases by filtering random data through the constructor,
+  validator, or parser (for example a `prop_filter` on rejection) makes
+  the property circular: "rejects all invalid inputs" becomes "rejects
+  what it rejects", which holds for any implementation and can never
+  fail. Write the invalid generator as an independent statement of the
+  spec — an inverse regex, an explicit invalid strategy, or
+  boundary-adjacent construction — so a disagreement between the
+  generator and the code surfaces as a test failure instead of a
+  silently narrowed sample. The same circularity poisons downstream
+  uses: a filtered generator inherits the constructor's current notion
+  of invalid, never produces the values a too-loose constructor wrongly
+  accepts, and mutates along with the constructor so mutants survive.
 
 ## Serialization and deserialization properties
 
