@@ -75,8 +75,15 @@ must be reasoned about.
    a test refactor against unchanged code — the fixed frame of
    reference in either direction. Editing both in one commit adds a
    second construction path to "the gates pass" and voids the proof
-   (`proof-preservation.md`) — such a diff is a Change. Sets up the
-   next tier safely.
+   (`proof-preservation.md`) — such a diff is a Change. Back-to-back
+   refactors of code and tests commute — gates pass in either order,
+   since each is verified against an oracle the other never touches.
+   This is the confluence invariant applied to commits
+   (`normalization.md` § "Formal underpinnings"): order independence
+   is evidence of genuine preservation and of independence (no
+   dependency edge, so the pair may parallelize); an ordering that
+   fails gates exposes structure-coupled tests or a disguised
+   Change. Sets up the next tier safely.
 6. **Change** — modifies the valid state space. Observable behavior
    shifts. Higher risk than refactor because callers may break.
 7. **Add** — expands the state space. Highest risk for new bugs
