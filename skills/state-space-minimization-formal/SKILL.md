@@ -26,6 +26,13 @@ triggers:
 
 # State Space Minimization Formal
 
+This skill is the notation-and-inference-rule layer over
+`state-space-minimization`. That skill's reference modules are
+determinant for semantics — what each concept means and when it
+applies. This skill is determinant for notation and inference
+rules — how the obligations are written and discharged. Where a
+section cites a module, the module owns the meaning.
+
 ## When to Activate
 
 - Required output is formal, theoretical, proof-like, or definition-only.
@@ -50,6 +57,8 @@ triggers:
 - Functions `f: D -> K`.
 - Reader/model state `q` and intended receiver-state set
   `Q_intended`, when text reception matters.
+- Thresholds `t` with stricter candidates `t'` and the current
+  evidence, when ratcheting.
 - Evidence set `E`.
 
 ## Core Notation
@@ -97,6 +106,10 @@ $$
 
 A smart constructor narrows `R(b)`, not `S`. Equating `I_reach = ∅` with
 `I_repr = ∅` is the most common slip in informal SSM analysis.
+
+Semantics: `state-space-minimization`
+`references/constructive-vs-predicative.md` (intrinsic vs extrinsic
+safety, the trusted-boundary audit, the hard-case fallbacks).
 
 ### Proof-preservation corollary
 
@@ -163,6 +176,11 @@ the analysis).
   facts, recompose along use.
 - Ratchet: replace threshold `t` by stricter `t'` when current evidence
   satisfies `t'`.
+
+These are the six operations of `state-space-minimization`
+`references/principles.md` § "Six operations"; `normalization.md`
+and `ratchet.md` there own the last two in depth (including when an
+estimated bound may move the other way).
 
 ## Encoding Order
 
@@ -292,6 +310,12 @@ $$
 \end{array}
 $$
 
+Semantics: `state-space-minimization`
+`references/ingress-and-boundaries.md` (boundary parsing,
+capability tokens, temporal invariants) and
+`references/proof-preservation.md` (proofs that survive
+conversions).
+
 ## Reception Semantics
 
 - Text has denotational content and operational effect.
@@ -325,12 +349,20 @@ premise: discharged by argument about the plausible readings of
 `t'`, not computed. A rewrite is admissible only when it preserves
 denotation and every reading it leaves open is an intended one.
 
+Semantics: `state-space-minimization`
+`references/documentation.md` (the reader's mental model as the
+state space a text constrains).
+
 ## Self-Similarity
 
 - The skill is an artifact.
 - Its rules are representable states.
 - Concrete cases reveal whether the codomain is too wide, too narrow, or
   missing a distinction.
+
+Semantics: `state-space-minimization` `references/principles.md`
+§ "Self-similarity"; the operational audit discipline is
+`references/skill-refinement.md`.
 
 $$
 \begin{array}{rcl}
@@ -378,7 +410,8 @@ $$
 6. Preserve or reconstitute proofs across morphisms.
 7. Normalize duplicated determinants.
 8. If text reception matters, model `[[t]]^D` and `[[t]]^O`.
-9. Emit only definitions, equations, and derived obligations.
+9. Emit only definitions, equations, derived obligations, and the
+   selection justification (the dominance reason).
 
 ## Outputs
 
