@@ -167,8 +167,10 @@ the analysis).
 - Bound range: replace unbounded component by finite, ordered, or measured
   subset.
 - Shrink codomain: replace `K` by `K'` where `R subset K' subset K`.
-- Remove intermediate: compose `g . f` and eliminate exposed state `X` when
-  `X` has no independent contract role.
+- Remove intermediate: compose `g . f` and eliminate exposed state `W` when
+  `W` has no independent contract role. (`W`, not `X`: `X` is
+  reserved for functional-dependency determinants `X → Y` in
+  `state-space-minimization` `references/normalization.md`.)
 - Normalize: decompose facts into determinants, remove transitively derivable
   facts, recompose along use.
 - Ratchet: replace threshold `t` by stricter `t'` when current evidence
