@@ -44,7 +44,9 @@ triggers:
 
 - Artifact `A`.
 - Contract `C(A)`.
-- Boundary morphisms `b: U -> T`.
+- Boundary morphisms `b: (u: U) × P(u) -> A`, consuming raw input `u`
+  and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
+  special case of trivial `P`.
 - Functions `f: D -> K`.
 - Reader/model state `q`, when text reception matters.
 - Evidence set `E`.
@@ -53,7 +55,8 @@ triggers:
 
 - `S(A)` — representable states (structural; what the type's shape permits).
 - `C(A)` — admissible states (contract).
-- `R(b)` — reachable states under a boundary constructor `b: U -> A`.
+- `R(b)` — reachable states under a boundary constructor
+  `b: (u: U) × P(u) -> A`.
 - `I_repr(A)` — representable invalid: `S(A) \ C(A)`.
 - `I_reach(A,b)` — reachable invalid: `R(b) ∩ I_repr(A)`.
 - `B(A)` — contract behavior.
@@ -64,7 +67,7 @@ $$
 \begin{array}{rcl}
 S(A) &:=& \text{representable states (structural)} \\
 C(A) &\subseteq& S(A) \\
-R(b) &:=& \{\, b(u) \mid u \in U \,\} \subseteq S(A) \\
+R(b) &:=& \{\, b(u,p) \mid u \in U,\; p \in P(u) \,\} \subseteq S(A) \\
 I_{\mathrm{repr}}(A) &:=& S(A) \setminus C(A) \\
 I_{\mathrm{reach}}(A,b) &:=& R(b) \cap I_{\mathrm{repr}}(A)
 \end{array}
@@ -226,7 +229,8 @@ neither `S` nor `R(b)`.
 ## Invariants
 
 - Contract preservation: `behavior(A') = behavior(A)` on `C(A)`.
-- Boundary monotonicity: trust may increase only through `b: U -> T`.
+- Boundary monotonicity: trust may increase only through
+  `b: (u: U) × P(u) -> A`.
 - Proof preservation: no downstream operation depends on erased proof.
 - Totality: every exposed function is total on its declared domain.
 - Exhaustiveness: closed sums have no catch-all branch without an external
@@ -244,12 +248,12 @@ $$
 \begin{array}{c}
 u \in U
 \qquad
-b: U \to T
+b: (u: U) \times P(u) \to A
 \qquad
 p: P(u)
 \\
 \hline
-b(u,p) \in T
+b(u,p) \in A
 \end{array}
 $$
 
@@ -329,7 +333,7 @@ $$
 
 1. State `S`, `C`, `I_repr = S \ C`, and, when boundaries exist,
    `R(b)` and `I_reach`. Never report `I = ∅` without naming which.
-2. Locate boundaries `U -> T`.
+2. Locate the boundary morphisms `b: (u: U) × P(u) -> A`.
 3. Compute domain, codomain, range, gaps, and failure preimages.
 4. Select the least encoding that removes the invalid set. When choosing
    among rank-1 encodings, prefer the one whose `S` is strictly included
