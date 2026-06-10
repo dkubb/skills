@@ -99,7 +99,7 @@ Use one combined command to decrease shell calls.
 13. Load `references/determinism.md` when behavior must be the same each run.
 14. Use the language list below to select language references.
 15. If Markdown is present, run the markdown review steps in the Markdown
-    language reference. Use simplified-english-editor when necessary.
+    language reference.
 16. Use sub-agents for review to avoid context damage. Give only relevant
     context and let them decide.
 17. Put together findings, remove same items, and keep order by severity.
@@ -137,9 +137,7 @@ Use one combined command to decrease shell calls.
    ask before you change project rules.
 4. Use the project's standard task runner wrappers when they exist. Note
    missing wrappers as review feedback.
-5. Use simplified-english-editor to review rule text for simplicity and
-   consistency, and add cause when necessary.
-6. Stop here unless the user asks for further follow-up.
+5. Stop here unless the user asks for further follow-up.
 
 ## Check List
 

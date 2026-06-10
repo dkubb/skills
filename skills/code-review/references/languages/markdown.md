@@ -17,5 +17,3 @@
 - Keep structure clear.
 - Keep headings and lists consistent.
 - Keep wording clear.
-- Use simplified-english-editor to check the English text for simplicity and
-  consistency on the cleaned text.

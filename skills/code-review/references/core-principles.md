@@ -36,8 +36,6 @@ These rules apply across languages. Keep them here to avoid drift.
   before updating project guidelines.
 - Prefer the project’s `just` workflow when it exists. Note missing wrappers as
   review feedback.
-- Use simplified-english-editor to check guideline text for simplicity and
-  consistency. Add reasoning when needed.
 - Stop here unless the user asks for further follow-up.
 
 ## Automation first
