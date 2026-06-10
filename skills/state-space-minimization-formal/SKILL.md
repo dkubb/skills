@@ -48,7 +48,8 @@ triggers:
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
 - Functions `f: D -> K`.
-- Reader/model state `q`, when text reception matters.
+- Reader/model state `q` and intended receiver-state set
+  `Q_intended`, when text reception matters.
 - Evidence set `E`.
 
 ## Core Notation
@@ -287,14 +288,19 @@ $$
 \begin{array}{c}
 t \equiv_D t'
 \qquad
-H([[t']]^O_c) \le H([[t]]^O_c)
+\operatorname{supp}([[t']]^O_c) \subseteq \operatorname{supp}([[t]]^O_c)
 \qquad
-\delta_M(q,t') \in Q_{\mathrm{intended}}
+\operatorname{supp}([[t']]^O_c) \subseteq Q_{\mathrm{intended}}
 \\
 \hline
 \operatorname{ReceptionNarrowing}(t,t')
 \end{array}
 $$
+
+The support premises are proof obligations like every other
+premise: discharged by argument about the plausible readings of
+`t'`, not computed. A rewrite is admissible only when it preserves
+denotation and every reading it leaves open is an intended one.
 
 ## Self-Similarity
 
