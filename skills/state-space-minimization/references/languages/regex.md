@@ -7,11 +7,12 @@ to accept, and Hyrum's Law guarantees a downstream consumer will eventually
 depend on that incidental admission. Tightening a regex is state-space
 minimization at the byte level: each anchor, each bounded quantifier, and
 each character class shrinks the accepted set to match the *valid* set.
-The canonical rule catalogue lives in the `regex-review` skill and
-the `code-review` skill's `languages/regex.md`; this file frames
-those rules in the vocabulary of `../principles.md` and
-`../primitive-obsession.md` and shows how regexes pair with
-branded / newtype'd carriers in the language modules.
+The review checklist for these rules lives in the `code-review`
+skill's `languages/regex.md` (and in a dedicated regex-review skill
+when one is available); this file frames the rules in the
+vocabulary of `../principles.md` and `../primitive-obsession.md`
+and shows how regexes pair with branded / newtype'd carriers in
+the language modules.
 
 ## Anchor unless you can prove the match is bounded
 

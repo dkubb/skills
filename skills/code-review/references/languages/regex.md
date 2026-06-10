@@ -3,6 +3,8 @@
 - Use simple English.
 - Use short bullets.
 - Do not repeat core principles.
+- This file is the review checklist; the state-space theory behind these
+  rules is `state-space-minimization` `references/languages/regex.md`.
 
 ## Pattern intent
 
