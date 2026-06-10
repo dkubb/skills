@@ -138,7 +138,10 @@ Emit in this order:
    1. **Dependencies before dependents** — whatever must exist for the next
       step to work goes first (the DAG's topological order).
    2. **Highest learning opportunity first** — do what teaches the most
-      early, so every later decision is better informed.
+      early, so every later decision is better informed. When the
+      highest-learning step is also high-risk, take the learning through a
+      reversible spike (step 2) and keep the *shipped* sequence on the risk
+      order below.
    3. **Lowest risk first** — clear low-risk changes early so they deploy
       and earn feedback while you focus on the riskier ones. This is why
       transformations run Remove → Fix → Move / Rename → Refactor → Change
