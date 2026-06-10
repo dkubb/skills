@@ -53,8 +53,12 @@ Every property test suite must continuously verify these properties:
     Targets the valid edge: the exact boundary value and values just
     inside it.
   - `*_invalid_broad` — broad coverage of the disallowed range.
-  - `*_invalid_biased` — values just after the boundary (first invalid).
-    Targets off-by-one and fence-post errors right past the edge.
+  - `*_invalid_biased` — near-misses: take a valid value and diverge in
+    exactly one small way (the first value past a bound, one character
+    outside the allowed class, one element over the cardinality limit,
+    one missing or extra field). Targets off-by-one and fence-post
+    errors, and more generally the inputs a buggy validator is most
+    likely to wrongly accept.
 - Compose two primary generators for use in tests:
   - `*_valid` = `prop_oneof![80 => *_valid_biased, 20 => *_valid_broad]`.
   - `*_invalid` = `prop_oneof![80 => *_invalid_biased, 20 => *_invalid_broad]`.
@@ -84,6 +88,14 @@ Every property test suite must continuously verify these properties:
   uses: a filtered generator inherits the constructor's current notion
   of invalid, never produces the values a too-loose constructor wrongly
   accepts, and mutates along with the constructor so mutants survive.
+- Filtered-random generation also has the wrong distribution: a uniformly
+  random input is almost never *near*-valid, so its rejects are obviously
+  invalid and exercise almost nothing. An invalid case's value is
+  proportional to how close it sits to the valid boundary — a buggy
+  validator wrongly accepts near-misses, not noise. Construct near-misses
+  deliberately by mutating a valid value one dimension at a time (the
+  `*_invalid_biased` recipe); a rejection filter essentially never finds
+  them.
 
 ## Serialization and deserialization properties
 
