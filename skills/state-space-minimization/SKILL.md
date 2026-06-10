@@ -301,6 +301,26 @@ the sections within each module.
    preimage), six operations, encoding ladder, decision
    rubric, types as hypotheses, self-similarity.
 
+### Profile → module map
+
+Classify the task into output profile(s) first (Process step 2),
+then load that profile's modules in router order.
+`references/principles.md` is the foundation for every profile and
+is omitted from the rows below. The "by symptom" column lists the
+profile's optional modules: load one only when its entry in the
+symptom router below matches evidence in the task.
+
+| Profile | Always | By symptom |
+|---|---|---|
+| Core type / boundary | constructive-vs-predicative | primitive-obsession, boolean-blindness, total-functions, proof-preservation, architectural-scopes, ingress-and-boundaries, least-power, defensive-code |
+| Testing | testing | defensive-code |
+| Documentation | documentation, normalization | |
+| Commit | commits, normalization | |
+| Normalization | normalization | least-power |
+| Tooling / ratchet | perfect-tool, ratchet | |
+| Language | languages/&lt;lang&gt;.md per file type in scope, after the profile's other modules | |
+| Skill-refinement | skill-refinement | |
+
 ### Cross-cutting lenses — load early when relevant
 
 These modules are high-leverage, but not automatic. Load them right
