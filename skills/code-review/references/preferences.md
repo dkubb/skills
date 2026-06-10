@@ -2,10 +2,6 @@
 
 - Review for correctness, safety, API, tests, docs, and style with Rust +
   Markdown focus.
-- During iterative improvements, it is acceptable to amend once `cargo fmt
-  --check`, `cargo clippy-all -- -D warnings`, and `cargo test` pass; keep
-  ratcheting coverage up, but do not block on 100% coverage to lock in
-  improvements.
 - When requested, focus on correctness, CLI behavior, regressions, missing
   updates to docs/tests, and API/UX issues.
 - When requested, focus on logic, edge cases, and docs for Rust + Markdown
