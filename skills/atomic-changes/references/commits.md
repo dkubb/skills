@@ -87,6 +87,8 @@ behavior preservation must be reasoned about.
 - Past-tense or gerund subjects ("fixed", "adding") — use the imperative.
 - A subject verb that does not match the diff's effect.
 - WIP commits on a shipped branch — squash or rewrite before merge.
-- `--no-verify`, or `--amend` / rebase of commits already shared.
+- `--no-verify` — bypasses the gates unconditionally; never use it.
+- `--amend` or rebase of commits already shared — rewrites a state
+  others may depend on. (Amending unshared commits is fine.)
 - Mixing a refactor with a behavior change in one commit — the
   behavior-preservation guarantee no longer holds.
