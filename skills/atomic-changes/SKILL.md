@@ -96,10 +96,10 @@ Emit in this order:
   plan order and name each step's blockers in its text. Either way the
   tracker is the single source of execution order, updated as each step is
   verified.
+- `references/commits.md` — the canonical commit structure: the closed type
+  and verb sets, transformation-priority ordering, and the subject, body, and
+  action-line rules used to classify, order, and write each step.
 - Related skills in this repo:
-  - `state-space-minimization` (`references/commits.md`) — the closed verb
-    set and transformation priority used to classify and order steps, and
-    the small preimage of failure that smaller steps buy.
   - `state-space-minimization` (`references/normalization.md`) — decompose
     into atoms, then recompose along use.
   - `code-review` — verify each step against the review rules.
@@ -131,9 +131,8 @@ Emit in this order:
    gets its own timing and verify, so a failure isolates to one segment
    instead of one large step.
 4. Split by transformation type. One step does one kind of change, drawn
-   from the closed verb set (see `state-space-minimization`,
-   `references/commits.md`). A step that spans two verbs is doing too much
-   — split it.
+   from the closed verb set (see `references/commits.md`). A step that spans
+   two verbs is doing too much — split it.
 5. Order by these criteria, applied in rank order (each one breaks ties in
    the criterion above it):
    1. **Dependencies before dependents** — whatever must exist for the next
