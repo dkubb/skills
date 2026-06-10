@@ -269,7 +269,7 @@ neither `S` nor `R(b)`.
 
 ## Invariants
 
-- Contract preservation: `behavior(A') = behavior(A)` on `C(A)`.
+- Contract preservation: `B(A') = B(A)|_{C(A)}`.
 - Boundary monotonicity: trust may increase only through
   `b: (u: U) × P(u) -> A`.
 - Proof preservation: no downstream operation depends on erased proof.
@@ -408,7 +408,7 @@ $$
 5. Prove contract preservation.
 6. Preserve or reconstitute proofs across morphisms.
 7. Normalize duplicated determinants.
-8. If text reception matters, model `[[t]]^D` and `[[t]]^O`.
+8. If text reception matters, model `[[t]]^D` and `[[t]]^O_c`.
 9. Emit only definitions, equations, derived obligations, and the
    selection justification (the dominance reason).
 
