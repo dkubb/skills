@@ -15,7 +15,6 @@ metadata:
 - A change set spans multiple languages or file formats.
 - The user wants to change review rules or codify review feedback.
 - The user wants to change review steps or report type.
-- After a successful fixup commit workflow or `git conventional-commit`.
 - The user asks for a review of diffs, commits, or PR changes.
 
 ## When Not to Use
@@ -47,21 +46,19 @@ metadata:
 
 ## Process
 
-Use one combined command to decrease shell calls.
-
 ### Scope
 
-1. Confirm the step list used:
-   - A skeleton commit + fixup commit chain, or
-   - `git conventional-commit`.
-2. Trigger this review only after a successful commit from that step list.
-3. If the project uses a skeleton commit + fixup chain, review the diff from
-   the skeleton commit through `HEAD`. Do not limit to the last fixup commit
-   unless the user or LLM states a different preference.
-4. Also review the most recent commit in isolation to spot local regressions.
-5. If there is no fixup chain, for example after autosquash, set the
+1. Identify the review target: a working-tree diff, a commit range, a fixup
+   commit chain, or a pull request. Any of these is a valid entry point; a
+   successful commit is not a precondition.
+2. When the project uses a commit workflow (such as a skeleton commit +
+   fixup chain via `just fixup-commit`, or `git conventional-commit`),
+   review the diff from the skeleton commit through `HEAD`. Do not limit to
+   the last fixup commit unless the user states a different preference.
+3. Also review the most recent commit in isolation to spot local regressions.
+4. If there is no fixup chain, for example after autosquash, set the
    review range to `HEAD`.
-6. Identify languages and file types in the change set.
+5. Identify languages and file types in the change set.
 
 ### Review Flow
 
@@ -70,8 +67,10 @@ Use one combined command to decrease shell calls.
    `references/core-principles.md` and its "Primitive obsession" section for
    common fixes.
 3. When the change introduces or modifies types, boundaries, or domain models,
-   load the `state-space-minimization` skill's reference for type design,
-   domain shrinking, and invariant encoding guidance.
+   load the `state-space-minimization` skill's
+   `references/constructive-vs-predicative.md` and
+   `references/ingress-and-boundaries.md` for type design, domain shrinking,
+   and invariant encoding.
    Prefer smart constructors when domain invariants exist, so invalid states
    are rejected at creation time. Request both boundary tests and property
    tests for each smart constructor.
@@ -82,9 +81,10 @@ Use one combined command to decrease shell calls.
    inline-range rules.
 6. Load `references/cli.md` when CLI behavior or command output is in scope.
 7. When the change set touches an I/O boundary (external API, database,
-   file parsing, user input), load the `external-integration` skill's
-   `references/external-integration.md` for trust model, mirror layer,
-   and translation testing guidance. All I/O boundaries are untrusted.
+   file parsing, user input), load an anti-corruption-layer skill if one
+   is available (such as `external-integration`) for trust model, mirror
+   layer, and translation testing guidance. All I/O boundaries are
+   untrusted.
 8. Scan the repo for rules (README, AGENTS, docs, or other files) and record
    rules not in `references/core-principles.md`.
 9. Load the applicable language references from `references/languages/` for
@@ -142,8 +142,8 @@ Use one combined command to decrease shell calls.
 
 ## Check List
 
-- The review happened after a successful fixup commit workflow or
-  `git conventional-commit`.
+- The review target (working-tree diff, commit range, fixup chain, or PR)
+  was identified and the full range reviewed.
 - Load `references/core-principles.md` and the relevant language references.
 - Deduplicate findings and order them by severity.
 - Record automation opportunities.
