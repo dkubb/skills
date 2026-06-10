@@ -1,10 +1,31 @@
 ---
 name: code-review
-description: Run a clear code review across languages and change review rules. Use when the user wants a code review or a rule change.
+description: >-
+  Review diffs, commit ranges, fixup chains, or PRs across languages and
+  report findings ordered by severity. Enforces primitive-obsession and
+  smart-constructor blockers, property-test and boundary-test requirements,
+  complexity thresholds, commit structure against the canonical form, and
+  per-language rules (Rust, SQL, bash, Ruby, Markdown, regex). Also the home
+  for changing review rules or codifying review feedback.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-01-v11"
+  version: "2026-06-v12"
+triggers:
+  - "code review"
+  - "review this diff"
+  - "review the diff"
+  - "review my changes"
+  - "review the changes"
+  - "review the PR"
+  - "review this PR"
+  - "review commits"
+  - "review the branch"
+  - "review findings"
+  - "review rules"
+  - "codify review feedback"
+  - "pedantic review"
+  - "review blockers"
 ---
 
 # Code Review
