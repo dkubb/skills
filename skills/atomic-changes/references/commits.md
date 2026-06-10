@@ -73,11 +73,18 @@ behavior preservation must be reasoned about.
 
 1. **Remove** — reduces the state space; deleted code cannot have bugs.
 2. **Fix** — eliminates an invalid (representable-but-wrong) state.
-3. **Move** / **Rename** — preserve shape; mechanical, compiler-checked.
-4. **Refactor** — preserves behavior, reshapes structure.
-5. **Change** — shifts observable behavior; callers may break.
-6. **Add** — expands the state space; the largest source of new bugs.
-7. **Upgrade** / **Downgrade** — isolate a dependency bump in its own commit.
+3. **Move** — relocates code; the path changes, name and shape stay.
+   Mechanical, compiler-checked.
+4. **Rename** — changes identifiers; the name changes, location and shape
+   stay. Mechanical and compiler-checked, but shifts the codebase's
+   vocabulary at every use site.
+5. **Refactor** — preserves behavior, reshapes structure; preservation
+   must be reasoned about, not compiler-checked.
+6. **Change** — shifts observable behavior; callers may break.
+7. **Add** — expands the state space; the largest source of new bugs.
+8. **Upgrade** — a dependency bump, isolated in its own commit.
+9. **Downgrade** — a dependency rollback, isolated in its own commit;
+   usually an evidence-driven correction.
 
 ## Anti-patterns
 

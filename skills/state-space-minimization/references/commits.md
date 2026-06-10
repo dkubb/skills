@@ -57,23 +57,29 @@ must be reasoned about.
 2. **Fix** — eliminates invalid states. A bug is a system sitting in
    a representable-but-invalid state; the fix removes that state from
    the reachable set.
-3. **Move** / **Rename** — preserve the valid state space, changing
-   location or label without changing shape. Mechanical and
-   compiler-checked, so the least disruptive of the preserving
-   changes; cheapest to review when isolated.
-4. **Refactor** — preserves the valid state space, reshapes the
+3. **Move** — preserves the valid state space; only the location
+   changes. Mechanical and compiler-checked, and the identifier
+   stays fixed, so every reference reads the same after the move —
+   the least disruptive of the preserving changes.
+4. **Rename** — preserves the valid state space; only the label
+   changes. Equally mechanical and compiler-checked, but it shifts
+   the codebase's vocabulary at every use site, so it is the more
+   disruptive of the two mechanical moves.
+5. **Refactor** — preserves the valid state space, reshapes the
    structure. Informational equivalence on inputs and outputs; only
    the implementation changes. More disruptive than move or rename
-   because the shape changes. Sets up the next tier safely.
-5. **Change** — modifies the valid state space. Observable behavior
+   because behavior preservation must be reasoned about rather than
+   compiler-checked. Sets up the next tier safely.
+6. **Change** — modifies the valid state space. Observable behavior
    shifts. Higher risk than refactor because callers may break.
-6. **Add** — expands the state space. Highest risk for new bugs
+7. **Add** — expands the state space. Highest risk for new bugs
    because new code is the largest preimage source for the next
    regression.
-7. **Upgrade** / **Downgrade** — dependency-level state-space
-   changes. Isolate in their own commits (often their own PRs) so
-   the diff is purely the dependency bump plus any required adapter
-   changes.
+8. **Upgrade** — a dependency-level state-space change in the
+   forward direction. Isolate in its own commit (often its own PR)
+   so the diff is purely the bump plus any required adapter changes.
+9. **Downgrade** — the corrective direction, usually evidence-driven.
+   Same isolation rule as upgrade.
 
 To see where a candidate new verb would sit, ask: does it reduce,
 preserve, or expand the state space? The verb set itself stays

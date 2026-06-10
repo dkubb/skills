@@ -155,8 +155,9 @@ Emit in this order:
       order below.
    3. **Lowest risk first** — clear low-risk changes early so they deploy
       and earn feedback while you focus on the riskier ones. This is why
-      transformations run Remove → Fix → Move / Rename → Refactor → Change
-      → Add (isolate Upgrade / Downgrade in their own step).
+      transformations run Remove → Fix → Move → Rename → Refactor →
+      Change → Add → Upgrade → Downgrade (dependency moves isolated in
+      their own steps).
    4. **Related items together** — group steps into a narrative that flows
       one into the next; do not jump between unrelated items.
    5. **Tie-break** — make each item a distinct unit and sort

@@ -353,8 +353,8 @@ an earlier one; earlier modules do not depend on later ones.
   as a state-space leak; progressive disclosure as topological sort →
   `references/documentation.md` + `references/normalization.md`
 - writing or auditing commit messages; sequencing commits by
-  transformation priority (Remove → Fix → Move/Rename → Refactor →
-  Change → Add → Upgrade/Downgrade);
+  transformation priority (Remove → Fix → Move → Rename → Refactor →
+  Change → Add → Upgrade → Downgrade);
   deciding commit granularity for small preimage of failure;
   encoding gate results as commit trailers; atomic-commits as
   decompose-then-recompose →
