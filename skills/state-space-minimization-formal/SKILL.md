@@ -115,6 +115,8 @@ addition of arbitrary new construction paths.
 
 $$
 \begin{array}{c}
+C(A) \subseteq S(A')
+\qquad
 I_{\mathrm{repr}}(A') \subset I_{\mathrm{repr}}(A)
 \qquad
 B(A') = B(A)|_{C(A)}
@@ -123,6 +125,10 @@ B(A') = B(A)|_{C(A)}
 \operatorname{Strict}(A,A')
 \end{array}
 $$
+
+The first premise is explicit, not derived: a strictness step may
+not delete any state the contract requires. `B(A') = B(A)|_{C(A)}`
+presupposes it, but the obligation stands on its own.
 
 $$
 \begin{array}{rl}
