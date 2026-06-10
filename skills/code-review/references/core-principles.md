@@ -47,6 +47,9 @@ These rules apply across languages. Keep them here to avoid drift.
   the tool instead.
 - When a new issue is found, ask: “Can this be automated?” If yes, log it as a
   tooling task.
+- Prefer fixing existing violations before adding new lints.
+- Prefer pushing conventions down into executable scripts (with shebangs)
+  over embedding them in task-runner wrappers or docs.
 
 ## Primitive obsession (review blockers)
 
@@ -86,6 +89,10 @@ These rules apply across languages. Keep them here to avoid drift.
 - Keep review findings ordered by severity.
 - Keep review feedback high signal. Do not spend review budget on praise unless
   the user explicitly asks for that style.
+- Avoid synthetic variables or synthetic code in review suggestions; prefer
+  direct, minimal expressions when no added clarity exists.
+- Fix small issues promptly ("no broken windows"); do not leave known
+  problems behind.
 - Keep core logic pure; isolate side effects.
 - Prefer explicit error types and clear failure messages.
 - Do not add placeholder `let` bindings. Use underscore parameters or handle errors.

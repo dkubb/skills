@@ -27,6 +27,11 @@ comments.
 - Keep each inline comment scoped to one distinct issue. Split unrelated points
   into separate comments.
 
+## Resolving comments
+
+- When resolving review comments, add 👍 to helpful feedback and 👎 to
+  feedback you will ignore, to reinforce reviewer preferences.
+
 ## Copilot reviews
 
 - When requesting a new Copilot review, hide all previous Copilot reviews
