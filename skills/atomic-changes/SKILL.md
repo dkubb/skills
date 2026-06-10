@@ -3,7 +3,9 @@ name: atomic-changes
 description: >-
   Break work into the smallest atomic steps. Verify the foundation first
   (step 0), then order steps so partial progress always leaves the system
-  valid or better.
+  valid or better. Owns the canonical commit form: conventional-commit
+  structure, the closed action-verb set, and transformation-priority
+  ordering.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -29,6 +31,15 @@ triggers:
   - "reversible steps"
   - "incremental change"
   - "small preimage of failure"
+  - "conventional commit"
+  - "commit structure"
+  - "commit message"
+  - "atomic commit"
+  - "atomic commits"
+  - "fixup commit"
+  - "transformation priority"
+  - "commit ordering"
+  - "action lines"
 ---
 
 # Atomic Changes
