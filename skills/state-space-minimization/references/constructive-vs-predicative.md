@@ -40,15 +40,20 @@ constructive: head + tail; emptiness is unrepresentable by shape
 When the constructive shape is right, the predicative version starts to
 feel silly: there is nothing for the smart constructor to check.
 
-The split has a precise formal counterpart. A predicative encoding has
-`S(A) ⊋ C(A)`; the smart constructor narrows `R(b) ⊆ C(A)` but `S \ C`
-remains representable. A constructive encoding has `S(A) = C(A)`. A
-mechanism swap from one predicative encoding to another (hand-written
-smart constructor to refinement-library wrapper, say) holds `S` and
-`R(b)` constant and is therefore not a state-space narrowing — only a
-move toward `|S| = |C|` is. See
-`state-space-minimization-formal` § "Constructive vs predicative" and
-§ "Constructive dominance at rank 1".
+The split has a precise formal counterpart. The
+representable-but-invalid set is `I_repr(A) = S(A) \ C(A)`; the
+reachable-invalid set under a boundary constructor `b` is
+`I_reach(A,b) = R(b) ∩ I_repr(A)`. A predicative encoding has
+`S(A) ⊋ C(A)`: the smart constructor narrows `R(b) ⊆ C(A)`, so
+`I_reach` is empty, but `I_repr` remains representable. A
+constructive encoding has `S(A) = C(A)`, so `I_repr` is empty by
+shape. A mechanism swap from one predicative encoding to another
+(hand-written smart constructor to refinement-library wrapper, say)
+holds `S` and `R(b)` constant and is therefore not a state-space
+narrowing — only a move toward `S(A) = C(A)` is. See
+`state-space-minimization-formal` for the full calculus, including
+§ "Constructive vs predicative" and § "Constructive dominance at
+rank 1".
 
 ## Smart constructors are only as strong as their trusted boundary
 
