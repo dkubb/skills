@@ -83,6 +83,8 @@ These rules apply across languages. Keep them here to avoid drift.
 - Record the exact coverage number used.
 - Do not allow coverage to drop unless the user approves.
 - If coverage increases, lock in the higher number.
+- Floor semantics: `state-space-minimization` `references/ratchet.md`
+  (the floor only tightens; weakening only on explicit user request).
 
 ## Review quality
 
@@ -142,34 +144,19 @@ Use tool output when available. Otherwise, review against the intent.
   - Fan-out per function/module: ≤ 7.
   - Fan-in per function/module: flag if 0; review if extremely high.
 
-## State space and types
+## State space and types (review lens)
 
-- Think in terms of allowed vs disallowed states. Aim to allow 100% valid
-  values and reject 100% invalid values.
-- Treat the database schema as a snapshot of the current mental model of the
-  data. Use real data and constraint violations as feedback to refine that
-  model over time.
+The semantics are owned by `state-space-minimization`:
+`references/principles.md` (six operations, bounds and provenance,
+allowlists, weaken-before-strengthen),
+`references/constructive-vs-predicative.md` (smart constructors and
+trusted boundaries), and `references/ingress-and-boundaries.md`
+(boundary parsing and revalidation). This section is what to flag
+during review.
+
 - Defense in depth: treat all external and persisted data as adversarial.
   Revalidate at every trust boundary (ingress, storage, and reuse) before
   creating domain types or mutating state.
-- For regex validation, accept all valid inputs when possible. When in doubt,
-  go tighter and loosen only when real inputs show valid cases are blocked.
-- Prefer the smallest type that still represents all valid values; avoid
-  oversized integers (use `u8` when it covers the range instead of `u32`).
-- Use allowlists and positive constraints. Define the narrow range of valid
-  values; reject everything else. Avoid denylists — enumerating invalid
-  cases is an unbounded problem that can never be complete.
-- Prefer being too strict over too loose when the model is uncertain. Reject
-  doubtful inputs first, then relax constraints later when real data proves
-  the model is too narrow.
-- When a max bound is needed and no spec gives the limit, choose a plausible
-  maximum rounded up to the nearest power of two, and record the bound's
-  provenance (spec-derived vs estimated) and unit — see
-  `state-space-minimization` `references/principles.md` § "Bound ranges and
-  cardinality". Prefer a bounded error over silently accepting runaway
-  values.
-- Use smart constructors and input validation to shrink the state space when
-  the type system cannot express the constraint.
 - Push constraints down to the lowest layer (primitive types, domains, DB
   constraints) and avoid redundant checks at higher layers when a more
   primitive guarantee exists.
@@ -177,50 +164,31 @@ Use tool output when available. Otherwise, review against the intent.
   and domain layers should reject bad data before it reaches the database.
   If a non-uniqueness database constraint fails in normal operation, treat it
   as a bug in upstream validation.
-- Prefer established libraries for non-empty values rather than custom
-  wrappers, unless extra invariants are required.
-- Do not construct `NonEmpty` values directly; require a smart constructor so
-  validation always occurs at the boundary.
-- Use `Option<NonEmpty*>` for optional non-empty fields. Do not use empty
-  strings or empty lists to represent absence.
-- Prefer `NonZero*` and smaller unsigned integer types when negatives or zero
-  are invalid.
-- Make fields private and require smart constructors for types with
-  invariants; avoid direct struct literal construction outside constructors.
-- For plain data containers where invariants are enforced at construction,
-  prefer `pub` fields over trivial accessors unless encapsulation or behavior
-  is required.
-- Ensure DB row mapping delegates to smart constructors.
-- Treat all external data as untrusted input (CLI, web, API, DB). Validate at
-  the boundary before creating domain types.
-- Do not assume previously stored data is safe. Validate again when loading it
-  into memory or passing it between subsystems.
-- Keep application validation aligned with DB constraints so integrity errors
-  (other than uniqueness violations) indicate a bug.
 - Aim for equivalent or stronger validation in the application layer than in
-  the database layer. Uniqueness is the main exception because concurrent
-  enforcement is naturally owned by the database.
-- Start with the strictest constraints you can justify. Loosen only when real
-  data proves it is needed.
-- When an official spec or first-party OSS library documents the exact format,
-  match it precisely. When specs are unclear, prefer a constrained allowlist
-  that rejects invalid inputs even if some valid inputs are temporarily
-  rejected.
-- When a string has no specific format, allow printable characters only.
-- Every string needs a length bound. If no max length is known, apply the
-  estimated-bound heuristic above and widen on evidence.
-- If a string has no minimum length specified, default to a minimum of 0. When
-  a non-empty value is required to be meaningful, enforce a minimum of 1 and
-  use a non-empty string type.
-- Apply strong constraints at every layer (production, tests, one-off utilities,
-  and internal data transformations). Validate on every transition so invalid
-  data is rejected early.
+  the database layer — uniqueness is the main exception because concurrent
+  enforcement is naturally owned by the database — and keep the two aligned
+  so integrity errors indicate bugs.
+- Treat the database schema as a snapshot of the current mental model of the
+  data. Use real data and constraint violations as feedback to refine that
+  model over time.
+- When a max bound is needed and no spec gives the limit, choose a plausible
+  maximum rounded up to the nearest power of two, and record the bound's
+  provenance (spec-derived vs estimated) and unit. Prefer a bounded error
+  over silently accepting runaway values.
 - Assume string types should be tightened toward the bounded form (min, max,
   and grammar). Treat `NonEmpty*` without a recorded upper-bound reason as
   an unfinished narrowing. Use `Option` when empty and missing are
   distinct, meaningful states.
-- If constraints tighten later, migrate or repair old data; do not keep invalid
-  states around.
+- When a string has no specific format, allow printable characters only;
+  default the minimum length to 0 unless a non-empty value is required to
+  be meaningful.
+- Prefer a parsed, specialized type over a raw string when one exists
+  (URL, UUID, path, timestamp, semantic version).
+- For plain data containers where invariants are enforced at construction,
+  prefer `pub` fields over trivial accessors unless encapsulation or behavior
+  is required.
+- If constraints tighten later, migrate or repair old data; do not keep
+  invalid states around.
 
 ## Sub-agent review
 
