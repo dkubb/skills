@@ -70,9 +70,9 @@ I_{\mathrm{reach}}(A,b) &:=& R(b) \cap I_{\mathrm{repr}}(A)
 \end{array}
 $$
 
-`I(A)` without qualification means `I_repr(A)`. Use the subscript whenever
-the analysis depends on which construction paths exist; the unsubscripted
-form silently equates a predicative encoding with a constructive one.
+Always subscript the invalid set. `I_repr` and `I_reach` answer
+different questions, and an unsubscripted `I` silently equates a
+predicative encoding with a constructive one.
 
 $$
 \begin{array}{rcl}
@@ -115,7 +115,7 @@ addition of arbitrary new construction paths.
 
 $$
 \begin{array}{c}
-I(A') \subset I(A)
+I_{\mathrm{repr}}(A') \subset I_{\mathrm{repr}}(A)
 \qquad
 B(A') = B(A)|_{C(A)}
 \\
@@ -126,7 +126,7 @@ $$
 
 $$
 \begin{array}{rl}
-\min\limits_m & (\;|I(m(A))|,\operatorname{cost}(m)\;) \\
+\min\limits_m & (\;|I_{\mathrm{repr}}(m(A))|,\operatorname{cost}(m)\;) \\
 \text{s.t.} & B(m(A)) = B(A)|_{C(A)}
 \end{array}
 $$
@@ -137,8 +137,8 @@ $$
 - Bound range: replace unbounded component by finite, ordered, or measured
   subset.
 - Shrink codomain: replace `K` by `K'` where `R subset K' subset K`.
-- Remove intermediate: compose `g . f` and eliminate exposed state `I` when
-  `I` has no independent contract role.
+- Remove intermediate: compose `g . f` and eliminate exposed state `X` when
+  `X` has no independent contract role.
 - Normalize: decompose facts into determinants, remove transitively derivable
   facts, recompose along use.
 - Ratchet: replace threshold `t` by stricter `t'` when current evidence
