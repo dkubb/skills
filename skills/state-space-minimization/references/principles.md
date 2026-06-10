@@ -32,17 +32,38 @@ See `least-power.md` for the operational form.
 
 ## Formal vocabulary
 
-- **Domain** — the set of values a function accepts. Determined by
+The symbols are shared with `state-space-minimization-formal`,
+which owns the inference rules built on them; this section owns
+their meaning. Every module in both skills uses these names for
+these concepts — same letter, same meaning.
+
+Artifact-state notation:
+
+- **Representable states `S(A)`** — the states an artifact's shape
+  permits.
+- **Valid states `C(A)`** — the states the artifact's contract
+  admits; `C(A) ⊆ S(A)`.
+- **Representable-but-invalid states `I_repr(A) = S(A) \ C(A)`** —
+  the latent bug surface; the set this skill minimizes. (`I_reach`,
+  the subset reachable through a boundary constructor, is defined
+  in `constructive-vs-predicative.md`.)
+
+Function notation:
+
+- **Domain `D(f)`** — the set of values a function accepts. Determined by
   the input types in the function's signature.
-- **Codomain** — the set of values the function's return *type* can
+- **Codomain `K(f)`** — the set of values the function's return *type* can
   represent. Determined by the output type in the signature.
-- **Range** — the set of values the function actually produces over
+- **Range `R(f)`** — the set of values the function actually produces over
   its entire domain. Always a subset of the codomain; usually not
   expressible in the type system directly, but the *goal* is to make
   it expressible.
-- **Preimage** — for a chosen output value, the set of inputs that
-  produce it. Large preimage means many inputs collapse to the same
-  output (information loss, as in hashing or masking). Small preimage
+- **Gap `G(f) = K(f) \ R(f)`** — the codomain values the function
+  never produces. "Closing the codomain-range gap" means driving
+  `G(f)` toward empty.
+- **Preimage `f^{-1}(F)`** — for a chosen set of outputs `F`, the set of
+  inputs that produce it. Large preimage means many inputs collapse to the
+  same output (information loss, as in hashing or masking). Small preimage
   means outputs are specific to particular inputs (information
   preservation).
 
@@ -175,12 +196,18 @@ those cardinalities.
 - Product types multiply state counts: `|A × B| = |A| · |B|`.
 - Sum types add state counts: `|A + B| = |A| + |B|`.
 - Optional types add one state: `|A?| = |A| + 1`.
-- Waste ratio: `(representable − valid) / representable`.
+- Waste ratio: `|I_repr(A)| / |S(A)|` — representable-but-invalid
+  states over representable states.
 - Lower waste ratio means less invalid behavior to guard at runtime.
 
 A field of type "integer in 1..=5" represented as a 32-bit integer has a
 waste ratio of `(2^32 − 5) / 2^32 ≈ 99.9999998%`. The same value as a
 five-variant enum has waste ratio `0`.
+
+Cardinality arithmetic sizes a single state space. Comparisons
+*between* candidate encodings are ordered by inclusion, not
+cardinality — see `state-space-minimization-formal` § "Artifact
+Calculus".
 
 ## Six operations
 

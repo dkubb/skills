@@ -40,8 +40,8 @@ constructive: head + tail; emptiness is unrepresentable by shape
 When the constructive shape is right, the predicative version starts to
 feel silly: there is nothing for the smart constructor to check.
 
-The split has a precise formal counterpart. The
-representable-but-invalid set is `I_repr(A) = S(A) \ C(A)`; the
+The split has a precise formal counterpart in the shared
+vocabulary (`principles.md` § "Formal vocabulary"). The
 reachable-invalid set under a boundary constructor `b` is
 `I_reach(A,b) = R(b) ∩ I_repr(A)`. A predicative encoding has
 `S(A) ⊋ C(A)`: the smart constructor narrows `R(b) ⊆ C(A)`, so
