@@ -113,8 +113,6 @@
   constructors; every string must have an explicit maximum length (and
   min/pattern when applicable), and URLs should use URL types instead of
   strings.
-- Assume string types should be tightened; prefer `NonEmptyString` and
-  `Option<NonEmptyString>` unless empty and missing are distinct states.
 - Avoid constructing `NonEmpty` values directly; require smart constructors so
   validation happens at the boundary.
 - When string constraints are unknown, allow printable characters only and

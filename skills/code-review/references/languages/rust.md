@@ -8,8 +8,11 @@
 
 ## Primitive obsession (review blockers)
 
-- Use `NonEmptyString` over `String` when empty is invalid.
-- Use `NonEmpty<T>` over `Vec<T>` when empty is invalid.
+- Go directly to the bounded form (bounded strings and collections with
+  both bounds) when constraints exist. `NonEmpty*` proves only the lower
+  bound — flag it unless the missing upper bound is recorded with a
+  reason. Constructive forms: `state-space-minimization`
+  `references/languages/rust.md`.
 - Use `NonZero*` over numeric types when zero is invalid.
 
 ## Structural review (review blockers)
@@ -52,11 +55,12 @@ covers the rationale; the bullets here are Rust-specific checklist items.
 ## Conversions and typing
 
 - Use `TryFrom` only when conversion can fail.
-- Prefer `non-empty-string` for non-empty strings and `nonempty` for non-empty
-  collections. Avoid hand-rolled equivalents unless extra invariants are
-  required.
-- Prefer `Option<NonEmptyString>` for optional strings unless empty and missing
-  are distinct, meaningful states. Avoid bare `String` unless a strict
+- Prefer established libraries for constrained values (bounded strings and
+  collections; `non-empty-string` / `nonempty` for the lower-bound part).
+  Avoid hand-rolled equivalents unless extra invariants are required, and
+  treat a lower bound alone as an unfinished narrowing.
+- Prefer `Option` for optional values unless empty and missing are
+  distinct, meaningful states. Avoid bare `String` unless a strict
   validator enforces length and format.
 - Use `NonZero*` types when zero is invalid, unsigned types for non-negative
   values, and the smallest integer width that covers all valid values.

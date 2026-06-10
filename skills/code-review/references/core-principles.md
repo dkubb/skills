@@ -48,13 +48,17 @@ These rules apply across languages. Keep them here to avoid drift.
 
 ## Primitive obsession (review blockers)
 
-- Use `NonEmptyString` over `String` when empty is invalid or impossible.
-- Use `NonEmpty<T>` over `Vec<T>` when empty is invalid or impossible.
+- Go directly to the bounded form: `BoundedString` / `BoundedVec` with both
+  bounds over `String` / `Vec<T>` when constraints exist. `NonEmpty*`
+  proves only the lower bound and is a placeholder, not a destination —
+  flag it unless the missing upper bound is recorded with a reason.
 - Use `NonZero*` over numeric types when zero is invalid or impossible.
 - Common fixes:
   - Replace primitives with domain types and smart constructors.
   - Use enums for restricted strings.
-  - Use `Option<NonEmpty*>` instead of empty values for absence.
+  - Use `Option` over empty values for absence.
+- Semantics: `state-space-minimization` `references/primitive-obsession.md`
+  and `references/principles.md` § "Bound ranges and cardinality".
 
 ## Workflow and tooling
 
@@ -202,8 +206,9 @@ Use tool output when available. Otherwise, review against the intent.
 - Apply strong constraints at every layer (production, tests, one-off utilities,
   and internal data transformations). Validate on every transition so invalid
   data is rejected early.
-- Assume string types should be tightened. Prefer `NonEmptyString` and
-  `Option<NonEmptyString>` for optional values unless empty and missing are
+- Assume string types should be tightened toward the bounded form (min, max,
+  and grammar). Treat `NonEmpty*` without a recorded upper-bound reason as
+  an unfinished narrowing. Use `Option` when empty and missing are
   distinct, meaningful states.
 - If constraints tighten later, migrate or repair old data; do not keep invalid
   states around.
