@@ -48,6 +48,8 @@ covers the rationale; the bullets here are Rust-specific checklist items.
   trait implementations rather than converting to a different type first
   (e.g., `self.inner.cmp(&other.inner)` over `self.inner.as_u128().cmp(…)`).
 - Prefer `pub(crate)` shorthand over `pub(in crate)` for crate visibility.
+- Prefer `use module::*` when importing multiple items from a module; prefer
+  explicit imports when only one item is used.
 - Keep public APIs minimal. Use the narrowest visibility that works.
 - Keep method ordering consistent and easy to scan.
 - Do not add `#[inline]` unless data shows it helps or a repo lint requires it.
@@ -140,3 +142,5 @@ covers the rationale; the bullets here are Rust-specific checklist items.
 - Be wary of `Default::default()` in tests when it hides missing data; use it
   only when the default value is the subject of the test.
 - Prefer `expect(...)` with a clear message when a value is required.
+- Avoid `#[cfg(test)]` outside test modules; when sharing helpers across
+  modules, place them in a `test_support` module instead.

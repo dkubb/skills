@@ -17,6 +17,7 @@
 - Send errors to stderr.
 - Use long-form options when available and order options alphabetically when
   multiple options are present.
+- Prefer single quotes for strings that do not use variable interpolation.
 - Prefer compound conditions with `&&`/`||` instead of nested `if` blocks for
   simple checks.
 - Sort `apt-get install` package lists alphabetically.

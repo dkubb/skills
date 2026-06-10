@@ -123,16 +123,11 @@
 - Follow the "No Broken Windows" principle: fix small issues promptly and do not
   leave known problems behind.
 - Let "The Pragmatic Programmer" influence code and process decisions.
-- Prefer single quotes for bash strings that do not use variable interpolation.
-- Prefer `use module::*` when importing multiple items from a module; prefer
-  explicit imports when only one item is used.
 - Avoid synthetic variables or synthetic code in reviews; prefer direct, minimal
   expressions when no added clarity exists.
 - When resolving review comments, add 👍 to helpful feedback and 👎 to feedback
   you will ignore, to reinforce reviewer preferences.
 - Always run `git up` before `git push-each`.
-- Avoid `#[cfg(test)]` outside test modules; when sharing helpers across
-  modules, place them in a `test_support` module instead.
 - When requested, perform full pedantic code review for branch vs main and use
   RepoPrompt MCP to gather diff context.
 - Prefer refactoring in small, safe steps; keep code passing after each step.
