@@ -149,9 +149,12 @@ Use tool output when available. Otherwise, review against the intent.
 - Prefer being too strict over too loose when the model is uncertain. Reject
   doubtful inputs first, then relax constraints later when real data proves
   the model is too narrow.
-- When a max bound is needed and the exact limit is unknown, choose a bound
-  near 2x the expected value. If uncertainty is high, choose 2-5x and state
-  why. Prefer a bounded error over silently accepting runaway values.
+- When a max bound is needed and no spec gives the limit, choose a plausible
+  maximum rounded up to the nearest power of two, and record the bound's
+  provenance (spec-derived vs estimated) and unit — see
+  `state-space-minimization` `references/principles.md` § "Bound ranges and
+  cardinality". Prefer a bounded error over silently accepting runaway
+  values.
 - Use smart constructors and input validation to shrink the state space when
   the type system cannot express the constraint.
 - Push constraints down to the lowest layer (primitive types, domains, DB
@@ -191,8 +194,8 @@ Use tool output when available. Otherwise, review against the intent.
   that rejects invalid inputs even if some valid inputs are temporarily
   rejected.
 - When a string has no specific format, allow printable characters only.
-- Every string needs a length bound. If no max length is known, pick a high but
-  reasonable limit and adjust upward later if needed.
+- Every string needs a length bound. If no max length is known, apply the
+  estimated-bound heuristic above and widen on evidence.
 - If a string has no minimum length specified, default to a minimum of 0. When
   a non-empty value is required to be meaningful, enforce a minimum of 1 and
   use a non-empty string type.

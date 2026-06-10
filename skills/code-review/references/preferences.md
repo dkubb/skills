@@ -120,8 +120,6 @@
 - When string constraints are unknown, allow printable characters only and
   enforce explicit min/max lengths (default min length to 0 unless non-empty is
   required).
-- When unsure about a maximum length, choose a high but reasonable bound and
-  adjust if inputs exceed it.
 - When validating identifiers or structured strings, prefer official specs or
   vendor-maintained libraries and be stricter when uncertain.
 - Construct structured languages (YAML/JSON/SQL/etc.) via serializers or
