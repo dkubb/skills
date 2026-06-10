@@ -91,8 +91,13 @@
   `LEAKPROOF`).
 - Uppercase `WITH ORDINALITY` when it is the keyword; keep `ordinality`
   lowercase when it is a column.
-- Uppercase `AT TIME ZONE`, `SET CONSTRAINTS ALL IMMEDIATE`, `RESET ROLE`, and
-  `SAVEPOINT`.
+- Uppercase context-required keywords: `AT TIME ZONE`, `BEGIN ATOMIC`,
+  `ON CONFLICT`, `NULLS FIRST` / `NULLS LAST`, `WITHIN GROUP`,
+  `SET CONSTRAINTS ALL IMMEDIATE`, `RESET ROLE`, and `SAVEPOINT`.
+- For one-line CHECK constraints, do not add spaces after `(` or before `)`.
+- When contiguous lines are sibling AST nodes at the same level (for example
+  list items), align their indentation consistently rather than drifting per
+  line.
 - Quote identifiers only when mixed case or reserved words require it.
 - Leave psql meta commands and variable references unchanged; format only SQL
   portions (for example, the query inside `\\copy (...)` and SQL keywords like
@@ -126,6 +131,8 @@
 - Use leading commas and aligned columns in CREATE TABLE and CREATE VIEW column
   lists.
 - Keep CONSTRAINT and CHECK clauses aligned with columns.
+- Order aligned column specs as: name, type, `NOT NULL`, `DEFAULT`, then
+  other specs (`UNIQUE` / `PRIMARY KEY` / `CHECK`), in that order.
 - For enum types, list values on separate lines with leading commas.
 - For enum types, keep `AS ENUM` on its own line and put the opening `(` on
   the next line.
@@ -148,7 +155,12 @@
 - Align SELECT lists and expression aliases.
 - Lowercase function names unless quoted.
 - Use WITH (or WITH RECURSIVE) with CTEs separated by leading commas.
-- Put CTE names and optional MATERIALIZED on the same line as the CTE header.
+- Format multi-line CTEs as: `WITH` on its own line, the CTE name (and
+  optional MATERIALIZED) on the next line, `AS` aligned with `WITH`, the
+  opening `(` aligned with the CTE name's indentation, and a fully formatted
+  inner query.
+- Name CTE legs with concise nouns (for example `new_resource`,
+  `new_provider`, `resource`, `provider`).
 - Use SELECT DISTINCT ON with the distinct list on the next line.
 - When a LEFT JOIN is only used for exclusion, prefer NOT EXISTS.
 
@@ -170,3 +182,4 @@
 - Put ON CONFLICT on its own line; put the action on the next line.
 - Format COPY as `COPY ( SELECT ... ) TO ... WITH ( ... )` with each clause on
   its own line.
+- Keep COPY options as `WITH (FORMAT CSV, HEADER)`.

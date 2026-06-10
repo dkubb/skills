@@ -79,16 +79,10 @@
   example, `unwrap_or_default`, `unwrap_or`, `unwrap_or_else`, `map_or`,
   `map_or_else`) that can hide missing values, and prefer explicit
   `expect`/assertions.
-- When requested, for one-line CHECK constraints, do not add spaces after `(` or
-  before `)`.
-- When requested, name CTE legs using concise nouns (e.g., `new_resource`,
-  `new_provider`, `resource`, `provider`).
 - When requested, review changes vs main one file at a time.
 - When requested, focus reviews on correctness, strictness, and tests.
 - When requested, output findings with file refs, open questions, a brief
   summary, and test suggestions.
-- When requested, focus review on SQL guidelines and whether constraints match
-  the user's preferred wording/structure rather than formatting.
 - When requested, focus on Rust style, lint attributes (`#[allow]` vs
   `#[expect]`), AAA test structure, NonEmptyString usage, and repo consistency.
 - When requested, review changes as an independent reviewer who did not author
@@ -138,34 +132,6 @@
   leave known problems behind.
 - Let "The Pragmatic Programmer" influence code and process decisions.
 - Prefer single quotes for bash strings that do not use variable interpolation.
-- For SQL formatting reviews, assume input is adversarial and normalize case:
-  uppercase primary keywords, keep `true`/`false` lowercase, lowercase function
-  names and unquoted identifiers, and preserve quoted identifiers.
-- For SQL formatting reviews, do not touch psql meta-commands or `:` variables;
-  format only the SQL portion of `\\copy` and keep COPY options as `WITH (FORMAT
-  CSV, HEADER)`.
-- For SQL formatting reviews, keep semicolons on the same line for single-line
-  statements and only move `;` to its own line for multi-line statements.
-- For SQL formatting reviews, treat keyword-looking identifiers contextually
-  (e.g., `type`, `schema`, `ordinality` as columns) while keeping
-  context-required keywords uppercased (e.g., `BEGIN ATOMIC`, `ON CONFLICT`,
-  `NULLS FIRST/LAST`, `WITH ORDINALITY`, `WITHIN GROUP`, `AT TIME ZONE`,
-  `INTERVAL`, `EPOCH` inside `extract`).
-- When requested, focus SQL formatting review on keyword/identifier casing and
-  leave psql commands untouched except for the SQL portions (e.g., `\\copy`).
-- When requested, perform SQL-formatting diff audit only.
-- When requested, focus SQL formatting review on leading-comma alignment
-  consistency and UNION ALL block spacing.
-- For SQL formatting reviews, format multi-line CTEs as: `WITH` line, CTE name
-  on its own line, `AS` aligned with `WITH`, opening `(` aligned with the CTE
-  name indentation, and fully formatted inner query.
-- For SQL formatting reviews, align multi-line `CREATE TABLE` columns with
-  separate columns for name, type, `NOT NULL`, `DEFAULT`, and other column specs
-  (`UNIQUE`/`PRIMARY KEY`/`CHECK`/etc.), in that order (NOT NULL before DEFAULT
-  before UNIQUE/PRIMARY KEY).
-- For SQL formatting reviews, when contiguous lines represent sibling AST nodes
-  at the same level (e.g., list items), align their indentation consistently
-  rather than drifting per line.
 - Prefer `use module::*` when importing multiple items from a module; prefer
   explicit imports when only one item is used.
 - Avoid synthetic variables or synthetic code in reviews; prefer direct, minimal
