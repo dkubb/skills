@@ -87,12 +87,6 @@
   `#[expect]`), AAA test structure, NonEmptyString usage, and repo consistency.
 - When requested, review changes as an independent reviewer who did not author
   the changes.
-- When requesting Copilot reviews, hide the previous Copilot "Pull request
-  overview" since new reviews supersede it.
-- When triggering a new Copilot review, hide all previous Copilot reviews; use
-  API dismissal with reason/message "Outdated" when available.
-- When Copilot reports "generated no new comments" after a review, stop
-  requesting further Copilot reviews for that PR.
 - Prefer URL types for URL fields; default to non-empty strings when empty is
   ambiguous, and allow empty only for free-form user input where absence is
   meaningful.

@@ -26,3 +26,11 @@ comments.
   range instead of anchoring only the first line.
 - Keep each inline comment scoped to one distinct issue. Split unrelated points
   into separate comments.
+
+## Copilot reviews
+
+- When requesting a new Copilot review, hide all previous Copilot reviews
+  (including the "Pull request overview") since new reviews supersede them.
+  Use API dismissal with reason/message "Outdated" when available.
+- When Copilot reports "generated no new comments" after a review, stop
+  requesting further Copilot reviews for that PR.
