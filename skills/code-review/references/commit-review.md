@@ -19,8 +19,8 @@ is the review lens on that form: what to check and how to report it.
   - dependency bumps with feature work
   - broad edits across unrelated modules without a single purpose
   - code and test edits in one refactor commit — without a fixed half
-    there is no frame of reference for behavior preservation; expect a
-    Change classification or back-to-back refactor commits instead
+    there is no oracle for behavior preservation; expect a Change
+    classification or back-to-back refactor commits instead
 - Prefer series of commits that can be reviewed independently, in order.
 - If a single commit is too large to review, recommend splitting it. Use
   a commit-splitting tool (such as `git-factor`, when available) when the

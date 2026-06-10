@@ -70,11 +70,13 @@ must be reasoned about.
    the implementation changes. More disruptive than move or rename
    because behavior preservation must be reasoned about rather than
    compiler-checked. The proof of preservation is the untouched
-   half: a code refactor is verified against unchanged tests, a test
-   refactor against unchanged code. Editing both in one commit adds
-   a second construction path to "the gates pass" and voids the
-   proof (`proof-preservation.md`) — such a diff is a Change. Sets
-   up the next tier safely.
+   half, which serves as the oracle (`principles.md` § "Search
+   algorithm"): a code refactor is verified against unchanged tests,
+   a test refactor against unchanged code — the fixed frame of
+   reference in either direction. Editing both in one commit adds a
+   second construction path to "the gates pass" and voids the proof
+   (`proof-preservation.md`) — such a diff is a Change. Sets up the
+   next tier safely.
 6. **Change** — modifies the valid state space. Observable behavior
    shifts. Higher risk than refactor because callers may break.
 7. **Add** — expands the state space. Highest risk for new bugs
@@ -179,8 +181,8 @@ The canonical anti-pattern list is in `atomic-changes`
   preimage of any post-merge regression is the union of both
   transformations.
 - **Refactor editing code and tests together** — neither half is a
-  fixed frame of reference, so the behavior-preservation obligation
-  is undischarged; the gates passing no longer proves anything about
+  fixed oracle, so the behavior-preservation obligation is
+  undischarged; the gates passing no longer proves anything about
   the old behavior.
 
 Compound and past-tense subjects are covered in § "The message as

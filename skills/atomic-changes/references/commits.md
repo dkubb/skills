@@ -80,11 +80,11 @@ behavior preservation must be reasoned about.
    vocabulary at every use site.
 5. **Refactor** — preserves behavior, reshapes structure; preservation
    must be reasoned about, not compiler-checked. Touches code or
-   tests, never both: the untouched half is the fixed frame of
-   reference proving the behavior survived. Code and tests may each
-   be refactored back-to-back — separate commits, either order, gates
-   passing between — but a single diff editing both has no frame, and
-   is a Change.
+   tests, never both: the untouched half is the oracle — the fixed
+   frame of reference that proves the behavior survived. Code and
+   tests may each be refactored back-to-back — separate commits,
+   either order, gates passing between — but a single diff editing
+   both has no oracle, and is a Change.
 6. **Change** — shifts observable behavior; callers may break.
 7. **Add** — expands the state space; the largest source of new bugs.
 8. **Upgrade** — a dependency bump, isolated in its own commit.
@@ -112,6 +112,6 @@ behavior preservation must be reasoned about.
 - Mixing a refactor with a behavior change in one commit — the
   behavior-preservation guarantee no longer holds.
 - A refactor commit that edits code and tests together — with neither
-  half held fixed there is no frame of reference, so no proof the
-  behavior survived. Reclassify as Change, or split into back-to-back
-  refactor commits (either order) with gates passing between.
+  half held fixed there is no oracle, so no proof the behavior
+  survived. Reclassify as Change, or split into back-to-back refactor
+  commits (either order) with gates passing between.
