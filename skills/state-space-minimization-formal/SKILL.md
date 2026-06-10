@@ -132,10 +132,20 @@ presupposes it, but the obligation stands on its own.
 
 $$
 \begin{array}{rl}
-\min\limits_m & (\;|I_{\mathrm{repr}}(m(A))|,\operatorname{cost}(m)\;) \\
+\text{choose } m: & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
+\text{then} & \operatorname{cost}(m) \text{ minimal among those} \\
 \text{s.t.} & B(m(A)) = B(A)|_{C(A)}
 \end{array}
 $$
+
+Invalidity is ordered by inclusion, not cardinality: `m` dominates
+`m'` only when `I_repr(m(A)) ⊊ I_repr(m'(A))`. Incomparable
+residual sets are not ranked — a count would rank them, and could
+prefer the numerically smaller set that still contains the
+dangerous states. The inclusion order is taken up to a chosen
+embedding into a common universe of states (`S(NonEmptyString)` is
+not literally a subset of `S(String)`; the embedding is part of
+the analysis).
 
 ## Operations
 
@@ -185,9 +195,11 @@ $$
 
 ### Constructive dominance at rank 1
 
-Within rank 1, encodings are ordered by `|S|`. A constructive encoding
-`A_c` with `S(A_c) = C(A)` strictly dominates any predicative encoding
-`A_p` with `S(A_p) ⊋ C(A)`, even when `I_reach(A_p, b) = ∅`.
+Within rank 1, encodings are ordered by inclusion of `S` (up to
+the chosen embedding). A constructive encoding `A_c` with
+`S(A_c) = C(A)` strictly dominates any predicative encoding `A_p`
+with `S(A_p) ⊋ C(A)` — then `S(A_c) ⊊ S(A_p)` — even when
+`I_reach(A_p, b) = ∅`.
 
 $$
 \begin{array}{c}
@@ -206,7 +218,7 @@ Rationale: `A_c` discharges every consumer proof obligation `P_f`
 structurally and is monotone under the addition of new construction
 paths. `A_p` discharges `P_f` only through the trusted boundary `b`, and
 any new `b'` with `R(b') ⊄ C(A)` voids `P_f`. A swap that holds `I_reach`
-constant while keeping `|S|` constant (predicative-to-predicative
+constant while holding `S` and `R(b)` fixed (predicative-to-predicative
 mechanism swap, e.g., relocating the check from a hand-written
 constructor to a refinement library) is **not** a narrowing; it changes
 neither `S` nor `R(b)`.
@@ -320,10 +332,10 @@ $$
 2. Locate boundaries `U -> T`.
 3. Compute domain, codomain, range, gaps, and failure preimages.
 4. Select the least encoding that removes the invalid set. When choosing
-   among rank-1 encodings, prefer the one with smaller `|S|` (constructive
-   dominance); when choosing among predicative encodings of equal `S` and
-   `R(b)`, the swap is not a narrowing and the dominance rule does not
-   apply.
+   among rank-1 encodings, prefer the one whose `S` is strictly included
+   in the alternative's (constructive dominance); when choosing among
+   predicative encodings of equal `S` and `R(b)`, the swap is not a
+   narrowing and the dominance rule does not apply.
 5. Prove contract preservation.
 6. Preserve or reconstitute proofs across morphisms.
 7. Normalize duplicated determinants.
@@ -347,8 +359,8 @@ $$
   `I_reach = R(b) ∩ I_repr` are explicit. No bare `I = ∅` claims.
 - Every narrowing is contract-preserving.
 - Predicative-to-predicative mechanism swaps are not counted as
-  narrowings; constructive dominance applies only when `|S|` strictly
-  decreases.
+  narrowings; constructive dominance applies only when `S` strictly
+  shrinks by inclusion.
 - Every boundary changes trust explicitly.
 - Every proof dependency is preserved.
 - Every duplicate fact has one determinant.
