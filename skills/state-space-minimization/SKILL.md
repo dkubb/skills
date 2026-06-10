@@ -255,7 +255,7 @@ the sections within each module.
 ### Foundation — always load
 
 1. `references/principles.md` — vocabulary (domain, codomain, range,
-   preimage), six operations, encoding ladder, decision
+   preimage), six operations, mechanism ladder, decision
    rubric, types as hypotheses, self-similarity.
 
 ### Profile → module map

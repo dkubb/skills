@@ -166,7 +166,8 @@ the analysis).
 
 ## Encoding Order
 
-Use the earliest sufficient mechanism:
+The **encoding order** ranks mechanism classes. Use the earliest
+sufficient mechanism:
 
 $$
 \begin{array}{c|c}
@@ -196,6 +197,28 @@ i < j
 m_i \prec m_j
 \end{array}
 $$
+
+The rank metric: a mechanism ranks earlier when it governs more of
+the artifact's construction paths and detects violations at an
+earlier phase. The table is the derived order for an
+application-owned artifact, not an axiom — derive the ranks per
+architecture. In a database-first system with multiple writers, a
+schema constraint governs every write path while an application
+boundary adapter governs one, and outranks it. Rank order is
+least-power order under this metric: the earliest sufficient
+mechanism is the least powerful one that still removes the invalid
+set (`state-space-minimization` `references/least-power.md` owns
+the principle).
+
+The choice among rank-1 type-level mechanisms (enums, constructive
+datatypes, typestate, phantom tags, GADTs, refinement and
+dependent types) is ordered by the **mechanism ladder** in
+`state-space-minimization` `references/principles.md` § "Encode
+invariants into types"; that ladder's lowest rungs (runtime
+checks, smart constructors) correspond to this table's later
+ranks. The two ladders are distinct: the encoding order ranks
+mechanism classes, the mechanism ladder ranks concrete mechanisms
+by guarantee strength.
 
 ### Constructive dominance at rank 1
 

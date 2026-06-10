@@ -430,6 +430,14 @@ elsewhere.
 
 ## Encode invariants into types
 
+This is the **mechanism ladder**: concrete mechanisms ordered from
+lowest to highest guarantee. It is distinct from the **encoding
+order** in `state-space-minimization-formal`, which ranks mechanism
+classes (type, constructor, boundary adapter, schema, …) by
+construction paths governed and detection phase; this ladder's
+upper rungs refine that order's rank 1, and its lowest rungs
+(runtime checks, smart constructors) correspond to its later ranks.
+
 Progression ladder, from lowest to highest guarantee:
 
 1. **Runtime checks at use sites** — a single boundary, easy to forget.
