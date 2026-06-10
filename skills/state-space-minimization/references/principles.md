@@ -159,8 +159,8 @@ The skill itself is one of those levels. Applying the skill to a
 concrete case produces evidence about whether the skill's rules
 match the actual situation; the audit after each use is the
 forcing function that converts evidence into proposed
-improvements. See `SKILL.md` § "Active participation in skill
-refinement" for the operational discipline.
+improvements. See `skill-refinement.md` for the operational
+discipline.
 
 When a new level is encountered that does not yet have a module,
 derive guidance from this file directly. A candidate new module

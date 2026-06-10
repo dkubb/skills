@@ -221,110 +221,18 @@ failure.
 ## Active participation in skill refinement
 
 The skill is itself a state space — see `references/principles.md`
-§ "Self-similarity". Applying the skill to a concrete case
-produces evidence about whether the skill's rules match the
-actual situation. A skill-refinement audit is the forcing function that
-converts that evidence into proposed improvements; the user is the gate
-that approves or rejects them.
-
-When this skill loads:
-
-1. Apply principles to code already seen this session, not just
-   code reached after load. Re-evaluate earlier files if a loaded
-   rule would change a finding.
-2. For code in a language without a `references/languages/<lang>.md`
-   file, derive guidance from `references/principles.md` only —
-   never invent rules from outside that file. Flag genuinely
-   unfamiliar territory; note derived rules as candidates for a
-   future module.
-3. Capture counter-examples (rule did not fit) and tightening
-   opportunities (rule could be sharper) as you work.
-
-For ordinary application tasks, keep this capture internal unless it
-produces a material finding. Load the skill-refinement profile only when
-the task asks to audit or improve this skill, repeated use exposes
-drift, or the concrete case produces a finding worth user attention.
-
-When the skill-refinement profile is loaded, apply the SSM audit to the
-skill itself. The distinctions made on the concrete case are the new
-range; the skill's current rules are the codomain. Where the codomain is
-wider than the range, surface a finding.
-
-Finding categories:
-
-- **Sharpened rules** — existing rule fit loosely; the case
-  revealed a tighter form
-- **Counter-examples** — existing rule did not fit; document the
-  boundary
-- **New examples** — strong illustration of an existing principle
-- **Candidate new modules** — recurring pattern the skill does
-  not yet cover
-- **Language patterns** — patterns specific to the language,
-  belonging in `references/languages/<lang>.md`
-- **Missing triggers** — terminology that should route here but
-  did not
-- **Cross-cutting concerns** — themes appearing across multiple
-  modules
-- **Threshold candidates** — metrics worth tracking at the
-  project level
-
-Finding format. Each finding cites the concrete case that exposed
-it. A finding without evidence is taste, not signal — do not
-propose a skill edit from prose alone.
-
-- **Category** — one of the above
-- **Evidence** — the file, line, or interaction that surfaced the
-  gap; quote or link the source so the user can re-derive the
-  finding without you
-- **Suggested change** — the specific rule or section to add,
-  sharpen, move, or remove
-- **Why this narrows the skill** — which state space the change
-  closes (rule ambiguity, missing routing, language gap,
-  inconsistent vocabulary, drift between modules)
-
-The skill-refinement report is one of:
-
-- **No material skill-refinement findings.** Stated explicitly,
-  not by silence.
-- **Findings:** one entry per finding, in the format above.
-
-Audit rules:
-
-- **Task result first.** Answer the user's actual request, then
-  append the skill-refinement report. The meta-audit is an
-  addendum to the work product, never a replacement for it. A
-  finding worth surfacing is still worth surfacing after the task
-  result; a finding only worth surfacing if it crowds out the task
-  result is not material.
-- **Verify before surfacing.** Read the cited file. LLM audits
-  are not infallible; the gate against fabricated findings is to
-  verify each one against the source before reporting.
-- **Gist over detail.** Short, scannable findings.
-- **Skip when nothing material.** Do not pad the output with weak
-  findings.
-- **Do not auto-edit.** Surface findings only; the user decides
-  which to apply.
-- **Modifications follow the skill's own rules.** When approved,
-  edits are atomic per `references/commits.md`, prose follows
-  `references/documentation.md`, module introductions follow the
-  self-similarity pattern in `references/ratchet.md`. The
-  skill governs its own modifications.
-
-Effectiveness audit. When the task is to audit or improve this skill,
-or when repeated use exposes drift, record:
-
-- **Activation precision** — did the trigger select a true
-  state-space-minimization task?
-- **Module-load precision** — which modules were loaded, which were
-  needed, and which were unused?
-- **Output precision** — which emitted outputs were actionable, false
-  positives, or noise?
-- **Finding fate** — accepted, rejected, deferred, or superseded by a
-  narrower rule.
-- **Missed routing** — terms that should have loaded this skill or a
-  specific module but did not.
-- **Progressive-disclosure fit** — whether a smaller module set could
-  have answered the task.
+§ "Self-similarity". When this skill loads, apply its rules to code
+already seen this session, not just code reached after load; for a
+language without a `references/languages/<lang>.md` file, derive
+guidance from `references/principles.md` only. Capture
+counter-examples (rule did not fit) and tightening opportunities
+(rule could be sharper) as you work; for ordinary tasks keep this
+capture internal unless it produces a material finding. Load
+`references/skill-refinement.md` — the finding categories, finding
+format, report shape, audit rules, and effectiveness audit — only
+when the task asks to audit or improve this skill, repeated use
+exposes drift, or a concrete case produces a finding worth user
+attention.
 
 ## When to Activate
 
@@ -479,6 +387,9 @@ an earlier one; earlier modules do not depend on later ones.
   choosing forcing functions; weakening thresholds only on
   explicit user request →
   `references/ratchet.md`
+- auditing or improving this skill; converting use evidence into
+  skill findings →
+  `references/skill-refinement.md`
 - origin of the slogans, canonical citations, further reading →
   `references/history-and-lineage.md`
 
@@ -515,8 +426,9 @@ sort of the module DAG is:
 14. `references/commits.md`
 15. `references/perfect-tool.md`
 16. `references/ratchet.md`
-17. `references/history-and-lineage.md`
-18. `references/languages/<lang>.md` for each language in scope
+17. `references/skill-refinement.md`
+18. `references/history-and-lineage.md`
+19. `references/languages/<lang>.md` for each language in scope
 
 Each module loads only after its dependencies. A reader following this
 order encounters every concept after the concepts it references.
@@ -555,8 +467,9 @@ apply, compose their outputs without adding unrelated checklist items.
   notes only when explicitly requested.
 - **Language profile** — concrete idioms for the language files in
   scope, loaded after the relevant technique modules.
-- **Skill-refinement profile** — material findings in the format above,
-  or "No material skill-refinement findings."
+- **Skill-refinement profile** — material findings in the format in
+  `references/skill-refinement.md`, or "No material skill-refinement
+  findings."
 
 ## Utilities
 
