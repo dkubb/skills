@@ -303,7 +303,7 @@ m_i \prec m_j
 $$
 
 When no mechanism is sufficient, choose the earliest mechanism that
-detects or rejects every targeted invalid state, and record what
+detects, documents, or rejects every targeted invalid state, and record what
 remains as the residual gap in Outputs. Ranks 5–7 are these
 fallback positions — a test oracle, documentation claim, or runtime
 assertion never makes `I_reach` empty by itself (semantics:
