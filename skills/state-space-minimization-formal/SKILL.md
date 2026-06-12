@@ -327,7 +327,10 @@ by guarantee strength.
 ### Constructive dominance at rank 1
 
 Within rank 1, encodings are ordered by inclusion of `S` (up to
-the chosen embedding). A constructive encoding `A_c` with
+the chosen embedding). A predicative scheme is a composite — a
+rank-1 representation whose sufficiency is supplied by its rank-2
+constructor; this rule compares the representations, not the
+mechanisms. A constructive encoding `A_c` with
 `S(A_c) = C(A)` strictly dominates any predicative encoding `A_p`
 with `S(A_p) ⊋ C(A)` — then `S(A_c) ⊊ S(A_p)` — even when every
 `I_reach(A_p, b)` is empty.
