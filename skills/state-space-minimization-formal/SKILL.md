@@ -93,6 +93,7 @@ gate the output form, not the reasoning mode.
   `Q_intended`, when text reception matters.
 - Thresholds `t` with stricter candidates `t'` and the current
   evidence, when ratcheting.
+- Fact sets and their functional dependencies, when normalizing.
 - Evidence set `E`.
 
 ## Core Notation
