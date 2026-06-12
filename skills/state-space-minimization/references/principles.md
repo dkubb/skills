@@ -11,6 +11,11 @@ states should match the number of valid states as closely as
 possible. Each extra representable-but-invalid state is latent bug
 surface that runtime checks must guard.
 
+Narrowings compound. Each invalid state removed is a bug class
+eliminated and a behavior tightened for every future change that
+touches the artifact, so the value of one more narrowing is rarely
+marginal — finding a single additional one justifies real effort.
+
 This principle is language-agnostic:
 
 - make illegal values impossible to construct

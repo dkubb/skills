@@ -311,7 +311,10 @@ state space. Escalate when invariants resist prose analysis, a
 design feels under-constrained, or two encodings seem equivalent
 and the dominance argument will not come into focus; derive in
 notation, then translate the result back into the deliverable's
-form.
+form. Escalate liberally: the notation costs a few tokens, and a
+single additional narrowing it surfaces pays for it many times
+over (`references/principles.md` § "Core principle": narrowings
+compound).
 
 ### Technique modules — load by symptom
 
