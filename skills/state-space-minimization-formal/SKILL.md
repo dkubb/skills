@@ -240,7 +240,9 @@ prefer the numerically smaller set that still contains the
 dangerous states. The inclusion order is taken up to a chosen
 embedding into a common universe of states (`S(NonEmptyString)` is
 not literally a subset of `S(String)`; the embedding is part of
-the analysis).
+the analysis). Fix one embedding per candidate into one common
+universe before checking any premise; switching embeddings between
+premises is inadmissible.
 
 When several candidates are ⊆-minimal with incomparable residuals,
 no rule orders them — neither rank nor cost may break the tie. The
