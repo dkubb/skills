@@ -27,6 +27,9 @@ triggers:
   - "reason formally"
   - "formal reasoning"
   - "derive formally"
+  - "refinement calculus"
+  - "refinement step"
+  - "refinement order"
 ---
 
 # State Space Minimization Formal
