@@ -314,8 +314,8 @@ neither `S` nor `R(b)`.
   `b: (u: U) × P(u) -> A`.
 - Proof preservation: no downstream operation depends on erased proof.
 - Totality: every exposed function is total on its declared domain.
-- Exhaustiveness: closed sums have no catch-all branch without an external
-  codomain.
+- Exhaustiveness: closed sums are matched without a catch-all branch; a
+  catch-all is admissible only when the sum is explicitly open.
 - Single source: each fact has one determinant.
 - Confluence: normalization order does not affect normal form.
 
