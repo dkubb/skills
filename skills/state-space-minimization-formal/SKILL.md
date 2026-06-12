@@ -358,8 +358,6 @@ S(A_c) = C(A)
 S(A_p) \supsetneq C(A)
 \qquad
 B(A_c) = B(A_p)|_{C(A)}
-\qquad
-\forall b:\; I_{\mathrm{reach}}(A_p, b) = \varnothing
 \\
 \hline
 A_c \prec A_p
