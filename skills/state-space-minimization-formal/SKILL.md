@@ -113,7 +113,9 @@ gate the output form, not the reasoning mode.
 ## Core Notation
 
 - `S(A)` — representable states (structural; what the type's shape permits).
-- `C(A)` — admissible states (contract).
+- `C(A)` — valid states (contract). ("Valid", matching
+  `principles.md`; "admissible" is reserved for judgments about
+  transformations and rewrites.)
 - `R(b)` — reachable states under a boundary constructor
   `b: (u: U) × P(u) -> A`.
 - `I_repr(A)` — representable invalid: `S(A) \ C(A)`.
