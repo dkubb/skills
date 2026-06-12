@@ -201,7 +201,7 @@ C(A) \subseteq S(A')
 \qquad
 I_{\mathrm{repr}}(A') \subsetneq I_{\mathrm{repr}}(A)
 \qquad
-B(A') = B(A)|_{C(A)}
+B(A')|_{C(A)} = B(A)|_{C(A)}
 \\
 \hline
 \operatorname{Strict}(A,A')
@@ -221,7 +221,7 @@ $$
 \text{choose } m: & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
 \text{then} & \text{earliest sufficient encoding-order rank} \\
 \text{then} & \operatorname{cost}(m) \text{ minimal among those} \\
-\text{s.t.} & B(m(A)) = B(A)|_{C(A)}
+\text{s.t.} & B(m(A))|_{C(A)} = B(A)|_{C(A)}
 \end{array}
 $$
 
@@ -291,9 +291,9 @@ $$
 \qquad
 I_{\mathrm{repr}}(m_i(A)) = I_{\mathrm{repr}}(m_j(A))
 \qquad
-B(m_i(A)) = B(A)|_{C(A)}
+B(m_i(A))|_{C(A)} = B(A)|_{C(A)}
 \qquad
-B(m_j(A)) = B(A)|_{C(A)}
+B(m_j(A))|_{C(A)} = B(A)|_{C(A)}
 \qquad
 i < j
 \\
@@ -371,7 +371,7 @@ neither `S` nor `R(b)`.
 
 ## Invariants
 
-- Contract preservation: `B(A') = B(A)|_{C(A)}`.
+- Contract preservation: `B(A')|_{C(A)} = B(A)|_{C(A)}`.
 - Boundary monotonicity: trust may increase only through
   `b: (u: U) × P(u) -> A`.
 - Proof preservation: no downstream operation depends on erased proof.
