@@ -112,8 +112,8 @@ gate the output form, not the reasoning mode.
 - `I_repr(A)` — representable invalid: `S(A) \ C(A)`.
 - `I_reach(A,b)` — reachable invalid: `R(b) ∩ I_repr(A)`.
 - `B(A)` — contract behavior: the artifact's observable behavior as a
-  function of admitted state. `B(A)|_C` restricts that function to the
-  states in `C`.
+  function of representable state `S(A)`. `B(A)|_C` restricts that
+  function to the states in `C`, where it does real work.
 - `D(f)`, `K(f)`, `R(f)`, `G(f)` — domain, codomain, range, gap.
 - `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
   adds plus its ergonomic and toolchain cost. Semantics:
