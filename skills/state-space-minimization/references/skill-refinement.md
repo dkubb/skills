@@ -85,6 +85,34 @@ The skill-refinement report is one of:
   self-similarity pattern in `ratchet.md`. The skill governs its
   own modifications.
 
+## Validation probes
+
+Self-use is one evidence source; independent probes catch classes
+that self-audit structurally cannot. Each grades a different
+property:
+
+- **Unbiased audit loop** — fresh subagents audit the artifact
+  repeatedly with this skill's discipline; the parent judges and
+  applies findings, looping until finding quality drops below the
+  apply bar. Grades internal coherence; later rounds audit the
+  earlier rounds' fixes.
+- **Cross-model one-shot** — a different model reviews once. Grades
+  purpose ("does the rule do what the prose promises") — the gap
+  class same-model loops converge away from.
+- **Read-back** — a separate agent explains the artifact back from
+  minimal context. Grades reception: what a consumer preserves,
+  loses, or invents.
+- **Translation probe** — reflect the artifact into a mechanically
+  checkable form (for a calculus: Lean or TLA+) and grade with the
+  checker. Grades commitment: translation forces bindings that
+  paraphrase can fake, and the checker finds undischargeable rules
+  prose review misses. The strongest probe; its findings flow back
+  as ordinary skill edits.
+- **Autonomous improvement loop** — an agent iterates on a derived
+  artifact one change at a time behind a hard gate (build, tests),
+  logging each step. Improvements that outrun the source are
+  back-port candidates.
+
 ## Effectiveness audit
 
 When the task is to audit or improve this skill, or when repeated
