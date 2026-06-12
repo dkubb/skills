@@ -215,7 +215,8 @@ def Obl
     (A : Artifact State Obs)
     (f : Consumer State)
     {U : Type w}
-    (bd : Boundary A U) : Prop :=
-  f.D = A.S ∧ R bd ⊆ A.C
+    (bd : TrustedBoundary A U)
+    (x : State) : Prop :=
+  f.D = A.S ∧ x ∈ f.D ∧ x ∈ R bd.toBoundary
 
 end SSM
