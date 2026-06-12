@@ -100,9 +100,10 @@ gate the output form, not the reasoning mode.
   special case of trivial `P`.
 - Functions `f: D -> K`.
 - Text `t` with rewrite candidate `t'`, reader/model state `q`,
-  reception context `c`, plausible prior receiver states `Q_0`, and
-  intended receiver-state set `Q_intended`, when text reception
-  matters.
+  plausible reception contexts `Ctx_0` with elements `c` (`Ctx`,
+  not `C`: `C` is the contract), plausible prior receiver states
+  `Q_0`, and intended receiver-state set `Q_intended`, when text
+  reception matters.
 - Thresholds `θ` with stricter candidates `θ'` and the current
   evidence, when ratcheting. (`θ`, not `t`: `t` is a text in
   reception semantics.)
@@ -136,8 +137,8 @@ gate the output form, not the reasoning mode.
 - `Flows(g, y)` — the output of `g` reaches consumer `y`.
 - `[[t]]^D`, `[[t]]^O_{q,c}` — denotation, and operational reception
   from prior state `q` in context `c`.
-- `c`, `q'` — reception context, and the receiver state after
-  reading `t`.
+- `c ∈ Ctx_0`, `q'` — a reception context, and the receiver state
+  after reading `t`.
 
 $$
 \begin{array}{rcl}
@@ -447,10 +448,10 @@ $$
 \begin{array}{c}
 t \equiv_D t'
 \qquad
-\forall q \in Q_0:\;
+\forall q \in Q_0,\, c \in Ctx_0:\;
 \operatorname{supp}([[t']]^O_{q,c}) \subseteq \operatorname{supp}([[t]]^O_{q,c})
 \qquad
-\forall q \in Q_0:\;
+\forall q \in Q_0,\, c \in Ctx_0:\;
 \operatorname{supp}([[t']]^O_{q,c}) \subseteq Q_{\mathrm{intended}}
 \\
 \hline
@@ -458,17 +459,15 @@ t \equiv_D t'
 \end{array}
 $$
 
-`ReceptionNarrowing(t, t')` strengthens admissibility with strict
-narrowing: additionally `∃q ∈ Q_0` with
+`ReceptionNarrowing(t, t')` strengthens admissibility with a strict
+witness: additionally `∃(q, c) ∈ Q_0 × Ctx_0` with
 `supp([[t']]^O_{q,c}) ⊊ supp([[t]]^O_{q,c})`. A rewrite with
 identical reception is admissible but is not a narrowing — the
 same standard as the predicative mechanism swap.
 
-The quantifier over `Q_0` forbids discharging the premises against
-one favorable prior reader; the rewrite must narrow readings for
-every plausible prior state. The judgment is likewise per reception
-context: instantiate the rule for each plausible `c` — discharging
-it for one favorable context does not cover the others.
+The quantifiers forbid discharging the premises against one
+favorable prior reader or one favorable context; the rewrite must
+hold for every plausible `(q, c)` pair.
 
 The support premises are proof obligations like every other
 premise: discharged by argument about the plausible readings of
