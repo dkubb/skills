@@ -427,10 +427,15 @@ b(u,p) \in C(A)
 \end{array}
 $$
 
-The evidence is what buys trust: with `p : P(u)` discharged, the
-constructed value lands in `C(A)`, so `R(b) ⊆ C(A)` and
-`I_reach(A,b) = ∅`. The evidence-free derived form `b: U -> A`
-reaches only `S(A)` and is not trust-increasing.
+The evidence is what buys trust, and its strength matters: evidence
+that discharges the full contract lands the value in `C(A)`, giving
+`R(b) ⊆ C(A)` and `I_reach(A,b) = ∅` — only such a boundary is
+trust-increasing, and the rule above states that case. Evidence may
+also discharge representability only (`b(u,p) ∈ S(A)` with
+`R(b) ⊄ C(A)`); such a boundary is an ordinary construction path,
+not a trusted one — these are the paths through which `I_reach` can
+be nonempty. The evidence-free `b: U -> A` is the weakest case,
+trivial `P` discharging representability alone.
 
 $$
 \begin{array}{c}
