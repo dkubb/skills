@@ -176,7 +176,8 @@ addition of arbitrary new construction paths.
 
 - Minimization is contract-preserving invalidity reduction.
 - Strictness is admissible only as a contract-preserving transformation.
-- Mechanism choice is lexicographic: invalidity first, cost second.
+- Mechanism choice is one lexicographic order: invalidity first, then
+  the encoding-order rank, then `cost(m)` as the final tiebreak.
 - A mechanism that detects, documents, or rejects invalid states does not
   necessarily shrink `S(A)`. Smart constructors, validators, and
   refinement-library wrappers narrow `R(b)`, not `S`.
@@ -205,6 +206,7 @@ premise presupposes both, but the obligations stand on their own.
 $$
 \begin{array}{rl}
 \text{choose } m: & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
+\text{then} & \text{earliest sufficient encoding-order rank} \\
 \text{then} & \operatorname{cost}(m) \text{ minimal among those} \\
 \text{s.t.} & B(m(A)) = B(A)|_{C(A)}
 \end{array}
@@ -291,8 +293,8 @@ modeling", which falls back to lints, tests, and runtime
 configuration).
 
 The rank metric: a mechanism ranks earlier when it governs more of
-the artifact's construction paths and detects violations at an
-earlier phase. The table is the derived order for an
+the artifact's construction paths; ties break by earlier detection
+phase. The table is the derived order for an
 application-owned artifact, not an axiom — derive the ranks per
 architecture. In a database-first system with multiple writers, a
 schema constraint governs every write path while an application
