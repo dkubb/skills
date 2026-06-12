@@ -230,6 +230,12 @@ embedding into a common universe of states (`S(NonEmptyString)` is
 not literally a subset of `S(String)`; the embedding is part of
 the analysis).
 
+When several candidates are ⊆-minimal with incomparable residuals,
+no rule orders them — neither rank nor cost may break the tie. The
+choice is an open obligation: name the states in the symmetric
+difference, decide by which residual contains the more dangerous
+states, and record the decision with the residual gap in Outputs.
+
 ## Operations
 
 - Shrink domain: replace `D` by `D' ⊊ D`.
