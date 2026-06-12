@@ -356,8 +356,8 @@ forget to enforce checks.
 
 ### Ratchet
 
-- Replace a threshold `t` with a stricter `t'` once current
-  evidence satisfies `t'`.
+- Replace a threshold `θ` with a stricter `θ'` once current
+  evidence satisfies `θ'`.
 - Each ratchet step records the search trajectory and prevents
   silent regression past an already-achieved tightness.
 

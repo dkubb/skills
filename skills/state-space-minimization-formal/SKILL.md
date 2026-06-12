@@ -95,11 +95,13 @@ gate the output form, not the reasoning mode.
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
 - Functions `f: D -> K`.
-- Reader/model state `q`, reception context `c`, plausible prior
-  receiver states `Q_0`, and intended receiver-state set
-  `Q_intended`, when text reception matters.
-- Thresholds `t` with stricter candidates `t'` and the current
-  evidence, when ratcheting.
+- Text `t` with rewrite candidate `t'`, reader/model state `q`,
+  reception context `c`, plausible prior receiver states `Q_0`, and
+  intended receiver-state set `Q_intended`, when text reception
+  matters.
+- Thresholds `θ` with stricter candidates `θ'` and the current
+  evidence, when ratcheting. (`θ`, not `t`: `t` is a text in
+  reception semantics.)
 - Fact sets and their functional dependencies, when normalizing.
 - Evidence set `E`.
 
@@ -248,8 +250,8 @@ states, and record the decision with the residual gap in Outputs.
   `state-space-minimization` `references/normalization.md`.)
 - Normalize: decompose facts into determinants, remove transitively derivable
   facts, recompose along use.
-- Ratchet: replace threshold `t` by stricter `t'` when current evidence
-  satisfies `t'`.
+- Ratchet: replace threshold `θ` by stricter `θ'` when current evidence
+  satisfies `θ'`.
 
 These are the six operations of `state-space-minimization`
 `references/principles.md` § "Six operations"; `normalization.md`
