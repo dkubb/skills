@@ -449,10 +449,15 @@ $$
 6. Preserve or reconstitute proofs across morphisms.
 7. Normalize duplicated determinants.
 8. If text reception matters, model `[[t]]^D` and `[[t]]^O_c`.
-9. Emit only definitions, equations, derived obligations, and the
-   selection justification (the dominance reason).
+9. In output-layer mode, emit only definitions, equations, derived
+   obligations, and the selection justification (the dominance
+   reason). In reasoning mode, translate the derivation into the
+   deliverable's form; the notation remains as intermediate work.
 
 ## Outputs
+
+In output-layer mode, emit the items below. In reasoning mode they
+are derived internally and translated into the deliverable's form.
 
 - Invalid-state set.
 - Chosen encoding and dominance reason.
@@ -476,4 +481,6 @@ $$
 - Every duplicate fact has one determinant.
 - Text rewrites preserve denotation while narrowing reception states.
 - The selected mechanism is least-power among sufficient mechanisms.
-- The answer is formal, concise, and self-contained.
+- In output-layer mode the answer is formal, concise, and
+  self-contained at the notation level; in reasoning mode the
+  derivation is translated faithfully into the deliverable's form.
