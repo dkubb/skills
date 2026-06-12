@@ -276,8 +276,10 @@ estimated bound may move the other way).
 
 ## Encoding Order
 
-The **encoding order** ranks mechanism classes. Use the earliest
-sufficient mechanism:
+The **encoding order** ranks mechanism classes. The table below is
+derived for an application-owned artifact, not an axiom — derive
+the ranks per architecture using the metric that follows it. Use
+the earliest sufficient mechanism:
 
 $$
 \begin{array}{c|c}
