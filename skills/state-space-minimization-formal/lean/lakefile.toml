@@ -1,6 +1,6 @@
 name = "ssm-formal-reflection"
-# Tracks ../SKILL.md metadata.version "2026-06-v2" as 2026.6.2.
-version = "2026.6.2"
+# Tracks ../SKILL.md metadata.version "2026-06-v3" as 2026.6.3.
+version = "2026.6.3"
 keywords = ["math"]
 defaultTargets = ["Reflection"]
 
