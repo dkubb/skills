@@ -218,7 +218,7 @@ I_{\mathrm{repr}}(A') \subsetneq I_{\mathrm{repr}}(A)
 B(A')|_{C(A)} = B(A)|_{C(A)}
 \\
 \hline
-\operatorname{Strict}(A,A')
+\mathrm{Strict}(A,A')
 \end{array}
 $$
 
@@ -232,11 +232,11 @@ of the other premises.
 
 $$
 \begin{array}{rl}
-\text{among } m \text{ with} & \operatorname{Sufficient}(m) \;\wedge\;
+\text{among } m \text{ with} & \mathrm{Sufficient}(m) \;\wedge\;
 B(m(A))|_{C(A)} = B(A)|_{C(A)}: \\
 \text{choose} & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
 \text{then} & \text{earliest encoding-order rank} \\
-\text{then} & \operatorname{cost}(m) \text{ minimal among those}
+\text{then} & \mathrm{cost}(m) \text{ minimal among those}
 \end{array}
 $$
 
@@ -310,9 +310,9 @@ path `b`; for rank-1 mechanisms this strengthens to
 
 $$
 \begin{array}{c}
-\operatorname{Sufficient}(m_i)
+\mathrm{Sufficient}(m_i)
 \qquad
-\operatorname{Sufficient}(m_j)
+\mathrm{Sufficient}(m_j)
 \qquad
 I_{\mathrm{repr}}(m_i(A)) = I_{\mathrm{repr}}(m_j(A))
 \qquad
@@ -439,14 +439,14 @@ trivial `P` discharging representability alone.
 
 $$
 \begin{array}{c}
-\operatorname{Erases}(g, P(x))
+\mathrm{Erases}(g, P(x))
 \qquad
-\operatorname{Flows}(g, y)
+\mathrm{Flows}(g, y)
 \qquad
-\operatorname{Needs}(y,P(x))
+\mathrm{Needs}(y,P(x))
 \\
 \hline
-\operatorname{ProofObligation}(y,P(x))
+\mathrm{ProofObligation}(y,P(x))
 \end{array}
 $$
 
@@ -477,11 +477,11 @@ $$
 t \equiv_D t'
 \qquad
 \forall q \in Q_0,\, c \in Ctx_0:\;
-\operatorname{supp}([[t']]^O_{q,c}) \setminus Q_{\mathrm{intended}}
-\subseteq \operatorname{supp}([[t]]^O_{q,c})
+\mathrm{supp}([[t']]^O_{q,c}) \setminus Q_{\mathrm{intended}}
+\subseteq \mathrm{supp}([[t]]^O_{q,c})
 \\
 \hline
-\operatorname{AdmissibleRewrite}(t,t')
+\mathrm{AdmissibleRewrite}(t,t')
 \end{array}
 $$
 
@@ -528,8 +528,8 @@ Semantics: `state-space-minimization` `references/principles.md`
 
 $$
 \begin{array}{rcl}
-\operatorname{Req}(E) &:=& \text{distinctions the evidence } E \text{ exercised or required} \\
-K(\operatorname{Skill}) &:=& \text{distinctions expressible by the skill}
+\mathrm{Req}(E) &:=& \text{distinctions the evidence } E \text{ exercised or required} \\
+K(\mathrm{Skill}) &:=& \text{distinctions expressible by the skill}
 \end{array}
 $$
 
@@ -544,23 +544,23 @@ expressiveness deficit (`MissingDistinction`), not a gap;
 
 $$
 \begin{array}{c}
-d \in \operatorname{Req}(E) \setminus K(\operatorname{Skill})
+d \in \mathrm{Req}(E) \setminus K(\mathrm{Skill})
 \\
 \hline
-\operatorname{MissingDistinction}(d)
+\mathrm{MissingDistinction}(d)
 \end{array}
 $$
 
 $$
 \begin{array}{c}
-d \in K(\operatorname{Skill})
+d \in K(\mathrm{Skill})
 \qquad
-d \notin \operatorname{Req}(E^{*})
+d \notin \mathrm{Req}(E^{*})
 \qquad
 E^{*} \text{ spans repeated use}
 \\
 \hline
-\operatorname{SharpeningCandidate}(d)
+\mathrm{SharpeningCandidate}(d)
 \end{array}
 $$
 
