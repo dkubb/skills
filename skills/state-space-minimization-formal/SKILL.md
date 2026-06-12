@@ -412,7 +412,7 @@ b: (u: U) \times P(u) \to A
 p: P(u)
 \\
 \hline
-b(u,p) \in A
+b(u,p) \in S(A)
 \end{array}
 $$
 
