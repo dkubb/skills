@@ -129,6 +129,7 @@ gate the output form, not the reasoning mode.
   `P(x)`.
 - `Erases(g, P(x))` — operation `g` maps `(x, p: P(x)) ↦ x`,
   discarding the evidence.
+- `Flows(g, y)` — the output of `g` reaches consumer `y`.
 - `[[t]]^D`, `[[t]]^O_{q,c}` — denotation, and operational reception
   from prior state `q` in context `c`.
 - `c`, `q'` — reception context, and the receiver state after
@@ -407,6 +408,8 @@ $$
 $$
 \begin{array}{c}
 \operatorname{Erases}(g, P(x))
+\qquad
+\operatorname{Flows}(g, y)
 \qquad
 \operatorname{Needs}(y,P(x))
 \\
