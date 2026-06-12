@@ -55,21 +55,25 @@ def B_restrict (A : Artifact State Obs) :
 /-- Boundary morphism carrying explicit evidence. -/
 structure Boundary (A : Artifact State Obs) (U : Type w) where
   P : U → Prop
-  b : (u : U) → P u → State
-  lands_in_S : ∀ u p, b u p ∈ A.S
+  b : (u : U) → P u → {x : State // x ∈ A.S}
 
 def R {A : Artifact State Obs} {U : Type w}
     (bd : Boundary A U) : Set State :=
-  {x | ∃ u, ∃ p : bd.P u, bd.b u p = x}
+  {x | ∃ u, ∃ p : bd.P u, (bd.b u p).1 = x}
 
 def I_reach {A : Artifact State Obs} {U : Type w}
     (bd : Boundary A U) : Set State :=
   R bd ∩ I_repr A
 
 /-- A trust-increasing boundary additionally lands in the contract. -/
-structure TrustedBoundary (A : Artifact State Obs) (U : Type w)
-    extends Boundary A U where
-  lands_in_C : ∀ u p, b u p ∈ A.C
+structure TrustedBoundary (A : Artifact State Obs) (U : Type w) where
+  P : U → Prop
+  b : (u : U) → P u → {x : State // x ∈ A.C}
+
+def TrustedBoundary.toBoundary {A : Artifact State Obs} {U : Type w}
+    (bd : TrustedBoundary A U) : Boundary A U where
+  P := bd.P
+  b := fun u p => ⟨(bd.b u p).1, A.C_subset_S (bd.b u p).2⟩
 
 theorem trusted_boundary_reaches_valid
     {A : Artifact State Obs} {U : Type w}
@@ -77,7 +81,7 @@ theorem trusted_boundary_reaches_valid
     R bd.toBoundary ⊆ A.C := by
   intro x hx
   rcases hx with ⟨u, p, rfl⟩
-  exact bd.lands_in_C u p
+  exact (bd.b u p).2
 
 theorem trusted_boundary_no_reachable_invalid
     {A : Artifact State Obs} {U : Type w}
@@ -109,15 +113,20 @@ def Strict (A A' : Artifact State Obs) : Prop :=
     I_repr A' ⊂ I_repr A ∧
     ContractBehaviorPreserved A A' h
 
+structure Rank where
+  index : Nat
+  positive : 0 < index
+
 structure Mechanism (State : Type u) (Obs : Type v) where
   apply : Artifact State Obs → Artifact State Obs
-  rank : Nat
+  rank : Rank
   cost : Nat
 
 def Residual (m : Mechanism State Obs) (A : Artifact State Obs) : Set State :=
   I_repr (m.apply A)
 
 def BehaviorOK (m : Mechanism State Obs) (A : Artifact State Obs) : Prop :=
+  ContractPinned A (m.apply A) ∧
   ∃ h : A.C ⊆ (m.apply A).S,
     ContractBehaviorPreserved A (m.apply A) h
 
@@ -135,25 +144,31 @@ def SubsetMinimalOn
   m ∈ Candidates ∧
   ∀ n ∈ Candidates, resid n ⊆ resid m → resid m ⊆ resid n
 
+def EligibleMechanisms
+    (Candidates : Set (Mechanism State Obs))
+    (A : Artifact State Obs)
+    (Sufficient : Mechanism State Obs → Prop) :
+    Set (Mechanism State Obs) :=
+  {n | n ∈ Candidates ∧ Sufficient n ∧ BehaviorOK n A}
+
 def EarliestSufficient
     (Candidates : Set (Mechanism State Obs))
     (A : Artifact State Obs)
     (Sufficient : Mechanism State Obs → Prop)
     (m : Mechanism State Obs) : Prop :=
-  m ∈ Candidates ∧
-  Sufficient m ∧
-  BehaviorOK m A ∧
-  SubsetMinimalOn Candidates (fun n => Residual n A) m ∧
-  ∀ n ∈ Candidates, Sufficient n → BehaviorOK n A →
-    Residual n A = Residual m A → m.rank ≤ n.rank
+  m ∈ EligibleMechanisms Candidates A Sufficient ∧
+  SubsetMinimalOn
+    (EligibleMechanisms Candidates A Sufficient) (fun n => Residual n A) m ∧
+  ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
+    Residual n A = Residual m A → m.rank.index ≤ n.rank.index
 
 def CostMinimalAmongTies
     (Candidates : Set (Mechanism State Obs))
     (A : Artifact State Obs)
     (Sufficient : Mechanism State Obs → Prop)
-    (m : Mechanism State Obs) : Prop :=
-  ∀ n ∈ Candidates, Sufficient n → BehaviorOK n A →
-    Residual n A = Residual m A → n.rank = m.rank →
+  (m : Mechanism State Obs) : Prop :=
+  ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
+    Residual n A = Residual m A → n.rank.index = m.rank.index →
     m.cost ≤ n.cost
 
 def ObjectiveChoice
@@ -174,10 +189,11 @@ def FallbackChoice
   m ∈ Candidates ∧
   DetectsRejectsOrDocuments m TargetInvalid ∧
   ∀ n ∈ Candidates,
-    DetectsRejectsOrDocuments n TargetInvalid → m.rank ≤ n.rank
+    DetectsRejectsOrDocuments n TargetInvalid → m.rank.index ≤ n.rank.index
 
 structure ConstructiveDominance
     (Ac Ap : Artifact State Obs) where
+  contract_pinned : Ap.C = Ac.C
   constructive : Ac.S = Ac.C
   predicative_wider : Ac.C ⊂ Ap.S
   behavior_eq :
@@ -189,8 +205,8 @@ theorem boundary_introduction
     {A : Artifact State Obs} {U : Type w}
     (bd : TrustedBoundary A U)
     (u : U) (p : bd.P u) :
-    bd.b u p ∈ A.C :=
-  bd.lands_in_C u p
+    (bd.b u p : State) ∈ A.C :=
+  (bd.b u p).2
 
 structure Consumer (State : Type u) where
   D : Set State
