@@ -555,7 +555,7 @@ owned by `references/skill-refinement.md`.
 In output-layer mode, emit the items below. In reasoning mode they
 are derived internally and translated into the deliverable's form.
 
-- Invalid-state set.
+- Invalid-state sets: `I_repr`, and `I_reach` per boundary.
 - Chosen encoding and dominance reason.
 - Boundary morphisms.
 - Contract-preservation obligation.
