@@ -232,12 +232,18 @@ of the other premises.
 
 $$
 \begin{array}{rl}
-\text{choose } m: & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
-\text{then} & \text{earliest sufficient encoding-order rank} \\
-\text{then} & \operatorname{cost}(m) \text{ minimal among those} \\
-\text{s.t.} & B(m(A))|_{C(A)} = B(A)|_{C(A)}
+\text{among } m \text{ with} & \operatorname{Sufficient}(m) \;\wedge\;
+B(m(A))|_{C(A)} = B(A)|_{C(A)}: \\
+\text{choose} & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
+\text{then} & \text{earliest encoding-order rank} \\
+\text{then} & \operatorname{cost}(m) \text{ minimal among those}
 \end{array}
 $$
+
+Eligibility gates the whole selection, not just the rank step: an
+insufficient or behavior-breaking mechanism may not participate in —
+or block — the minimality comparison. When no mechanism is eligible,
+use the fallback rule in § "Encoding Order".
 
 Invalidity is ordered by inclusion, not cardinality: `m` dominates
 `m'` only when `I_repr(m(A)) ⊊ I_repr(m'(A))`. Incomparable
