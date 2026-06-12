@@ -4,8 +4,11 @@ description: >-
   Notation and inference rules for state-space minimization:
   S/C/I_repr/I_reach state sets, boundary morphisms, strictness and
   dominance rules, the encoding order, and proof obligations.
-  Definition-only output; semantics live in the
-  state-space-minimization skill's reference modules.
+  Two uses: the output layer when the deliverable is formal, and a
+  reasoning mode when it is not — working in the calculus activates
+  formal-methods reasoning and surfaces constraints that prose
+  analysis misses. Semantics live in the state-space-minimization
+  skill's reference modules.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -30,6 +33,16 @@ applies. This skill is determinant for notation and inference
 rules — how the obligations are written and discharged. Where a
 section cites a module, the module owns the meaning.
 
+The calculus is standard formal-methods machinery under local
+names: `Strict(A, A')` is a refinement step (contract preserved
+while the representable set shrinks); "invalid states
+unrepresentable" is a safety invariant discharged structurally;
+each rule's premises are proof obligations in the
+refinement-calculus sense; the inclusion order on encodings is a
+refinement order. Reason in that register — exhaustive case
+analysis, every obligation discharged or explicitly recorded as
+open, no claim without a premise.
+
 ## When to Activate
 
 - Required output is formal, theoretical, proof-like, or definition-only.
@@ -37,12 +50,24 @@ section cites a module, the module owns the meaning.
   receiver-state effects, or proof obligations.
 - The ordinary `state-space-minimization` skill is too operational or verbose
   for the requested form.
+- The analysis needs more rigor than prose is producing — even when the
+  deliverable is ordinary code or design. Switch to the calculus as a
+  reasoning mode, derive in notation, then translate back. The notation
+  forces commitments prose lets slide: `S` and `C` must be stated to be
+  related, every premise of a rule must be discharged, and the
+  `I_repr` / `I_reach` distinction cannot be blurred. Reasoning in this
+  register tends to find further narrowings of the state space that
+  informal analysis misses.
 
 ## When Not to Use
 
 - The user wants examples, implementation tactics, or idiom catalogues.
 - A concrete language module is required.
 - The task needs explanatory prose more than formal structure.
+
+Using the calculus internally as a reasoning step and translating the
+result into the deliverable's form is always admissible; these bullets
+gate the output form, not the reasoning mode.
 
 ## Inputs
 
