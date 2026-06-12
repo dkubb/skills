@@ -118,6 +118,8 @@ gate the output form, not the reasoning mode.
   evidence predicate.)
 - `Needs(y, P(x))` — consumer `y`'s contract depends on evidence
   `P(x)`.
+- `Erases(g, P(x))` — operation `g` maps `(x, p: P(x)) ↦ x`,
+  discarding the evidence.
 - `[[t]]^D`, `[[t]]^O_c` — denotation and operational reception.
 - `c`, `q'` — reception context, and the receiver state after
   reading `t`.
@@ -368,7 +370,7 @@ $$
 
 $$
 \begin{array}{c}
-(x,p) \mapsto x
+\operatorname{Erases}(g, P(x))
 \qquad
 \operatorname{Needs}(y,P(x))
 \\
