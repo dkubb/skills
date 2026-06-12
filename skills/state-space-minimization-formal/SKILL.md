@@ -253,8 +253,9 @@ states, and record the decision with the residual gap in Outputs.
 ## Operations
 
 - Shrink domain: replace `D` by `D' ⊊ D`.
-- Bound range: replace unbounded component by finite, ordered, or measured
-  subset.
+- Bound ranges and cardinality: replace an unbounded component by a
+  finite, ordered, or measured subset. (Value intervals and counts,
+  not `R(f)`: `R` is the image.)
 - Shrink codomain: replace `K` by `K'` where `R ⊆ K' ⊊ K`.
 - Remove intermediate: compose `g . f` and eliminate exposed state `W` when
   `W` has no independent contract role. (`W`, not `X`: `X` is
