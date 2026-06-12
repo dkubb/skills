@@ -555,9 +555,9 @@ $$
 \begin{array}{c}
 d \in K(\mathrm{Skill})
 \qquad
-d \notin \mathrm{Req}(E^{*})
+d \notin \mathrm{Req}(E^{\ast})
 \qquad
-E^{*} \text{ spans repeated use}
+E^{\ast} \text{ spans repeated use}
 \\
 \hline
 \mathrm{SharpeningCandidate}(d)
