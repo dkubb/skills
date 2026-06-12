@@ -561,11 +561,13 @@ owned by `references/skill-refinement.md`.
    `R(b)` and `I_reach`. Never report `I = ∅` without naming which.
 2. Locate the boundary morphisms `b: (u: U) × P(u) -> A`.
 3. Compute domain, codomain, range, gaps, and failure preimages.
-4. Select the least encoding that removes the invalid set. When choosing
-   among rank-1 encodings, prefer the one whose `S` is strictly included
-   in the alternative's (constructive dominance); when choosing among
-   predicative encodings of equal `S` and `R(b)`, the swap is not a
-   narrowing and the dominance rule does not apply.
+4. Select the least encoding that removes the invalid set; when no
+   mechanism is sufficient, apply the fallback rule and record the
+   residual gap. When choosing among rank-1 encodings, prefer the one
+   whose `S` is strictly included in the alternative's (constructive
+   dominance); when choosing among predicative encodings of equal `S`
+   and `R(b)`, the swap is not a narrowing and the dominance rule does
+   not apply.
 5. Prove contract preservation.
 6. Preserve or reconstitute proofs across morphisms.
 7. Normalize duplicated determinants; where the artifact exposes
