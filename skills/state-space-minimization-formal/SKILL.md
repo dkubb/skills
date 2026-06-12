@@ -111,8 +111,9 @@ gate the output form, not the reasoning mode.
 - `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
   adds plus its ergonomic and toolchain cost. Semantics:
   `state-space-minimization` `references/least-power.md`.
-- `supp(P)` — the support of distribution `P`: the outcomes with
-  nonzero probability.
+- `supp(μ)` — the support of distribution `μ`: the outcomes with
+  nonzero probability. (`μ`, not `P`: `P(u)` is the boundary
+  evidence predicate.)
 - `Needs(y, P(x))` — consumer `y`'s contract depends on evidence
   `P(x)`.
 - `[[t]]^D`, `[[t]]^O_c` — denotation and operational reception.
