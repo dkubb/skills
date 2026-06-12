@@ -428,8 +428,8 @@ conversions).
 
 - Text has denotational content and operational effect.
 - Prose, ordering, notation, omissions, and repetition are state controls.
-- Rewrite text only when denotation is preserved and intended receiver states
-  are narrowed.
+- Rewrite text only when denotation is preserved and no reading
+  widens; aim for strict reception narrowing.
 
 $$
 \begin{array}{rcl}
@@ -450,9 +450,15 @@ t \equiv_D t'
 \operatorname{supp}([[t']]^O_{q,c}) \subseteq Q_{\mathrm{intended}}
 \\
 \hline
-\operatorname{ReceptionNarrowing}(t,t')
+\operatorname{AdmissibleRewrite}(t,t')
 \end{array}
 $$
+
+`ReceptionNarrowing(t, t')` strengthens admissibility with strict
+narrowing: additionally `∃q ∈ Q_0` with
+`supp([[t']]^O_{q,c}) ⊊ supp([[t]]^O_{q,c})`. A rewrite with
+identical reception is admissible but is not a narrowing — the
+same standard as the predicative mechanism swap.
 
 The quantifier over `Q_0` forbids discharging the premises against
 one favorable prior reader; the rewrite must narrow readings for
