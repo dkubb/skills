@@ -343,6 +343,10 @@ neither `S` nor `R(b)`.
 - Single source: each fact has one determinant.
 - Confluence: normalization order does not affect normal form.
 
+Semantics: totality `references/total-functions.md`; exhaustiveness
+`references/defensive-code.md`; single source and confluence
+`references/normalization.md` — all in `state-space-minimization`.
+
 ## Boundary Calculus
 
 - Trust increases only through boundary morphisms.
@@ -480,7 +484,9 @@ owned by `references/skill-refinement.md`.
    narrowing and the dominance rule does not apply.
 5. Prove contract preservation.
 6. Preserve or reconstitute proofs across morphisms.
-7. Normalize duplicated determinants.
+7. Normalize duplicated determinants; where the artifact exposes
+   functions, closed sums, or a rewrite order, check totality,
+   exhaustiveness, and confluence.
 8. If text reception matters, model `[[t]]^D` and `[[t]]^O_c`.
 9. In output-layer mode, emit only definitions, equations, derived
    obligations, and the selection justification (the dominance
