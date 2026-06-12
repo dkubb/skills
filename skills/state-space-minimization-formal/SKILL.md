@@ -89,8 +89,9 @@ gate the output form, not the reasoning mode.
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
 - Functions `f: D -> K`.
-- Reader/model state `q`, reception context `c`, and intended
-  receiver-state set `Q_intended`, when text reception matters.
+- Reader/model state `q`, reception context `c`, plausible prior
+  receiver states `Q_0`, and intended receiver-state set
+  `Q_intended`, when text reception matters.
 - Thresholds `t` with stricter candidates `t'` and the current
   evidence, when ratcheting.
 - Fact sets and their functional dependencies, when normalizing.
@@ -120,7 +121,8 @@ gate the output form, not the reasoning mode.
   `P(x)`.
 - `Erases(g, P(x))` — operation `g` maps `(x, p: P(x)) ↦ x`,
   discarding the evidence.
-- `[[t]]^D`, `[[t]]^O_c` — denotation and operational reception.
+- `[[t]]^D`, `[[t]]^O_{q,c}` — denotation, and operational reception
+  from prior state `q` in context `c`.
 - `c`, `q'` — reception context, and the receiver state after
   reading `t`.
 
@@ -409,7 +411,7 @@ conversions).
 $$
 \begin{array}{rcl}
 [[t]]^D &:=& \text{denotation of } t \\
-[[t]]^O_c &:=& \Pr(q' \mid q,t,c) \\
+[[t]]^O_{q,c} &:=& \Pr(q' \mid q,t,c) \\
 t \equiv_D t' &:=& [[t]]^D = [[t']]^D
 \end{array}
 $$
@@ -418,14 +420,20 @@ $$
 \begin{array}{c}
 t \equiv_D t'
 \qquad
-\operatorname{supp}([[t']]^O_c) \subseteq \operatorname{supp}([[t]]^O_c)
+\forall q \in Q_0:\;
+\operatorname{supp}([[t']]^O_{q,c}) \subseteq \operatorname{supp}([[t]]^O_{q,c})
 \qquad
-\operatorname{supp}([[t']]^O_c) \subseteq Q_{\mathrm{intended}}
+\forall q \in Q_0:\;
+\operatorname{supp}([[t']]^O_{q,c}) \subseteq Q_{\mathrm{intended}}
 \\
 \hline
 \operatorname{ReceptionNarrowing}(t,t')
 \end{array}
 $$
+
+The quantifier over `Q_0` forbids discharging the premises against
+one favorable prior reader; the rewrite must narrow readings for
+every plausible prior state.
 
 The support premises are proof obligations like every other
 premise: discharged by argument about the plausible readings of
@@ -502,7 +510,7 @@ owned by `references/skill-refinement.md`.
 7. Normalize duplicated determinants; where the artifact exposes
    functions, closed sums, or a rewrite order, check totality,
    exhaustiveness, and confluence.
-8. If text reception matters, model `[[t]]^D` and `[[t]]^O_c`.
+8. If text reception matters, model `[[t]]^D` and `[[t]]^O_{q,c}`.
 9. In output-layer mode, emit only definitions, equations, derived
    obligations, and the selection justification (the dominance
    reason). In reasoning mode, translate the derivation into the
