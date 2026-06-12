@@ -11,7 +11,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-05-v2"
+  version: "2026-06-v3"
 triggers:
   - "state space minimization"
   - "make invalid states impossible"

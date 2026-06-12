@@ -12,7 +12,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-05-v1"
+  version: "2026-06-v2"
 triggers:
   - "state-space-minimization-formal"
   - "formal state-space minimization"
