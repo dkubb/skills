@@ -3,7 +3,8 @@ name: state-space-minimization-formal
 description: >-
   Notation and inference rules for state-space minimization:
   S/C/I_repr/I_reach state sets, boundary morphisms, strictness and
-  dominance rules, the encoding order, and proof obligations.
+  dominance rules, the encoding order, proof obligations, reception
+  semantics for text rewrites, and the skill-gap rules.
   Two uses: the output layer when the deliverable is formal, and a
   reasoning mode when it is not — working in the calculus activates
   formal-methods reasoning and surfaces constraints that prose
@@ -74,8 +75,8 @@ match the requested form.
 Broad formal-methods terms ("formalize", "proof obligation",
 "denotational", "inference rule") route here only when paired with
 state-space intent — state sets, invariant encodings, boundary
-morphisms, dominance, thresholds. A formal request from another
-domain belongs to that domain's skill.
+morphisms, dominance, thresholds, receiver-state narrowing. A
+formal request from another domain belongs to that domain's skill.
 
 ## When Not to Use
 
