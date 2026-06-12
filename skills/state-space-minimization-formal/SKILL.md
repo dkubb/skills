@@ -89,8 +89,8 @@ gate the output form, not the reasoning mode.
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
 - Functions `f: D -> K`.
-- Reader/model state `q` and intended receiver-state set
-  `Q_intended`, when text reception matters.
+- Reader/model state `q`, reception context `c`, and intended
+  receiver-state set `Q_intended`, when text reception matters.
 - Thresholds `t` with stricter candidates `t'` and the current
   evidence, when ratcheting.
 - Fact sets and their functional dependencies, when normalizing.
@@ -119,6 +119,8 @@ gate the output form, not the reasoning mode.
 - `Needs(y, P(x))` — consumer `y`'s contract depends on evidence
   `P(x)`.
 - `[[t]]^D`, `[[t]]^O_c` — denotation and operational reception.
+- `c`, `q'` — reception context, and the receiver state after
+  reading `t`.
 
 $$
 \begin{array}{rcl}
