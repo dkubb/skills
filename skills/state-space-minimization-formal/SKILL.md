@@ -412,9 +412,14 @@ b: (u: U) \times P(u) \to A
 p: P(u)
 \\
 \hline
-b(u,p) \in S(A)
+b(u,p) \in C(A)
 \end{array}
 $$
+
+The evidence is what buys trust: with `p : P(u)` discharged, the
+constructed value lands in `C(A)`, so `R(b) ⊆ C(A)` and
+`I_reach(A,b) = ∅`. The evidence-free derived form `b: U -> A`
+reaches only `S(A)` and is not trust-increasing.
 
 $$
 \begin{array}{c}
