@@ -514,10 +514,10 @@ the gap analogy: with codomain `K(Skill)`, the set
 
 $$
 \begin{array}{c}
-\operatorname{Req}(E) \not\subseteq K(\operatorname{Skill})
+d \in \operatorname{Req}(E) \setminus K(\operatorname{Skill})
 \\
 \hline
-\operatorname{MissingDistinction}
+\operatorname{MissingDistinction}(d)
 \end{array}
 $$
 
