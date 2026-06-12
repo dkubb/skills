@@ -235,7 +235,8 @@ ordinary refactoring).
 - The required output is formal, proof-like, or definition-only — use
   `state-space-minimization-formal`, the notation and inference-rule
   layer over this skill's modules. Semantics stay here; load the
-  formal skill for the requested form.
+  formal skill for the requested form. (For using it as a reasoning
+  instrument when the output is informal, see § "Formal escalation".)
 
 ## How to use this skill
 
@@ -297,6 +298,20 @@ after principles only when the selected profile needs their distinction.
 
 If neither distinction is needed, skip both and continue to the specific
 technique module.
+
+### Formal escalation
+
+`state-space-minimization-formal` is not only for formal
+deliverables — switching to its calculus mid-task is a reasoning
+move. Stating `S(A)`, `C(A)`, and `R(b)` and discharging the
+strictness and proof-preservation obligations forces commitments
+that prose analysis lets slide, and reasoning in the
+formal-methods register tends to surface further narrowings of the
+state space. Escalate when invariants resist prose analysis, a
+design feels under-constrained, or two encodings seem equivalent
+and the dominance argument will not come into focus; derive in
+notation, then translate the result back into the deliverable's
+form.
 
 ### Technique modules — load by symptom
 
