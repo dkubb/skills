@@ -3,12 +3,15 @@
 
 Provenance: produced by a Codex (GPT-class) reflection probe of
 `../SKILL.md` on 2026-06-12, then graded by compilation under
-Lean 4.30.0 + mathlib (`lake new <proj> math`, `lake exe cache get`,
-`lake build`). Three mechanical patches were applied to the probe
-output, each at a spot the probe itself flagged: a mathlib lemma
-rename (`Set.notMem_empty`), threading the `A.C ⊆ A'.S` proof into
-`ContractBehaviorPreserved` explicitly, and the `.subset` accessor
-on `⊂`. No semantic corrections were needed.
+Lean 4.30.0 + mathlib. Three mechanical patches were applied to the
+probe output, each at a spot the probe itself flagged: a mathlib
+lemma rename (`Set.notMem_empty`), threading the `A.C ⊆ A'.S` proof
+into `ContractBehaviorPreserved` explicitly, and the `.subset`
+accessor on `⊂`. No semantic corrections were needed.
+
+This directory is a self-contained lake project: from here, run
+`lake exe cache get` once (downloads the mathlib build cache), then
+`lake build` to type-check this file.
 
 Determinant: `../SKILL.md` owns the calculus; this file is a derived
 reflection used as a comprehension/commitment probe. It is not yet
