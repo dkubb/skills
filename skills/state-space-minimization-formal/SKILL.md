@@ -174,9 +174,9 @@ safety, the trusted-boundary audit, the hard-case fallbacks).
 
 ### Proof-preservation corollary
 
-For predicative `A`, every consumer `f` whose contract `B(f)` is defined
-on `C(A)` but typed on `S(A)` carries an obligation `Obl(f)` that the
-input came through `R(b)`. (`Obl(f)`, not `P_f`: `P` is the boundary
+For predicative `A`, every consumer `f` with `D(f) = S(A)` whose
+contractual behavior is specified only on `C(A)` carries an
+obligation `Obl(f)` that the input came through `R(b)`. (`Obl(f)`, not `P_f`: `P` is the boundary
 evidence predicate.) Adding a second construction path `b' ≠ b` with
 `R(b') ⊄ C(A)` voids `Obl(f)` globally.
 
