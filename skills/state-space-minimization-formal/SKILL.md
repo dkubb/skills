@@ -101,6 +101,9 @@ gate the output form, not the reasoning mode.
 - Boundary morphisms `b: (u: U) × P(u) -> A`, consuming raw input `u`
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
+- The construction paths of `A`: the set of all boundary morphisms
+  that can produce values of `A`. Quantifiers `∀b` range over this
+  set; it must be enumerated, not assumed.
 - Functions `f: D -> K`.
 - Text `t` with rewrite candidate `t'`, reader/model state `q`,
   plausible reception contexts `Ctx_0` with elements `c` (`Ctx`,
