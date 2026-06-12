@@ -101,6 +101,13 @@ gate the output form, not the reasoning mode.
 - `I_reach(A,b)` — reachable invalid: `R(b) ∩ I_repr(A)`.
 - `B(A)` — contract behavior.
 - `D(f)`, `K(f)`, `R(f)`, `G(f)` — domain, codomain, range, gap.
+- `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
+  adds plus its ergonomic and toolchain cost. Semantics:
+  `state-space-minimization` `references/least-power.md`.
+- `supp(P)` — the support of distribution `P`: the outcomes with
+  nonzero probability.
+- `Needs(y, P(x))` — consumer `y`'s contract depends on evidence
+  `P(x)`.
 - `[[t]]^D`, `[[t]]^O_c` — denotation and operational reception.
 
 $$
