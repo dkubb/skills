@@ -173,12 +173,13 @@ safety, the trusted-boundary audit, the hard-case fallbacks).
 ### Proof-preservation corollary
 
 For predicative `A`, every consumer `f` whose contract `B(f)` is defined
-on `C(A)` but typed on `S(A)` carries an obligation `P_f` that the input
-came through `R(b)`. Adding a second construction path `b' ≠ b` with
-`R(b') ⊄ C(A)` voids `P_f` globally.
+on `C(A)` but typed on `S(A)` carries an obligation `Obl(f)` that the
+input came through `R(b)`. (`Obl(f)`, not `P_f`: `P` is the boundary
+evidence predicate.) Adding a second construction path `b' ≠ b` with
+`R(b') ⊄ C(A)` voids `Obl(f)` globally.
 
-For constructive `A`, `P_f` is discharged by the type and survives the
-addition of arbitrary new construction paths.
+For constructive `A`, `Obl(f)` is discharged by the type and survives
+the addition of arbitrary new construction paths.
 
 ## Artifact Calculus
 
@@ -346,10 +347,10 @@ A_c \prec A_p
 \end{array}
 $$
 
-Rationale: `A_c` discharges every consumer proof obligation `P_f`
+Rationale: `A_c` discharges every consumer proof obligation `Obl(f)`
 structurally and is monotone under the addition of new construction
-paths. `A_p` discharges `P_f` only through the trusted boundary `b`, and
-any new `b'` with `R(b') ⊄ C(A)` voids `P_f`. A swap that holds `I_reach`
+paths. `A_p` discharges `Obl(f)` only through the trusted boundary `b`,
+and any new `b'` with `R(b') ⊄ C(A)` voids `Obl(f)`. A swap that holds `I_reach`
 constant while holding `S` and `R(b)` fixed (predicative-to-predicative
 mechanism swap, e.g., relocating the check from a hand-written
 constructor to a refinement library) is **not** a narrowing; it changes
