@@ -176,7 +176,7 @@ $$
 \begin{array}{c}
 C(A) \subseteq S(A')
 \qquad
-I_{\mathrm{repr}}(A') \subset I_{\mathrm{repr}}(A)
+I_{\mathrm{repr}}(A') \subsetneq I_{\mathrm{repr}}(A)
 \qquad
 B(A') = B(A)|_{C(A)}
 \\
@@ -208,10 +208,10 @@ the analysis).
 
 ## Operations
 
-- Shrink domain: replace `D` by `D' subset D`.
+- Shrink domain: replace `D` by `D' ⊊ D`.
 - Bound range: replace unbounded component by finite, ordered, or measured
   subset.
-- Shrink codomain: replace `K` by `K'` where `R subset K' subset K`.
+- Shrink codomain: replace `K` by `K'` where `R ⊆ K' ⊊ K`.
 - Remove intermediate: compose `g . f` and eliminate exposed state `W` when
   `W` has no independent contract role. (`W`, not `X`: `X` is
   reserved for functional-dependency determinants `X → Y` in
