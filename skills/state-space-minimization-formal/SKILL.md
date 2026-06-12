@@ -320,8 +320,8 @@ by guarantee strength.
 Within rank 1, encodings are ordered by inclusion of `S` (up to
 the chosen embedding). A constructive encoding `A_c` with
 `S(A_c) = C(A)` strictly dominates any predicative encoding `A_p`
-with `S(A_p) ⊋ C(A)` — then `S(A_c) ⊊ S(A_p)` — even when
-`I_reach(A_p, b) = ∅`.
+with `S(A_p) ⊋ C(A)` — then `S(A_c) ⊊ S(A_p)` — even when every
+`I_reach(A_p, b)` is empty.
 
 $$
 \begin{array}{c}
@@ -329,7 +329,9 @@ S(A_c) = C(A)
 \qquad
 S(A_p) \supsetneq C(A)
 \qquad
-I_{\mathrm{reach}}(A_p, b) = \varnothing
+B(A_c) = B(A_p)|_{C(A)}
+\qquad
+\forall b:\; I_{\mathrm{reach}}(A_p, b) = \varnothing
 \\
 \hline
 A_c \prec A_p
