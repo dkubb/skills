@@ -251,8 +251,16 @@ k & \text{mechanism} \\
 \end{array}
 $$
 
+`Sufficient(m)` := `I_reach(m(A), b) = ∅` for every construction
+path `b`; for rank-1 mechanisms this strengthens to
+`I_repr(m(A)) = ∅`. Only sufficient mechanisms compete for rank:
+
 $$
 \begin{array}{c}
+\operatorname{Sufficient}(m_i)
+\qquad
+\operatorname{Sufficient}(m_j)
+\qquad
 I_{\mathrm{repr}}(m_i(A)) = I_{\mathrm{repr}}(m_j(A))
 \qquad
 B(m_i(A)) = B(A)|_{C(A)}
