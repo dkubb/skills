@@ -110,7 +110,9 @@ gate the output form, not the reasoning mode.
 - `D(f)`, `K(f)`, `R(f)`, `G(f)` — domain, codomain, range, gap.
 - `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
   adds plus its ergonomic and toolchain cost. Semantics:
-  `state-space-minimization` `references/least-power.md`.
+  `state-space-minimization` `references/principles.md` § "Core
+  principle" (audit cost and drift surface) and § "Encode invariants
+  into types" (ergonomic and toolchain cost per rung).
 - `supp(μ)` — the support of distribution `μ`: the outcomes with
   nonzero probability. (`μ`, not `P`: `P(u)` is the boundary
   evidence predicate.)
