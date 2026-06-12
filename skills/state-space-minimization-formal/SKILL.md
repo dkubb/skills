@@ -433,16 +433,15 @@ Semantics: `state-space-minimization` `references/principles.md`
 
 $$
 \begin{array}{rcl}
-S(\operatorname{Skill}) &:=& \text{representable rules} \\
-\operatorname{Req}(E) &:=& \text{distinctions required by evidence } E \\
+\operatorname{Req}(E) &:=& \text{distinctions the evidence } E \text{ exercised or required} \\
 K(\operatorname{Skill}) &:=& \text{distinctions expressible by the skill}
 \end{array}
 $$
 
-`Req(E)` is named apart from the range notation `R(f)`/`R(b)`: it
-is a requirement set, not a range. With `Req(E)` as the skill's
-range and `K(Skill)` as its codomain, `K(Skill) \ Req(E)` is the
-gap `G` applied to the skill itself.
+`Req(E)` is named apart from the range notation `R(f)` / `R(b)` —
+`R` stays reserved for ranges — but it plays the range's role in
+the gap analogy: with codomain `K(Skill)`, the set
+`K(Skill) \ Req(E)` is the gap `G` applied to the skill itself.
 
 $$
 \begin{array}{c}
