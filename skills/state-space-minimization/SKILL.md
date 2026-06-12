@@ -314,7 +314,11 @@ notation, then translate the result back into the deliverable's
 form. Escalate liberally: the notation costs a few tokens, and a
 single additional narrowing it surfaces pays for it many times
 over (`references/principles.md` § "Core principle": narrowings
-compound).
+compound). The strongest escalation is a checked translation:
+reflect the derivation into a mechanically verifiable form (Lean,
+TLA+) and let the checker grade it — translation forces
+commitments even the notation lets slide, and the checker finds
+undischargeable obligations that prose audits miss.
 
 ### Technique modules — load by symptom
 
