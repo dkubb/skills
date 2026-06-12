@@ -1,29 +1,7 @@
 /-
-# Lean reflection of the state-space-minimization calculus
-
-Provenance: produced by a Codex (GPT-class) reflection probe of
-`../SKILL.md` on 2026-06-12, then graded by compilation under
-Lean 4.30.0 + mathlib. Three mechanical patches were applied to the
-probe output, each at a spot the probe itself flagged: a mathlib
-lemma rename (`Set.notMem_empty`), threading the `A.C ⊆ A'.S` proof
-into `ContractBehaviorPreserved` explicitly, and the `.subset`
-accessor on `⊂`. No semantic corrections were needed.
-
-This directory is a self-contained lake project: from here, run
-`lake exe cache get` once (downloads the mathlib build cache), then
-`lake build` to type-check this file.
-
-Determinant: `../SKILL.md` owns the calculus; this file is a derived
-reflection used as a comprehension/commitment probe. It is not yet
-linked from the skill and is not normative. If the two disagree,
-the SKILL.md is right and this file is stale.
-
-Scope: state sets, boundaries and trust theorems, Strict, the
-selection objective with `Sufficient` and the fallback, constructive
-dominance, and `Obl`. Reception semantics, self-similarity, and the
-proof-preservation rules (`Needs` / `Erases` / `Flows`) are not
-reflected here — the probe correctly classified them as schematic or
-meta-level as stated in the source.
+Lean reflection of the state-space-minimization calculus in
+`../SKILL.md`. See README.md for purpose, provenance, determinant,
+naming parity, scope, and build instructions.
 -/
 
 import Mathlib.Data.Set.Basic
