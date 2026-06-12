@@ -47,6 +47,14 @@ type — that bypasses the narrowing parser. See
 `constructive-vs-predicative.md` § "Smart constructors are only as
 strong as their trusted boundary".
 
+The two stages discharge evidence of different strengths: the DTO
+parse proves only representability (the bytes have the wire shape),
+while the narrowing conversion proves the contract. Only the stage
+that discharges the full contract is the trusted boundary;
+everything before it is an ordinary construction path. Treating
+shape-evidence as contract-evidence is how invalid states arrive
+"validated".
+
 ## Restructure data to remove the constraint
 
 When stacked refinements explode (`NonEmpty AND Sorted AND
