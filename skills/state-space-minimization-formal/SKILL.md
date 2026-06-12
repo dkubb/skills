@@ -71,6 +71,12 @@ match the requested form.
   register tends to find further narrowings of the state space that
   informal analysis misses.
 
+Broad formal-methods terms ("formalize", "proof obligation",
+"denotational", "inference rule") route here only when paired with
+state-space intent — state sets, invariant encodings, boundary
+morphisms, dominance, thresholds. A formal request from another
+domain belongs to that domain's skill.
+
 ## When Not to Use
 
 - The user wants examples, implementation tactics, or idiom catalogues.
