@@ -281,13 +281,23 @@ m_i \prec m_j
 \end{array}
 $$
 
+When no mechanism is sufficient, choose the earliest mechanism that
+detects or rejects every targeted invalid state, and record what
+remains as the residual gap in Outputs. Ranks 5–7 are these
+fallback positions — a test oracle, documentation claim, or runtime
+assertion never makes `I_reach` empty by itself (semantics:
+`constructive-vs-predicative.md` § "Hard cases for constructive
+modeling", which falls back to lints, tests, and runtime
+configuration).
+
 The rank metric: a mechanism ranks earlier when it governs more of
 the artifact's construction paths and detects violations at an
 earlier phase. The table is the derived order for an
 application-owned artifact, not an axiom — derive the ranks per
 architecture. In a database-first system with multiple writers, a
 schema constraint governs every write path while an application
-boundary adapter governs one, and outranks it. Rank order is
+boundary adapter governs one — the adapter fails `Sufficient`, so
+the schema constraint is the earliest sufficient mechanism. Rank order is
 least-power order under this metric: the earliest sufficient
 mechanism is the least powerful one that still removes the invalid
 set (`state-space-minimization` `references/least-power.md` owns
