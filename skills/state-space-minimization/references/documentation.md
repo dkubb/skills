@@ -43,6 +43,15 @@ the consumer side.
 The forcing function is what matters. Without one, drift is the
 default.
 
+A lightweight forcing function for any *derived representation* of
+a determinant document (a formal rendering, a generated reference,
+a mirror in another notation): stamp the derivative with the
+determinant's version, and bump both in lockstep when they
+correspond. A version mismatch is then a visible staleness flag
+instead of silent drift — re-derive and re-stamp after determinant
+changes, or leave the mismatch standing as an explicit "stale"
+marker.
+
 ## Hierarchy: prefer executable forms over prose
 
 Each rung is harder to drift than the previous because each carries
