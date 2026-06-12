@@ -104,7 +104,9 @@ gate the output form, not the reasoning mode.
   `b: (u: U) × P(u) -> A`.
 - `I_repr(A)` — representable invalid: `S(A) \ C(A)`.
 - `I_reach(A,b)` — reachable invalid: `R(b) ∩ I_repr(A)`.
-- `B(A)` — contract behavior.
+- `B(A)` — contract behavior: the artifact's observable behavior as a
+  function of admitted state. `B(A)|_C` restricts that function to the
+  states in `C`.
 - `D(f)`, `K(f)`, `R(f)`, `G(f)` — domain, codomain, range, gap.
 - `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
   adds plus its ergonomic and toolchain cost. Semantics:
@@ -174,6 +176,8 @@ addition of arbitrary new construction paths.
 
 $$
 \begin{array}{c}
+C(A') = C(A)
+\qquad
 C(A) \subseteq S(A')
 \qquad
 I_{\mathrm{repr}}(A') \subsetneq I_{\mathrm{repr}}(A)
@@ -185,9 +189,11 @@ B(A') = B(A)|_{C(A)}
 \end{array}
 $$
 
-The first premise is explicit, not derived: a strictness step may
-not delete any state the contract requires. `B(A') = B(A)|_{C(A)}`
-presupposes it, but the obligation stands on its own.
+The contract is pinned: `C(A') = C(A)` (up to the chosen embedding)
+forbids discharging the rule by widening the contract until nothing
+is invalid. `C(A) ⊆ S(A')` is explicit, not derived: a strictness
+step may not delete any state the contract requires. The behavior
+premise presupposes both, but the obligations stand on their own.
 
 $$
 \begin{array}{rl}
