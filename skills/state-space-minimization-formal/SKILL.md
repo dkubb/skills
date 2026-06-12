@@ -92,6 +92,9 @@ gate the output form, not the reasoning mode.
 
 - Artifact `A`.
 - Contract `C(A)`.
+- Candidate mechanisms `m`, each inducing a re-encoded artifact
+  `m(A)` with the contract pinned: `C(m(A)) = C(A)` up to the
+  chosen embedding.
 - Boundary morphisms `b: (u: U) × P(u) -> A`, consuming raw input `u`
   and evidence `p: P(u)`. The evidence-free `b: U -> A` is the derived
   special case of trivial `P`.
