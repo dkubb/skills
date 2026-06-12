@@ -43,6 +43,14 @@ refinement order. Reason in that register — exhaustive case
 analysis, every obligation discharged or explicitly recorded as
 open, no claim without a premise.
 
+The notation is also compression: a derivation in the calculus
+packs more reasoning into fewer tokens than its prose equivalent,
+and committing to symbols keeps later steps anchored to exact
+referents. Prefer it for internal reasoning and scratch work even
+when nothing formal was requested. Notation surfacing in
+intermediate output is acceptable; only the final deliverable must
+match the requested form.
+
 ## When to Activate
 
 - Required output is formal, theoretical, proof-like, or definition-only.
