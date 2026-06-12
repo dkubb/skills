@@ -446,12 +446,21 @@ $$
 
 $$
 \begin{array}{c}
-K(\operatorname{Skill}) \setminus \operatorname{Req}(E) \neq \varnothing
+d \in K(\operatorname{Skill})
+\qquad
+d \notin \operatorname{Req}(E^{*})
+\qquad
+E^{*} \text{ spans repeated use}
 \\
 \hline
-\operatorname{SharpeningCandidate}
+\operatorname{SharpeningCandidate}(d)
 \end{array}
 $$
+
+A single case exercises few distinctions, so the premise must range
+over accumulated evidence `E*`, not one case — otherwise the rule
+fires vacuously on every use. Materiality and the report gate are
+owned by `references/skill-refinement.md`.
 
 ## Process
 
