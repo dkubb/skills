@@ -1,7 +1,9 @@
 /-
 Lean reflection of the state-space-minimization calculus in
-`../SKILL.md`. See README.md for purpose, provenance, determinant,
-naming parity, scope, and build instructions.
+`../SKILL.md`. Calculus version: 2026-06-v2 — must match the
+SKILL.md `metadata.version`; a mismatch means this reflection is
+stale. See README.md for purpose, provenance, determinant, naming
+parity, scope, and build instructions.
 -/
 
 import Mathlib.Data.Set.Basic

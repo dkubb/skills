@@ -32,6 +32,16 @@ treat a good coined name as a candidate to back-port into the
 calculus. Renames on either side are vocabulary drift and should land
 on both sides or not at all.
 
+## Version parity
+
+The reflection is stamped with the calculus version it was derived
+from, in two places: the header comment of `Reflection.lean`
+(verbatim, e.g. `2026-06-v2`) and the lakefile `version` (mapped to
+semver, e.g. `2026.6.2`). When `../SKILL.md` bumps
+`metadata.version`, a non-matching stamp here means the reflection is
+stale and must be re-derived and re-stamped. Matching versions are
+the signal that the two representations are connected.
+
 ## Determinant
 
 `../SKILL.md` owns the calculus. This project is a derived reflection:
