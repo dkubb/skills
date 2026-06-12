@@ -521,6 +521,10 @@ $$
 `R` stays reserved for ranges — but it plays the range's role in
 the gap analogy: with codomain `K(Skill)`, the set
 `K(Skill) \ Req(E)` is the gap `G` applied to the skill itself.
+The two directions differ: `Req(E) \ K(Skill)` is an
+expressiveness deficit (`MissingDistinction`), not a gap;
+`K(Skill) \ Req(E*)` is unexercised expressiveness
+(`SharpeningCandidate`) — only the latter is `G`.
 
 $$
 \begin{array}{c}
