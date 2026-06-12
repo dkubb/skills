@@ -451,7 +451,9 @@ $$
 
 The quantifier over `Q_0` forbids discharging the premises against
 one favorable prior reader; the rewrite must narrow readings for
-every plausible prior state.
+every plausible prior state. The judgment is likewise per reception
+context: instantiate the rule for each plausible `c` — discharging
+it for one favorable context does not cover the others.
 
 The support premises are proof obligations like every other
 premise: discharged by argument about the plausible readings of
