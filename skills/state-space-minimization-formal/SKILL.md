@@ -491,7 +491,9 @@ hold for every plausible `(q, c)` pair.
 The support premises are proof obligations like every other
 premise: discharged by argument about the plausible readings of
 `t'`, not computed. A rewrite is admissible only when it preserves
-denotation and every reading it leaves open is an intended one.
+denotation and introduces no new unintended readings; reception
+completeness — every remaining reading intended — is the
+obligation's discharge condition, not the admissibility bar.
 
 Semantics: `state-space-minimization`
 `references/documentation.md` (the reader's mental model as the
