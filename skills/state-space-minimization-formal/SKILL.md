@@ -18,10 +18,14 @@ triggers:
   - "formal state-space minimization"
   - "proof obligation"
   - "inference rule"
-  - "calculus"
   - "artifact calculus"
+  - "state-space calculus"
   - "definition-only"
   - "denotational"
+  - "formalize"
+  - "reason formally"
+  - "formal reasoning"
+  - "derive formally"
 ---
 
 # State Space Minimization Formal
