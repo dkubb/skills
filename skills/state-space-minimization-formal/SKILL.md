@@ -210,9 +210,11 @@ $$
 
 The contract is pinned: `C(A') = C(A)` (up to the chosen embedding)
 forbids discharging the rule by widening the contract until nothing
-is invalid. `C(A) ⊆ S(A')` is explicit, not derived: a strictness
-step may not delete any state the contract requires. The behavior
-premise presupposes both, but the obligations stand on their own.
+is invalid. `C(A) ⊆ S(A')` is the well-formedness obligation on the
+chosen embedding — every contract state must be carried into
+`S(A')`, so a strictness step cannot delete a state the contract
+requires. It is listed to be checked, not because it is independent
+of the other premises.
 
 $$
 \begin{array}{rl}
