@@ -7,7 +7,7 @@ bisect` lands on a single transformation instead of a tangle.
 
 ## Atomic
 
-- One transformation per commit — one type, one action verb. If you need "and"
+- One transformation per commit — one semantic action verb. If you need "and"
   to describe it, it is two commits.
 - Each commit passes the full gate on its own. No broken intermediate states in
   history; eliminate them at write time, not by rewriting after.
@@ -15,22 +15,26 @@ bisect` lands on a single transformation instead of a tangle.
   deployable. Rough diff-size guide (source + tests): ≤30 lines ideal, 30–50
   the max for confident review, 50–300 needs justification, >300 split.
 
-## Subject — `type(scope): summary`
+## Subject — `<Verb> <imperative summary>`
 
-- `type` from the closed set: `feat`, `fix`, `refactor`, `perf`, `style`,
-  `test`, `docs`, `build`, `ci`, `chore`, `revert`. A `!` before the colon
-  marks a breaking change to the public contract.
-- ≤70 characters including the type prefix.
-- Lowercase, imperative present ("add", not "added" or "adds"), no trailing
-  period.
+- Start with one semantic action verb from the
+  [closed set](#action-verbs-closed-set). The verb is capitalized and names
+  the transformation: `Remove`, `Fix`, `Move`,
+  `Rename`, `Refactor`, `Change`, `Add`, `Upgrade`, or `Downgrade`.
+- Do not use conventional commit prefixes in git commit subjects. Reserve
+  `type(scope): summary` syntax for pull request titles or repo-specific
+  tooling that explicitly asks for it.
+- Keep the subject concise, ideally around 50 characters and no more than 72.
+- Imperative present ("Add", not "Added" or "Adds"), no trailing period.
 - No "and" / "or" — a compound subject is two transformations. Split.
 - The subject verb must match what the diff actually does.
 
 ## Body
 
 - One blank line after the subject; wrap at 72 columns.
-- Explain the *why* — the constraint or intent. The diff already shows the
-  *what*.
+- Keep it brief. Explain what changed and why the commit exists. Include how
+  only when the implementation is novel, complex, or not self-evident from
+  the diff.
 - No `What:` / `Why:` / `How:` labels. When the body makes more than one point,
   use action lines instead of prose bullets.
 
@@ -44,8 +48,8 @@ When the body has multiple observations, write each as one action line:
 - <Verb> <reason>.
 ```
 
-The verb is from the closed set below; the reason is the *why* and ends with a
-period. A single-observation body can stay prose.
+The verb is from the [closed set](#action-verbs-closed-set); the reason is the
+*why* and ends with a period. A single-observation body can stay prose.
 
 ## Action verbs (closed set)
 
