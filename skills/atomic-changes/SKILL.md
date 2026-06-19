@@ -46,7 +46,9 @@ triggers:
 Make the smallest change that keeps the system whole. Split as small as
 possible, but no smaller than stays functional: every step must pass all
 gates and be merge-ready and deployable on its own. That functional floor —
-not line count — bounds how small a step can be. Start from a verified
+not line count — bounds how small a step can be: it is permission to split
+down to, not a reason to stop above. Split until one more cut would turn a
+gate red, then stop. Start from a verified
 foundation, and order steps so that stopping or failing at any point leaves
 the system valid or better than the start.
 
@@ -79,7 +81,10 @@ reliable pipeline; large ones hide where they went wrong.
 - The full gate set that defines merge-ready and deployable (build, lint,
   test, format, coverage, run) and the single command that runs it. This is
   the verify command referenced below.
-- The candidate changes and the dependencies between them.
+- The candidate changes and the dependencies between them. Deriving the
+  atoms is part of the job, not a precondition: when the work arrives as
+  one lump ("add this module"), decomposing it into the maximal set of
+  atoms is the first step, not something the caller hands you.
 
 ## Outputs
 
@@ -87,14 +92,26 @@ Emit in this order:
 
 1. Step 0 result: the foundation command and whether it passed or was
    repaired.
-2. A dependency DAG of atomic steps: nodes are steps; edges run from each
+2. The atom set, as a table — one row per externally visible unit the work
+   introduces, removes, or behaviorally changes; mechanical reference
+   updates stay in the atom that drives them, and work with no public symbol
+   uses its smallest gated unit (a behavior, schema object, config surface,
+   doc claim, or test contract):
+
+   | Atom | Verb | Depends on | Gate it passes alone | Why not split further |
+   |------|------|------------|----------------------|-----------------------|
+
+   This is the decomposition shown, not assumed; the DAG below is built over
+   these rows. Filling "why not split further" per row is what forces the
+   split — an empty or hand-wavy cell means the atom is still too big.
+3. A dependency DAG of atomic steps: nodes are steps; edges run from each
    dependency to its dependent. Mark independent branches for parallel
    fan-out and chains as serial.
-3. The DAG recorded in the harness task or plan tracker: one entry per
+4. The DAG recorded in the harness task or plan tracker: one entry per
    step, dependency edges where supported or a topologically sorted plan
    otherwise; statuses updated as steps verify.
-4. The valid/better state each completed step leaves behind.
-5. The revert point for each step.
+5. The valid/better state each completed step leaves behind.
+6. The revert point for each step.
 
 ## Utilities
 
@@ -144,14 +161,35 @@ Emit in this order:
    working result, not planned up front. Independent branches fan out and
    run in parallel; a chain runs in series; a topological sort gives a
    valid serial order. Do not ship the spike; extract from it.
-3. Split as small as possible, bounded by functional integrity. Each step
-   changes one thing AND leaves the system whole — it passes the full gate
-   set and is merge-ready and deployable on its own. That floor is what
-   stops a split: a cut that would leave the tree red, a feature
-   half-wired, or any gate failing is too small — fold it into the change
-   that makes it whole. Within that floor, smaller is better: each segment
-   gets its own timing and verify, so a failure isolates to one segment
-   instead of one large step.
+3. Split to the maximal set of atoms; derive them, do not just order the
+   ones you were handed. The default grain is verb-aware: for new code, one
+   public symbol plus its tests is one `Add`, so introducing N *independent*
+   public symbols is N commits, never one; a `Refactor` instead keeps code
+   and tests in separate atoms (the untouched half is the oracle), and
+   `Move`/`Rename` keep a symbol with its mechanical reference updates.
+   Independence is the test and the floor decides it: two symbols that each
+   pass the full gate alone are two atoms; two that pass only together are
+   one — a trait and its only impl, a type and its smart constructor,
+   mutually recursive functions, a public contract deployable only with its
+   counterpart (schema and its generated API, protocol version and adapter),
+   or a test that cannot exist without its sibling. Each atom changes one
+   thing AND leaves the system whole — it passes the full gate set and is
+   merge-ready and deployable on its own. Operate as if full mutation testing
+   were always on, whatever gates the repo configures: you cannot add
+   functionality no test would kill a mutant of. Every behavior is exercised
+   either directly by a public symbol's own tests, or through a private
+   helper reachable from a public tested symbol whose tests assert the
+   result — so each atom carries direct tests rather than incidental
+   coverage (which rarely kills mutants), and a private helper, uncoverable
+   with no caller, is never its own atom but folds into the atom that
+   introduces its first tested caller. A cut that leaves the tree red or
+   half-wires a feature is too small — fold it into the change that makes it
+   whole; that gate-red boundary is the *only* reason to stop splitting.
+   Within it the burden runs one way: splitting independent symbols never
+   needs justification, combining always does. "It's all one feature",
+   "they're related", and "it's cleaner together" are not that justification
+   — relatedness orders atoms adjacent (the "related items together"
+   criterion below), it does not merge them.
 4. Split by transformation type. One step does one kind of change, drawn
    from the closed verb set (see `references/commits.md`). A step that spans
    two verbs is doing too much — split it.
@@ -237,6 +275,9 @@ Emit in this order:
 - Each step changes one thing and has its own verify command.
 - Every step passes the full gate set and is merge-ready and deployable on
   its own; functional integrity, not line count, bounds atom size.
+- No commit bundles two changes that could each have stood alone as a gated
+  commit; each independent public symbol is its own atom, and any
+  combination is justified only by a gate that splitting would turn red.
 - When the right steps were unknown, exploration used a reversible spike;
   only the atomic steps extracted from it were kept and gated.
 - The order guarantees partial progress leaves the system valid or better.

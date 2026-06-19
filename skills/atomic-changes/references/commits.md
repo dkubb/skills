@@ -14,6 +14,26 @@ bisect` lands on a single transformation instead of a tangle.
 - Smaller is better, bounded by functional integrity: the tree stays green and
   deployable. Rough diff-size guide (source + tests): ≤30 lines ideal, 30–50
   the max for confident review, 50–300 needs justification, >300 split.
+- For new code, the default atom is one public symbol plus its tests; N
+  independent public symbols are N commits, never one. (Other verbs keep
+  their own grain: a `Refactor` splits code from tests so the untouched half
+  is the oracle; `Move`/`Rename` keep a symbol with its mechanical reference
+  updates.) Splitting never needs justification — combining does, and the
+  only justification that counts is that splitting would turn a gate red:
+  symbols that pass the gate only together (a trait and its only impl, a type
+  and its smart constructor, mutually recursive functions, a public contract
+  deployable only with its counterpart) are one atom. The grain is a floor on
+  splitting, not a ceiling: a symbol that crosses the >300-line bound still
+  splits by behavior or helper extraction. A commit that bundles two
+  stand-alone changes is as defective as one that breaks the build.
+- Operate as if full mutation testing were always on, whatever gates the repo
+  configures: you cannot add functionality no test would kill a mutant of.
+  Every behavior is exercised either directly by a public symbol's own tests,
+  or through a private function reachable from a public tested symbol whose
+  tests assert the result. So each public atom carries direct tests, not
+  incidental coverage (which rarely kills mutants), and a private function —
+  uncoverable with no caller — is never a standalone atom; it ships inside the
+  atom that introduces its first tested caller.
 
 ## Subject — `<Verb> <imperative summary>`
 
@@ -98,9 +118,34 @@ behavior preservation must be reasoned about.
 9. **Downgrade** — a dependency rollback, isolated in its own commit;
    usually an evidence-driven correction.
 
+## Worked example — one module, three functions
+
+A module exposes three public functions where `B` calls `A` and `C` calls `B`
+(dependencies: A ← B ← C). That is three commits, not one:
+
+1. `Add A` — the function and its tests. A leaf with no internal caller yet is
+   still whole: green and deployable on its own.
+2. `Add B` — depends on A existing, so it follows (dependencies before
+   dependents).
+3. `Add C` — depends on B, so it comes last.
+
+One commit holding all three is too large even though it is green. A, B, and C
+are separate public symbols, and each can stand as a gated commit once its
+dependencies exist, so each is its own `Add`. Bundling them means a failing
+gate cannot say whether A, B, or C broke it, and `git bisect` lands on three
+transformations at once. "They are one feature" orders the three commits
+adjacent; it does not merge them.
+
+Each `Add` carries its own tests. If B cannot be honestly tested until C
+exists, B is not yet a stand-alone public atom: fold it into C, or keep B
+private until C introduces the tested public contract.
+
 ## Anti-patterns
 
 - Compound "and" / "or" subjects — split.
+- Bundling independent public symbols in one commit because they are "one
+  feature" or "related" — relatedness orders adjacent commits, it does not
+  merge them; each stand-alone symbol is its own commit.
 - Vague subjects ("misc", "cleanup", "stuff", "various") — name the
   transformation.
 - Past-tense or gerund subjects ("fixed", "adding") — use the imperative.
