@@ -287,6 +287,19 @@ triggers — use them *after* you have a target and witness. Full lineage:
 
 - **Vacuity + mutation** — break a definition / weaken a hypothesis; does it still
   prove? Un-killed mutant = spec too weak. (See the vacuity test below.)
+- **Theorem-set minimality (the delete-a-headline mutant)** — extend mutation
+  from *definitions* to the *theorem set itself*: delete each headline and
+  recompile the rest. If it re-derives from the others plus already-pinned
+  lemmas, the delete-mutant SURVIVES — it pins nothing new, so it is redundant
+  coverage, not an independent guarantee. Keep the headline that names the
+  load-bearing invariant (or the one nearest a public observation); DEMOTE the
+  one-step-derivable twin to a plain corollary. Canonical case: two readings of
+  one fact linked by carried laws (e.g. `decode-origin` vs `spec-conformance`
+  via `sound`/`complete`) — a minimal basis keeps one. Caveat: theorem-SET
+  redundancy is a *prune / minimal-basis* finding, NOT vacuity or a soundness
+  defect, and does not weaken *definition*-mutation resistance (a definition
+  mutant is still caught, by one or both); flag it as such, don't overstate
+  severity.
 - **Adequacy of encodings** — is the model the *real* object, or one with extra
   inhabitants / collapsed distinctions?
 - **Kernel conservativity** (did a def/quotient/axiom enlarge what the *kernel*
@@ -402,6 +415,15 @@ For each claim containing "private/sealed/affine/terminal/only/never/deferred":
 assign its enforcement rank (theorem / export-drill / runtime-bridge /
 operator-policy / evaluator / doc). If the artifact enforces it at the WRONG
 rank, give the minimal witness or the reason.
+```
+
+```text
+Mutate the THEOREM SET, not just definitions: for each headline, DELETE it and
+recompile the rest. If they still build AND it re-derives from them plus
+already-pinned lemmas, the delete-mutant survived — it is a redundant
+(interderivable) headline. Report which to KEEP (the one naming the load-bearing
+invariant / nearest a public observation) and which to DEMOTE to a corollary. This
+is a minimal-basis prune finding, not a vacuity or soundness defect.
 ```
 
 ```text
