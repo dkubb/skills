@@ -116,11 +116,13 @@ Emit in this order:
 ## Utilities
 
 - No mandatory scripts. This is guidance only.
-- Use whatever task or plan tracker the harness provides to record the DAG
-  and drive execution. If it supports dependency edges (for example
-  blockedBy/blocks), encode the DAG directly. If it only offers a flat,
-  ordered plan of steps with statuses, topologically sort the DAG into the
-  plan order and name each step's blockers in its text. Either way the
+- Use whatever built-in todo, task, or plan tracker the harness provides to
+  record the DAG and drive execution. Prefer the native tracker over an
+  ad-hoc checklist because it gives the agent execution state and gives the
+  operator live progress feedback. If it supports dependency edges (for
+  example blockedBy/blocks), encode the DAG directly. If it only offers a
+  flat, ordered plan of steps with statuses, topologically sort the DAG into
+  the plan order and name each step's blockers in its text. Either way the
   tracker is the single source of execution order, updated as each step is
   verified.
 - `references/commits.md` — the canonical atomic commit structure: the
@@ -233,12 +235,12 @@ Emit in this order:
    reorder them to match. Regenerate positional numbering to fit the new
    order; preserve a number only when it is an identifier referenced from
    outside the artifact.
-6. Record the DAG in the harness task or plan tracker, one entry per atomic
-   step. If the tracker supports dependency edges, encode each dependency
-   directly so a step becomes runnable only after its dependencies
-   complete. If it only offers a flat plan, topologically sort the DAG into
-   the plan order and name each step's blockers in its text. The tracker is
-   the single source of execution order.
+6. Record the DAG in the harness's built-in todo, task, or plan tracker,
+   one entry per atomic step. Use dependency edges when the tracker supports
+   them so a step becomes runnable only after its dependencies complete. If
+   it only offers a flat plan, topologically sort the DAG into the plan
+   order and name each step's blockers in its text. The tracker is the
+   single source of execution order.
 7. Execute as a loop, re-evaluating the DAG each iteration from the point of
    view of the current largest bottleneck — the runnable step the most work
    depends on. Take that step, mark it in progress, apply the one change,
