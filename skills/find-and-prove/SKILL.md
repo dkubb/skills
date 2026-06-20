@@ -380,6 +380,24 @@ under-scoped. If yes, state the exact PUBLIC behavior it constrains.
 ```
 
 ```text
+Then sweep the IMPLEMENTATION mechanically — do NOT reason about coverage,
+EXECUTE it. The dumb brute-force check ("delete/change this, recompile")
+finds what targeted reasoning rationalizes away ("surely the types forbid
+that" — when they don't). For each load-bearing definition apply each
+operator — each replaces a construct with a smaller-state-space form (full
+catalog: lean-robustness "Mutation operators"): weaken a carrier (⊆→=),
+degenerate a field to a constant (children→nil), swap a constructor
+(ordinary→authoring), off-by-one a count (≤→<), identity a transform (map→id),
+flip a branch/Option — then recompile against the WHOLE theorem set. A mutant
+that compiles GREEN means the lower-power form passes every theorem, forcing a
+binary: EITHER adopt it (the power was unneeded — shrink the code) OR add the
+theorem that forces the dropped behavior (the gap). Never rewrite to mask it.
+Sweep the full set, not one def. A kill counts only if SEMANTIC — silence
+incidental warningAsError lints (rename _x) first, or you log a false kill
+that overstates adequacy.
+```
+
+```text
 For each claim containing "private/sealed/affine/terminal/only/never/deferred":
 assign its enforcement rank (theorem / export-drill / runtime-bridge /
 operator-policy / evaluator / doc). If the artifact enforces it at the WRONG
