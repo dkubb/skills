@@ -1,11 +1,9 @@
 name = "ssm-formal-reflection"
-# Tracks ../SKILL.md metadata.version "2026-06-v3" as 2026.6.3.
-version = "2026.6.3"
-keywords = ["math"]
-defaultTargets = ["Reflection"]
+version = "2026.6.8"
+defaultTargets = ["Ssm"]
 
 [leanOptions]
-pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+pp.unicode.fun = true
 relaxedAutoImplicit = false
 weak.linter.mathlibStandardSet = true
 maxSynthPendingDepth = 3
@@ -16,4 +14,5 @@ scope = "leanprover-community"
 rev = "v4.30.0"
 
 [[lean_lib]]
-name = "Reflection"
+name = "Ssm"
+roots = ["Ssm", "Reflection"]
