@@ -1,0 +1,757 @@
+#!/usr/bin/env rust-script
+//! Mechanical gate for the state-space-minimization-formal calculus.
+//!
+//! Run from the `lean/` directory:
+//!     ./check_claims
+//! (needs elan on PATH: export PATH="$HOME/.elan/bin:$PATH")
+//!
+//! This gate is LEAN-INTERNAL. It NEVER reads `../SKILL.md`: the Lean
+//! project is a DERIVED, NON-NORMATIVE reflection of the calculus that
+//! `../SKILL.md` owns, so the gate proves the reflection is internally
+//! sound and anti-vacuous without asserting any binding to the skill
+//! prose. The reflection tracks `../SKILL.md` by content and review,
+//! not by a shared stamp the gate enforces.
+//!
+//! The gate is SELF-CONTAINED and CACHE-SAFE: it sets its own env and
+//! does not depend on the caller. Before any Lean-invoking check it
+//! deletes the project module oleans and runs a cache-disabled
+//! (`LAKE_ARTIFACT_CACHE=false`) `lake build`, so every downstream
+//! check (decl probe, type pin, mutants) judges oleans that match the
+//! CURRENT sources, never stale cached artifacts.
+//!
+//! HEADLINE STATEMENTS ARE PINNED BY TYPE, NOT BY AN EDITABLE GUARD.
+//! For every non-residual row the gate prints the real decl's type
+//! (`#check @<decl>` under `pp.fullNames`), collapses whitespace, and
+//! compares it to the `expected_type` recorded in claims.toml. Gutting
+//! a headline (e.g. to `: True := trivial`) changes its printed type,
+//! so the gate FAILS — and the ONLY way to make it pass is to also
+//! edit `expected_type` in claims.toml, a visible reviewable change.
+//! There is no in-build guard file an attacker can co-mutate.
+//!
+//! Fails (nonzero exit) on ANY of:
+//!   * the cache-disabled `lake build` of current sources failing.
+//!   * INTERNAL version stamps disagree among the Lean files only
+//!     (lakefile / Reflection.lean header / README.md / claims.toml) —
+//!     Invariant 5. The SKILL.md side of version parity is intentionally
+//!     NOT checked: the reflection is versioned independently.
+//!   * a non-residual row whose `lean_decl` is missing from the built
+//!     environment, or that resolves to a sorryAx / project axiom /
+//!     non-allowlisted axiom — Invariants 3 & 6.
+//!   * a non-residual row whose printed type does NOT match its
+//!     recorded `expected_type` — the TYPE PIN (subsumes the old
+//!     statement-binding guard) — HIGH-1.
+//!   * a headline row whose `mutant` file is missing, or whose mutant
+//!     COMPILES (a headline without a failing mutant is vacuous) —
+//!     Invariant 6.
+//!   * a residual row with a non-empty lean_decl, an empty
+//!     residual_justification, or an unknown rank; a non-residual row
+//!     with an empty lean_decl or empty expected_type — Phase 0.
+//!   * an orphan `*.lean` under lean/ (not the root, not the checker,
+//!     not under mutants/) that is NOT transitively imported by the
+//!     root module `Ssm` — Invariant 2.
+//!
+//! ```cargo
+//! [dependencies]
+//! toml = "0.8"
+//! serde = { version = "1", features = ["derive"] }
+//! ```
+
+use serde::Deserialize;
+use std::collections::BTreeSet;
+use std::fs;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+
+const ROOT_MODULE: &str = "Ssm";
+// Ratcheted to the minimal set this calculus actually uses (F4):
+// every headline rests only on `propext` + `Quot.sound`, so
+// `Classical.choice` was dead codomain and is removed. This is the
+// skill's own shrink-codomain operation applied to the axiom
+// allowlist — if a future proof genuinely needs choice the gate will
+// flag the non-allowlisted axiom, which is the ratchet working.
+const ALLOWED_AXIOMS: &[&str] = &["propext", "Quot.sound"];
+/// Ranks a residual row may carry. A residual is a claim NO command can
+/// enforce; a `kernel-theorem`/`kernel-definition` rank asserts machine-
+/// checked content, so it may never sit on a `residual=true` row — that
+/// would let a provable theorem be dodged as prose (HIGH-2).
+const RESIDUAL_RANKS: &[&str] = &["evaluator-judgment", "operator-policy", "honest-doc"];
+const KNOWN_RANKS: &[&str] = &[
+    "kernel-theorem",
+    "kernel-definition",
+    // `export-seal` and `runtime-bridge` are part of the general
+    // find-and-prove enforcement-rank taxonomy. This artifact has no
+    // C-export drill or runtime bridge, so no row carries either rank
+    // today — they are DELIBERATELY RESERVED (not dead): kept so the
+    // taxonomy stays whole and a future export/runtime claim has a
+    // home, but unused-by-this-artifact on purpose (F4).
+    "export-seal",
+    "runtime-bridge",
+    "operator-policy",
+    "evaluator-judgment",
+    "honest-doc",
+];
+
+#[derive(Deserialize)]
+struct Doc {
+    version_lakefile: String,
+    version_header: String,
+    #[serde(rename = "claim")]
+    claims: Vec<Claim>,
+}
+
+#[derive(Deserialize)]
+struct Claim {
+    id: String,
+    #[allow(dead_code)]
+    statement: String,
+    rank: String,
+    #[serde(default)]
+    lean_decl: String,
+    #[serde(default)]
+    expected_type: String,
+    #[serde(default)]
+    headline: bool,
+    #[serde(default)]
+    mutant: String,
+    #[serde(default)]
+    residual: bool,
+    #[serde(default)]
+    residual_justification: String,
+}
+
+fn fail(errors: &mut Vec<String>, msg: String) {
+    errors.push(msg);
+}
+
+fn lean_dir() -> PathBuf {
+    // The script lives in lean/; run relative to its own directory.
+    std::env::current_dir().expect("cwd")
+}
+
+fn main() {
+    let dir = lean_dir();
+    let mut errors: Vec<String> = Vec::new();
+
+    let toml_path = dir.join("claims.toml");
+    let toml_src = fs::read_to_string(&toml_path)
+        .unwrap_or_else(|e| panic!("cannot read claims.toml: {e}"));
+    let doc: Doc =
+        toml::from_str(&toml_src).unwrap_or_else(|e| panic!("claims.toml parse error: {e}"));
+
+    // ── 1. INTERNAL version stamps agree (Invariant 5) ──────────────
+    // LEAN-INTERNAL ONLY. The reflection is versioned independently of
+    // `../SKILL.md`; this gate never reads the skill and asserts no
+    // shared stamp. The stamps it ties together are all inside this
+    // project: the `lakefile.toml` `version` (semver), the
+    // `Reflection.lean` header (formalization version), the two README
+    // literals, and the matching `claims.toml` fields.
+    let lake_ver = read_lakefile_version(&dir).unwrap_or_else(|| {
+        errors.push("could not read version from lakefile.toml".into());
+        String::new()
+    });
+    let header_ver = read_header_version(&dir).unwrap_or_else(|| {
+        errors.push("could not read formalization version from Reflection.lean header".into());
+        String::new()
+    });
+    // README.md must carry both internal stamps in its "Version parity"
+    // prose so it cannot silently drift (the v5/v6 drift the audit
+    // caught): the formalization stamp (2026-06-vN) == version_header,
+    // and the lakefile semver stamp (2026.6.N) == version_lakefile.
+    let (readme_header_ver, readme_lake_ver) = read_readme_versions(&dir);
+    match &readme_header_ver {
+        Some(v) if *v == doc.version_header => {}
+        Some(v) => fail(
+            &mut errors,
+            format!(
+                "version mismatch: README.md formalization stamp {v:?} != claims.toml version_header {:?}",
+                doc.version_header
+            ),
+        ),
+        None => fail(
+            &mut errors,
+            "could not find the formalization version stamp (2026-06-vN) in README.md".into(),
+        ),
+    }
+    match &readme_lake_ver {
+        Some(v) if *v == doc.version_lakefile => {}
+        Some(v) => fail(
+            &mut errors,
+            format!(
+                "version mismatch: README.md semver stamp {v:?} != claims.toml version_lakefile {:?}",
+                doc.version_lakefile
+            ),
+        ),
+        None => fail(
+            &mut errors,
+            "could not find the lakefile semver stamp (2026.6.N) in README.md".into(),
+        ),
+    }
+    if !lake_ver.is_empty() && lake_ver != doc.version_lakefile {
+        fail(
+            &mut errors,
+            format!(
+                "version mismatch: lakefile version {lake_ver:?} != claims.toml version_lakefile {:?}",
+                doc.version_lakefile
+            ),
+        );
+    }
+    if !header_ver.is_empty() && header_ver != doc.version_header {
+        fail(
+            &mut errors,
+            format!(
+                "version mismatch: Reflection.lean header {header_ver:?} != claims.toml version_header {:?}",
+                doc.version_header
+            ),
+        );
+    }
+    // Cross-stamp: the formalization version (2026-06-vN) maps to the
+    // lakefile semver (2026.6.N). Both stamps live inside this project.
+    let mapped = doc.version_header.replace("-06-v", ".6.");
+    if !doc.version_header.is_empty()
+        && !doc.version_lakefile.is_empty()
+        && mapped != doc.version_lakefile
+    {
+        fail(
+            &mut errors,
+            format!(
+                "version-map mismatch: formalization header {:?} maps to {:?} but lakefile is {:?}",
+                doc.version_header, mapped, doc.version_lakefile
+            ),
+        );
+    }
+
+    // ── 2. Schema: ids unique, ranks known, residual/lean_decl rules ─
+    let mut seen_ids: BTreeSet<String> = BTreeSet::new();
+    for c in &doc.claims {
+        if !seen_ids.insert(c.id.clone()) {
+            fail(&mut errors, format!("duplicate claim id {:?}", c.id));
+        }
+        if !KNOWN_RANKS.contains(&c.rank.as_str()) {
+            fail(
+                &mut errors,
+                format!("claim {:?}: unknown rank {:?}", c.id, c.rank),
+            );
+        }
+        if c.residual {
+            if !RESIDUAL_RANKS.contains(&c.rank.as_str()) {
+                fail(
+                    &mut errors,
+                    format!(
+                        "residual claim {:?} has rank {:?}; a residual may only be {:?} — a kernel rank on a residual lets a provable theorem be dodged as prose",
+                        c.id, c.rank, RESIDUAL_RANKS
+                    ),
+                );
+            }
+            if !c.lean_decl.is_empty() {
+                fail(
+                    &mut errors,
+                    format!("residual claim {:?} must have empty lean_decl", c.id),
+                );
+            }
+            if !c.expected_type.is_empty() {
+                fail(
+                    &mut errors,
+                    format!("residual claim {:?} must have empty expected_type", c.id),
+                );
+            }
+            if c.residual_justification.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!("residual claim {:?} needs a residual_justification", c.id),
+                );
+            }
+            if c.headline {
+                fail(
+                    &mut errors,
+                    format!("residual claim {:?} cannot be a headline", c.id),
+                );
+            }
+        } else {
+            if c.lean_decl.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!(
+                        "non-residual claim {:?} has empty lean_decl (must map to a Lean decl or be allowlisted residual)",
+                        c.id
+                    ),
+                );
+            }
+            if c.expected_type.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!(
+                        "non-residual claim {:?} has empty expected_type (the type pin requires a recorded type)",
+                        c.id
+                    ),
+                );
+            }
+            if !c.residual_justification.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!(
+                        "non-residual claim {:?} must NOT carry a residual_justification",
+                        c.id
+                    ),
+                );
+            }
+        }
+        if c.headline && c.mutant.trim().is_empty() {
+            fail(
+                &mut errors,
+                format!("headline claim {:?} must name a rejecting mutant", c.id),
+            );
+        }
+    }
+
+    // ── 3. (removed) SKILL.md tag bijection ─────────────────────────
+    // The gate is LEAN-INTERNAL and never reads `../SKILL.md`, so there
+    // is no prose ↔ claims.toml bijection check. The reflection tracks
+    // the skill by content and review, not by a tag the gate enforces.
+
+    // ── 4. Orphan check (Invariant 2) ───────────────────────────────
+    let reachable = transitively_imported(&dir, ROOT_MODULE);
+    let mut module_files: Vec<String> = Vec::new();
+    for entry in fs::read_dir(&dir).expect("read lean dir") {
+        let p = entry.expect("entry").path();
+        if p.extension().and_then(|e| e.to_str()) == Some("lean") {
+            let stem = p.file_stem().unwrap().to_str().unwrap().to_string();
+            module_files.push(stem);
+        }
+    }
+    for m in &module_files {
+        if m == ROOT_MODULE {
+            continue;
+        }
+        if !reachable.contains(m) {
+            fail(
+                &mut errors,
+                format!(
+                    "orphan module {m:?}: not transitively imported by root {ROOT_MODULE:?}"
+                ),
+            );
+        }
+    }
+
+    // ── 4b. Cache-safe build from CURRENT sources (gate self-defense) ─
+    // Every Lean-invoking check below (decl probe, type pin, mutants)
+    // loads `.olean`s. `lake env lean <file>` does NOT recompile an
+    // unchanged dependency, and the cross-worktree artifact cache can
+    // even restore a STALE project olean across `lake build` — so
+    // without this step the gate could judge artifacts that do not match
+    // current sources (the round-2 HIGH-1 hole: a gutted headline left
+    // stale oleans, every mutant red). We force project-olean freshness:
+    //
+    //   1. delete every PROJECT module olean (mathlib lives in a
+    //      separate package dir and is NOT touched, so runtime stays a
+    //      few seconds, not a mathlib rebuild);
+    //   2. `lake build` with LAKE_ARTIFACT_CACHE=false so the artifact
+    //      cache cannot restore a stale olean.
+    //
+    // The gate sets its own env — it does NOT depend on the caller. A
+    // failed build IS a gate failure. When the build fails we skip the
+    // downstream Lean checks: they would only report cascade noise
+    // against absent/partial oleans. The freshly-built oleans are what
+    // the type pin (§7) prints from, so the pin judges current sources.
+    let build_ok = {
+        // Project oleans live under .lake/build/lib/lean/<Module>.*.
+        // `module_files` are exactly the project `*.lean` stems (mutants
+        // are in a subdir and are not scanned here).
+        let lib = dir.join(".lake").join("build").join("lib").join("lean");
+        for m in &module_files {
+            for ext in ["olean", "olean.hash", "ilean", "ilean.hash", "trace"] {
+                let _ = fs::remove_file(lib.join(format!("{m}.{ext}")));
+            }
+        }
+        let out = Command::new("lake")
+            .arg("build")
+            .env("LAKE_ARTIFACT_CACHE", "false")
+            .current_dir(&dir)
+            .output();
+        match out {
+            Ok(o) if o.status.success() => true,
+            Ok(o) => {
+                fail(
+                    &mut errors,
+                    format!(
+                        "cache-disabled `lake build` FAILED — current sources do not compile:\n{}\n{}",
+                        String::from_utf8_lossy(&o.stdout),
+                        String::from_utf8_lossy(&o.stderr)
+                    ),
+                );
+                false
+            }
+            Err(e) => {
+                fail(&mut errors, format!("could not run `lake build`: {e}"));
+                false
+            }
+        }
+    };
+
+    // ── 5. lean_decl existence + axiom cleanliness (Inv 3 & 6) ──────
+    // `#print <decl>` proves existence for structures/defs/theorems;
+    // `#print axioms <decl>` (theorems only) proves axiom cleanliness.
+    let decls: Vec<(&str, bool)> = doc
+        .claims
+        .iter()
+        .filter(|c| !c.residual)
+        .map(|c| (c.lean_decl.as_str(), c.rank == "kernel-theorem"))
+        .collect();
+    if build_ok && !decls.is_empty() {
+        match probe_decls(&dir, &decls) {
+            Ok((missing, bad_axioms)) => {
+                for d in missing {
+                    fail(
+                        &mut errors,
+                        format!("lean_decl {d:?} not found in built environment"),
+                    );
+                }
+                for (d, ax) in bad_axioms {
+                    fail(
+                        &mut errors,
+                        format!("lean_decl {d:?} depends on non-allowlisted axiom {ax:?}"),
+                    );
+                }
+            }
+            Err(e) => fail(&mut errors, format!("decl probe failed to run: {e}")),
+        }
+    }
+
+    // ── 6. Mutant gate: every headline mutant must FAIL to compile ──
+    // Run against the freshly built oleans (same LAKE_ARTIFACT_CACHE=false
+    // env as the build) so a mutant cannot pass/fail by hitting a stale
+    // cached olean. Skipped only if the build itself failed (mutants
+    // compiled against absent oleans would be cascade noise).
+    for c in doc.claims.iter().filter(|c| build_ok && c.headline) {
+        let mpath = dir.join(&c.mutant);
+        if !mpath.exists() {
+            fail(
+                &mut errors,
+                format!("headline {:?}: mutant file {} missing", c.id, c.mutant),
+            );
+            continue;
+        }
+        let status = Command::new("lake")
+            .arg("env")
+            .arg("lean")
+            .arg(&mpath)
+            .env("LAKE_ARTIFACT_CACHE", "false")
+            .current_dir(&dir)
+            .output();
+        match status {
+            Ok(out) => {
+                if out.status.success() {
+                    fail(
+                        &mut errors,
+                        format!(
+                            "headline {:?}: mutant {} COMPILED (it must fail — claim is presumed vacuous)",
+                            c.id, c.mutant
+                        ),
+                    );
+                }
+            }
+            Err(e) => fail(
+                &mut errors,
+                format!("headline {:?}: could not run mutant {}: {e}", c.id, c.mutant),
+            ),
+        }
+    }
+
+    // ── 7. Type pin (HIGH-1, subsumes the statement-binding guard) ──
+    // For every non-residual row, print the real decl's type from the
+    // freshly-rebuilt env and compare it to the recorded `expected_type`.
+    // The type of a THEOREM is its full statement, so gutting a headline
+    // to `: True := trivial` changes its printed type and FAILS here —
+    // with NO editable guard in the loop. The ONLY way to make a gutted
+    // headline pass is to ALSO edit `expected_type` in claims.toml, a
+    // visible reviewable change (fail-closed on a lone source edit).
+    //
+    // The printed type is normalized identically on both sides (see
+    // `normalize_type`): `pp.fullNames true` for stable qualified names,
+    // then all whitespace runs collapsed to single spaces. An honest
+    // rebuild round-trips, so the gate does not flap.
+    if build_ok {
+        let pins: Vec<(&str, &str, &str)> = doc
+            .claims
+            .iter()
+            .filter(|c| !c.residual)
+            .map(|c| (c.id.as_str(), c.lean_decl.as_str(), c.expected_type.as_str()))
+            .collect();
+        if !pins.is_empty() {
+            match probe_types(&dir, &pins) {
+                Ok(printed) => {
+                    for (id, decl, expected) in &pins {
+                        match printed.get(*decl) {
+                            Some(actual) if normalize_type(actual) == normalize_type(expected) => {}
+                            Some(actual) => fail(
+                                &mut errors,
+                                format!(
+                                    "type-pin mismatch for {id:?} ({decl}):\n      expected: {}\n      actual:   {}\n    (a headline may be gutted/weakened; if this change is intended, update `expected_type` in claims.toml)",
+                                    normalize_type(expected),
+                                    normalize_type(actual)
+                                ),
+                            ),
+                            None => fail(
+                                &mut errors,
+                                format!(
+                                    "type-pin: could not print a type for {id:?} ({decl}) — decl missing or unprintable"
+                                ),
+                            ),
+                        }
+                    }
+                }
+                Err(e) => fail(&mut errors, format!("type probe failed to run: {e}")),
+            }
+        }
+    }
+
+    // ── Report ──────────────────────────────────────────────────────
+    let n = doc.claims.len();
+    let n_residual = doc.claims.iter().filter(|c| c.residual).count();
+    let n_theorem = doc
+        .claims
+        .iter()
+        .filter(|c| c.rank == "kernel-theorem")
+        .count();
+    let n_headline = doc.claims.iter().filter(|c| c.headline).count();
+    if errors.is_empty() {
+        println!("check_claims: PASS");
+        println!(
+            "  rows={n}  kernel-theorems={n_theorem}  headlines(with failing mutant)={n_headline}  residuals(allowlisted)={n_residual}"
+        );
+        println!("  version: {} (lakefile {})", doc.version_header, doc.version_lakefile);
+        std::process::exit(0);
+    } else {
+        eprintln!("check_claims: FAIL ({} problem(s))", errors.len());
+        for e in &errors {
+            eprintln!("  - {e}");
+        }
+        std::process::exit(1);
+    }
+}
+
+fn read_lakefile_version(dir: &Path) -> Option<String> {
+    let s = fs::read_to_string(dir.join("lakefile.toml")).ok()?;
+    for line in s.lines() {
+        let t = line.trim();
+        if let Some(rest) = t.strip_prefix("version") {
+            let rest = rest.trim_start();
+            if let Some(rest) = rest.strip_prefix('=') {
+                return Some(rest.trim().trim_matches('"').to_string());
+            }
+        }
+    }
+    None
+}
+
+fn read_header_version(dir: &Path) -> Option<String> {
+    let s = fs::read_to_string(dir.join("Reflection.lean")).ok()?;
+    // Look for the token "2026-06-vN" anywhere in the header comment.
+    for line in s.lines() {
+        if !line.contains("version") {
+            continue;
+        }
+        for tok in line.split(|c: char| !(c.is_ascii_alphanumeric() || c == '-')) {
+            if tok.starts_with("2026-06-v") {
+                return Some(tok.to_string());
+            }
+        }
+    }
+    None
+}
+
+/// Scan README.md for the formalization stamp (`2026-06-vN`) and the
+/// lakefile semver stamp (`2026.6.N`) so the README cannot silently
+/// drift from the live version (the v5/v6 drift the audit caught).
+/// Both stamps are LEAN-INTERNAL; neither is read from `../SKILL.md`.
+fn read_readme_versions(dir: &Path) -> (Option<String>, Option<String>) {
+    let Ok(s) = fs::read_to_string(dir.join("README.md")) else {
+        return (None, None);
+    };
+    let mut header_ver = None;
+    let mut lake_ver = None;
+    for tok in s.split(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '.')) {
+        if header_ver.is_none() && tok.starts_with("2026-06-v") && tok.len() > "2026-06-v".len() {
+            header_ver = Some(tok.to_string());
+        }
+        // semver stamp: 2026.6.<n> (avoid matching the toolchain etc.)
+        if lake_ver.is_none() && tok.starts_with("2026.6.") && tok.len() > "2026.6.".len() {
+            lake_ver = Some(tok.trim_end_matches('.').to_string());
+        }
+    }
+    (header_ver, lake_ver)
+}
+
+/// Canonical type normalization, applied identically to the printed
+/// type and the recorded `expected_type`: collapse every run of
+/// whitespace (including newlines from pretty-printer wrapping) to a
+/// single space and trim. Combined with `pp.fullNames true` and stable
+/// `u_N` universe naming, an honest rebuild round-trips, so the pin
+/// does not flap.
+fn normalize_type(s: &str) -> String {
+    s.split_whitespace().collect::<Vec<_>>().join(" ")
+}
+
+/// Parse `import X` lines, following modules that have a local file.
+fn transitively_imported(dir: &Path, root: &str) -> BTreeSet<String> {
+    let mut seen = BTreeSet::new();
+    let mut stack = vec![root.to_string()];
+    while let Some(m) = stack.pop() {
+        if !seen.insert(m.clone()) {
+            continue;
+        }
+        let file = dir.join(format!("{m}.lean"));
+        let Ok(src) = fs::read_to_string(&file) else {
+            continue;
+        };
+        for line in src.lines() {
+            let t = line.trim();
+            if let Some(rest) = t.strip_prefix("import ") {
+                let name = rest.split_whitespace().next().unwrap_or("").to_string();
+                // only follow local modules (a file exists)
+                if dir.join(format!("{name}.lean")).exists() {
+                    stack.push(name);
+                }
+            }
+        }
+    }
+    seen
+}
+
+/// Probe every decl with `#print` (existence) and every theorem with
+/// `#print axioms` (cleanliness). Returns (missing decls, [(decl,
+/// non-allowlisted-axiom)]).
+type ProbeOut = (Vec<String>, Vec<(String, String)>);
+fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> {
+    let mut probe = String::from("import Ssm\nset_option autoImplicit false\n");
+    // Use a unique marker before each #print so we can attribute the
+    // "unknown" errors to a specific decl by line ordering.
+    for (d, is_thm) in decls {
+        probe.push_str(&format!("#print {d}\n"));
+        if *is_thm {
+            probe.push_str(&format!("#print axioms {d}\n"));
+        }
+    }
+    let probe_path = dir.join(".check_claims_probe.lean");
+    fs::write(&probe_path, &probe)?;
+    let out = Command::new("lake")
+        .arg("env")
+        .arg("lean")
+        .arg(&probe_path)
+        .env("LAKE_ARTIFACT_CACHE", "false")
+        .current_dir(dir)
+        .output()?;
+    let _ = fs::remove_file(&probe_path);
+    let combined = format!(
+        "{}\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let mut missing: Vec<String> = Vec::new();
+    let mut bad_axioms: Vec<(String, String)> = Vec::new();
+
+    // Existence: any "Unknown constant/identifier `Name`" names a
+    // missing decl. Collect the backtick-quoted names.
+    for line in combined.lines() {
+        let l = line.trim();
+        if l.contains("Unknown constant") || l.contains("Unknown identifier") {
+            if let Some(name) = between(l, '`', '`') {
+                if decls.iter().any(|(d, _)| *d == name) && !missing.contains(&name) {
+                    missing.push(name);
+                }
+            }
+        }
+    }
+
+    // Axiom cleanliness: lines like
+    //   'Name' depends on axioms: [propext, Quot.sound]
+    for line in combined.lines() {
+        let l = line.trim();
+        if let Some(rest) = l.strip_prefix('\'') {
+            if let Some(end) = rest.find('\'') {
+                let name = &rest[..end];
+                let tail = &rest[end + 1..];
+                if let Some(ax_list) = tail.split("depends on axioms:").nth(1) {
+                    let ax_list = ax_list.trim().trim_start_matches('[').trim_end_matches(']');
+                    for ax in ax_list.split(',') {
+                        let ax = ax.trim();
+                        if ax.is_empty() {
+                            continue;
+                        }
+                        if !ALLOWED_AXIOMS.contains(&ax) {
+                            bad_axioms.push((name.to_string(), ax.to_string()));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Ok((missing, bad_axioms))
+}
+
+/// Print the type of every (id, decl, _) via `#check @<decl>` under
+/// `pp.fullNames true`, then attribute each printed record to its decl.
+/// Returns a map decl -> raw printed type (post-`: `, pre-normalize).
+///
+/// `#check @D` prints `@D : <type>` (or `D : <type>` for decls where
+/// `@` is a no-op, e.g. structures). Records can wrap across lines, so
+/// we flatten the whole output to a single space-separated string and
+/// slice each record from its `(@?)<decl> : ` marker to the start of
+/// the next decl's marker.
+fn probe_types(
+    dir: &Path,
+    pins: &[(&str, &str, &str)],
+) -> std::io::Result<std::collections::BTreeMap<String, String>> {
+    let mut probe =
+        String::from("import Ssm\nset_option autoImplicit false\nset_option pp.fullNames true\n");
+    for (_, decl, _) in pins {
+        probe.push_str(&format!("#check @{decl}\n"));
+    }
+    let probe_path = dir.join(".check_claims_typeprobe.lean");
+    fs::write(&probe_path, &probe)?;
+    let out = Command::new("lake")
+        .arg("env")
+        .arg("lean")
+        .arg(&probe_path)
+        .env("LAKE_ARTIFACT_CACHE", "false")
+        .current_dir(dir)
+        .output()?;
+    let _ = fs::remove_file(&probe_path);
+    let combined = format!(
+        "{}\n{}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let flat = normalize_type(&combined);
+
+    // Marker for each decl, in either `@D : ` or `D : ` form. Compute
+    // every marker's byte position, then each record runs to the next.
+    let decls: Vec<&str> = pins.iter().map(|(_, d, _)| *d).collect();
+    // Collect (start_of_type, decl) for whichever marker form appears.
+    let mut hits: Vec<(usize, usize, &str)> = Vec::new(); // (marker_start, type_start, decl)
+    for d in &decls {
+        let m_at = format!("@{d} : ");
+        let m_plain = format!("{d} : ");
+        // Prefer the `@`-form; fall back to the plain form.
+        if let Some(i) = flat.find(&m_at) {
+            hits.push((i, i + m_at.len(), d));
+        } else if let Some(i) = flat.find(&m_plain) {
+            hits.push((i, i + m_plain.len(), d));
+        }
+    }
+    hits.sort_by_key(|h| h.0);
+    let mut map = std::collections::BTreeMap::new();
+    for (idx, &(_, type_start, decl)) in hits.iter().enumerate() {
+        let end = hits.get(idx + 1).map(|h| h.0).unwrap_or(flat.len());
+        let ty = flat[type_start..end].trim().to_string();
+        map.insert(decl.to_string(), ty);
+    }
+    Ok(map)
+}
+
+fn between(s: &str, open: char, close: char) -> Option<String> {
+    let i = s.find(open)?;
+    let rest = &s[i + open.len_utf8()..];
+    let j = rest.find(close)?;
+    Some(rest[..j].to_string())
+}

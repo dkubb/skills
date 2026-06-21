@@ -1,0 +1,784 @@
+# claims.toml — the inventory and single source of truth for the
+# state-space-minimization-formal REFLECTION.
+#
+# One [[claim]] row per formal symbol, inference rule, and
+# guarantee-bearing claim reflected from the calculus that `../SKILL.md`
+# OWNS. The Lean project is a DERIVED, NON-NORMATIVE reflection;
+# `../SKILL.md` is normative and, if the two disagree, SKILL.md is
+# right. This file is what `check_claims` enforces, and the gate is
+# LEAN-INTERNAL: it never reads `../SKILL.md`, so claim ids are stable
+# Lean-side identifiers, NOT tags the gate matches against the prose.
+#
+# Schema per row:
+#   id                     stable claim id (Lean-side)
+#   statement              the calculus claim (tight paraphrase)
+#   rank                   one of:
+#                            kernel-theorem | kernel-definition |
+#                            export-seal | runtime-bridge |
+#                            operator-policy | evaluator-judgment |
+#                            honest-doc
+#   lean_module            module the decl lives in (for non-residual)
+#   lean_decl              the Lean declaration discharging it
+#                          (empty ONLY if residual)
+#   expected_type          the decl's pinned type (required for every
+#                          non-residual row). `check_claims` rebuilds
+#                          the env cache-disabled, prints the real
+#                          decl's type with `#check @<decl>` under
+#                          `pp.fullNames`, collapses whitespace, and
+#                          compares it to this string. A mismatch FAILS
+#                          the gate — so gutting a headline to
+#                          `: True := trivial` changes its printed type
+#                          and the only way to pass is to ALSO edit this
+#                          field (a visible, reviewable change). This is
+#                          the non-editable replacement for the old
+#                          StatementBinding guard.
+#   headline               true if this claim carries a rejecting
+#                          mutant; corollary/definition rows set false
+#   mutant                 mutant file (headline rows only)
+#   mutant_result          the compile-failure excerpt (headline rows)
+#   residual               true when lean_decl is empty (allowlisted)
+#   residual_justification required iff residual=true
+#
+# Internal version stamps the checker cross-validates (Invariant 5).
+# LEAN-INTERNAL ONLY: these tie the lakefile semver, the Reflection.lean
+# header, and the README literals together. The reflection is versioned
+# independently of `../SKILL.md`; there is no SKILL version stamp here.
+version_lakefile = "2026.6.8"
+version_header  = "2026-06-v8"
+
+# ───────────────────────── Core notation (definitions) ─────────────────
+
+[[claim]]
+id = "core.S_C_subset"
+statement = "S(A) representable states, C(A) ⊆ S(A) the contract, B(A) behavior over S(A)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "Artifact"
+expected_type = "Type u_1 → Type u_2 → Type (max u_1 u_2)"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.B_restrict"
+statement = "B(A)|_C — behavior restricted to the contract set."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.B_restrict"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → (A : Artifact State Obs) → { x // x ∈ A.C } → Obs"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.I_repr"
+statement = "I_repr(A) = S(A) \\ C(A) — representable invalid."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.I_repr"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Set State"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.R_boundary"
+statement = "R(b) = { b(u,p) | u∈U, p∈P(u) } ⊆ S(A) — reachable states under a boundary."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.R"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → {A : Artifact State Obs} → {U : Type u_3} → SSM.Boundary A U → Set State"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.I_reach"
+statement = "I_reach(A,b) = R(b) ∩ I_repr(A) — reachable invalid."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.I_reach"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → {A : Artifact State Obs} → {U : Type u_3} → SSM.Boundary A U → Set State"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.range"
+statement = "R(f) = { f(x) | x ∈ D(f) } — the range of a function."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.Range"
+expected_type = "{D : Type u_1} → {K : Type u_2} → (D → K) → Set D → Set K"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.gap"
+statement = "G(f) = K(f) \\ R(f) — the gap, codomain values f never produces."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.Gap"
+expected_type = "{D : Type u_1} → {K : Type u_2} → (D → K) → Set D → Set K → Set K"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.preimage"
+statement = "f⁻¹(F) = { x ∈ D(f) | f(x) ∈ F } — the (failure) preimage."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.Preimage"
+expected_type = "{D : Type u_1} → {K : Type u_2} → (D → K) → Set D → Set K → Set D"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.gap_iff"
+statement = "y ∈ G(f) ↔ y ∈ K(f) ∧ y ∉ R(f) — gap is the codomain-relative complement of the range."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.mem_gap_iff"
+expected_type = "∀ {D : Type u_1} {K : Type u_2} {f : D → K} {Dom : Set D} {Cod : Set K} {y : K}, y ∈ SSM.Fn.Gap f Dom Cod ↔ y ∈ Cod ∧ ¬y ∈ SSM.Fn.Range f Dom"
+headline = false
+residual = false
+
+[[claim]]
+id = "core.supp_residual"
+statement = "supp(μ) — the support of a distribution (outcomes with nonzero probability)."
+rank = "evaluator-judgment"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "The numeric distribution μ = Pr(q'|q,t,c) is not modeled (its premise is empirical, reception.operational_residual). Only the SHAPE of its support is modeled, as Text.supp : Q → Ctx → Set Q in Reception. The support of a real reception distribution cannot be computed by a command."
+
+# ───────────────────── Constructive vs predicative ─────────────────────
+
+[[claim]]
+id = "cvp.constructive"
+statement = "Constructive encoding: S(A)=C(A), so I_repr(A)=∅; the proof lives in the type's shape."
+rank = "kernel-theorem"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.constructive_discharges_obl"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs}, A.S = A.C → ∀ (f : SSM.Consumer State), f.D = A.S → ∀ (x : State), x ∈ f.D → x ∈ A.C"
+headline = true
+mutant = "mutants/mut_constructive_discharges_obl.lean"
+mutant_result = "mut_constructive_discharges_obl.lean:29:2: error: Type mismatch — dropping S(A)=C(A) (predicative A), a state in f.D need not be in C, so the discharge fails."
+residual = false
+
+[[claim]]
+id = "cvp.trusted_reaches_valid"
+statement = "A trusted boundary gives R(b) ⊆ C(A)."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.trusted_boundary_reaches_valid"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} {U : Type u_3} (bd : SSM.TrustedBoundary A U), SSM.R bd.toBoundary ⊆ A.C"
+headline = true
+mutant = "mutants/mut_trusted_reaches_valid.lean"
+mutant_result = "mut_trusted_reaches_valid.lean:34:2: error: Type mismatch — an ordinary boundary reaching false ∈ I_repr cannot satisfy R(b) ⊆ C(A)={true}."
+residual = false
+
+[[claim]]
+id = "cvp.no_reachable_invalid"
+statement = "A trusted boundary yields I_reach(A,b)=∅."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.trusted_boundary_no_reachable_invalid"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} {U : Type u_3} (bd : SSM.TrustedBoundary A U), SSM.I_reach bd.toBoundary = ∅"
+headline = false
+residual = false
+
+# ───────────────────────── Boundary calculus ──────────────────────────
+
+[[claim]]
+id = "boundary.morphism"
+statement = "b: (u:U) × P(u) → A — boundary morphism; ordinary b returns a representable-state subtype."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Boundary"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Type u_3 → Type (max u_1 u_3)"
+headline = false
+residual = false
+
+[[claim]]
+id = "boundary.trusted"
+statement = "A trusted boundary returns a contract-state subtype directly (evidence discharges the full contract)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.TrustedBoundary"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Type u_3 → Type (max u_1 u_3)"
+headline = false
+residual = false
+
+[[claim]]
+id = "boundary.introduction"
+statement = "With p:P(u) discharged, b(u,p) ∈ C(A) — the boundary-introduction rule."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.boundary_introduction"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} {U : Type u_3} (bd : SSM.TrustedBoundary A U) (u : U) (p : bd.P u), ↑(bd.b u p) ∈ A.C"
+headline = false
+residual = false
+
+[[claim]]
+id = "boundary.obl"
+statement = "Obl(f) — the consumer's per-value obligation that its input came through the trusted boundary."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Obl"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → (A : Artifact State Obs) → SSM.Consumer State → {U : Type u_3} → SSM.TrustedBoundary A U → State → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "boundary.freshness_residual"
+statement = "Cache-safe rebuild is a freshness boundary: when a check consumes DERIVED state (compiled oleans), the derivation is a boundary b whose evidence P(u) is 'rebuilt from current sources'; a stale read is I_reach(verifier) != ∅."
+rank = "honest-doc"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "This frames the gate's own cache-safe rebuild (delete project oleans, build with LAKE_ARTIFACT_CACHE=false before any source-judging check) as a boundary-calculus instance: derived state is trusted only when rebuilt from current sources, and a stale read is the verifier reaching a representable-but-invalid verdict. It documents a property of check_claims' freshness discipline, not a theorem over the target calculus — no command judges whether an arbitrary derived artifact is fresh, so it is an honest-doc residual."
+
+# ──────────────────────── Proof preservation ──────────────────────────
+
+[[claim]]
+id = "pp.needs"
+statement = "Needs(y, P(x)) — consumer y's contract depends on evidence P(x)."
+rank = "kernel-definition"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.Needs"
+expected_type = "{State : Type u_1} → SSM.Consumer State → (State → Prop) → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "pp.erases"
+statement = "Erases(g, P(x)) — operation g maps (x,p:P x) ↦ x, discarding evidence; formal content is value-preservation g.run x = x. P names which evidence is dropped, not a constraint inside the predicate (the def is independent of P by construction); P's role is pinned via Needs in proofObligation_needs_holds."
+rank = "kernel-definition"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.Erases"
+expected_type = "{State : Type u_1} → SSM.Operation State → (State → Prop) → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "pp.flows"
+statement = "Flows(g, y) — the output of g reaches consumer y."
+rank = "kernel-definition"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.Flows"
+expected_type = "{State : Type u_1} → SSM.Operation State → SSM.Consumer State → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "pp.obligation_intro"
+statement = "Erases(g,P) ∧ Flows(g,y) ∧ Needs(y,P) ⇒ ProofObligation(y,P(x)) — the obligation introduction rule."
+rank = "kernel-theorem"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.proofObligation_intro"
+expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.Erases g P → SSM.Flows g y → SSM.Needs y P → SSM.ProofObligation g y P"
+headline = false
+residual = false
+
+[[claim]]
+id = "pp.needs_holds"
+statement = "Corollary (field projection of ProofObligation.needs): under the obligation, the required evidence P holds of every consumer input."
+rank = "kernel-theorem"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.proofObligation_needs_holds"
+expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.ProofObligation g y P → ∀ (x : State), x ∈ y.D → P x"
+headline = false
+residual = false
+
+[[claim]]
+id = "pp.reconstitute"
+statement = "The erased evidence must be reconstituted at the consumer: P(g.run x) holds and g.run x = x — load-bearing on all three obligation fields (erased, flows, needs)."
+rank = "kernel-theorem"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.proofObligation_reconstitute"
+expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.ProofObligation g y P → ∀ (x : State), P (g.run x) ∧ g.run x = x"
+headline = true
+mutant = "mutants/mut_proofobl_drop_needs.lean"
+mutant_result = "mut_proofobl_drop_needs.lean:28:2: error: Type mismatch — dropping the `needs` premise, P x cannot be concluded for an input where P is false, so the reconstituted P(g.run x) is unprovable."
+residual = false
+
+# ─────────────────────── Reception semantics ──────────────────────────
+
+[[claim]]
+id = "reception.denot_eq"
+statement = "t ≡_D t' := [[t]]^D = [[t']]^D — denotational equivalence."
+rank = "kernel-definition"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.DenotEq"
+expected_type = "{Den : Type u_1} → {Q : Type u_2} → {Ctx : Type u_3} → SSM.Reception.Text Den Q Ctx → SSM.Reception.Text Den Q Ctx → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.admissible"
+statement = "AdmissibleRewrite: denotation preserved AND ∀(q,c): supp([[t']]^O)\\Q_intended ⊆ supp([[t]]^O)."
+rank = "kernel-definition"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.AdmissibleRewrite"
+expected_type = "{Den : Type u_1} → {Q : Type u_2} → {Ctx : Type u_3} → Set Q → SSM.Reception.Text Den Q Ctx → SSM.Reception.Text Den Q Ctx → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.narrowing"
+statement = "ReceptionNarrowing strengthens admissibility with a strict shrink at some (q,c)."
+rank = "kernel-definition"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.ReceptionNarrowing"
+expected_type = "{Den : Type u_1} → {Q : Type u_2} → {Ctx : Type u_3} → Set Q → SSM.Reception.Text Den Q Ctx → SSM.Reception.Text Den Q Ctx → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.complete"
+statement = "ReceptionComplete — every remaining reading is intended; the obligation's discharge condition."
+rank = "kernel-definition"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.ReceptionComplete"
+expected_type = "{Den : Type u_1} → {Q : Type u_2} → {Ctx : Type u_3} → Set Q → SSM.Reception.Text Den Q Ctx → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.narrowing_admissible"
+statement = "Every narrowing is admissible (narrowing is strictly stronger)."
+rank = "kernel-theorem"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.narrowing_imp_admissible"
+expected_type = "∀ {Den : Type u_1} {Q : Type u_2} {Ctx : Type u_3} {Q_intended : Set Q} {t t' : SSM.Reception.Text Den Q Ctx}, SSM.Reception.ReceptionNarrowing Q_intended t t' → SSM.Reception.AdmissibleRewrite Q_intended t t'"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.complete_no_unintended"
+statement = "Admissible + complete ⇒ no unintended reading at all (residual gap empty)."
+rank = "kernel-theorem"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.complete_imp_no_unintended"
+expected_type = "∀ {Den : Type u_1} {Q : Type u_2} {Ctx : Type u_3} {Q_intended : Set Q} {t t' : SSM.Reception.Text Den Q Ctx}, SSM.Reception.AdmissibleRewrite Q_intended t t' → SSM.Reception.ReceptionComplete Q_intended t' → ∀ (q : Q) (c : Ctx), t'.supp q c \\ Q_intended = ∅"
+headline = false
+residual = false
+
+[[claim]]
+id = "reception.admissible_trans"
+statement = "Admissible rewrites compose: a chain of denotation-preserving, support-bounded edits is admissible."
+rank = "kernel-theorem"
+lean_module = "Reception"
+lean_decl = "SSM.Reception.admissibleRewrite_trans"
+expected_type = "∀ {Den : Type u_1} {Q : Type u_2} {Ctx : Type u_3} {Q_intended : Set Q} {t t' t'' : SSM.Reception.Text Den Q Ctx}, SSM.Reception.AdmissibleRewrite Q_intended t t' → SSM.Reception.AdmissibleRewrite Q_intended t' t'' → SSM.Reception.AdmissibleRewrite Q_intended t t''"
+headline = true
+mutant = "mutants/mut_admissible_drop_support.lean"
+mutant_result = "mut_admissible_drop_support.lean:31:2: error: Type mismatch — dropping the support-subset premise, a rewrite adding an unintended reading cannot satisfy the support bound."
+residual = false
+
+[[claim]]
+id = "reception.operational_residual"
+statement = "[[t]]^O_{q,c} := Pr(q'|q,t,c) — the operational reception measure."
+rank = "evaluator-judgment"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "Pr(q'|q,t,c) is a probabilistic claim about how a reader/model updates state on reading t. It is empirical (depends on the reader population and contexts), not Lean-checkable. The SKILL.md is explicit that the support premises are 'proof obligations … discharged by argument about the plausible readings of t', not computed.' Only the support shape is modeled (Reception.Text.supp); the probability is the residual."
+
+# ───────────────────────── Self-similarity ────────────────────────────
+
+[[claim]]
+id = "selfsim.K"
+statement = "K(Skill) — distinctions expressible by the skill (the codomain in the gap analogy)."
+rank = "kernel-definition"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.K"
+expected_type = "{Distinction : Type u_1} → Set Distinction → Set Distinction"
+headline = false
+residual = false
+
+[[claim]]
+id = "selfsim.Req"
+statement = "Req(E) — distinctions the evidence E exercised or required."
+rank = "kernel-definition"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.Req"
+expected_type = "{Distinction : Type u_1} → Set Distinction → Set Distinction"
+headline = false
+residual = false
+
+[[claim]]
+id = "selfsim.missing"
+statement = "MissingDistinction(d): d ∈ Req(E) \\ K(Skill) — an expressiveness deficit (NOT the gap)."
+rank = "kernel-definition"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.MissingDistinction"
+expected_type = "{Distinction : Type u_1} → Set Distinction → Set Distinction → Distinction → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "selfsim.gap"
+statement = "G(Skill,E) = K(Skill) \\ Req(E) — unexercised expressiveness; the gap applied to the skill."
+rank = "kernel-definition"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.Gap"
+expected_type = "{Distinction : Type u_1} → Set Distinction → Set Distinction → Set Distinction"
+headline = false
+residual = false
+
+[[claim]]
+id = "selfsim.disjoint"
+statement = "MissingDistinction and Gap are disjoint directions — neither can masquerade as the other."
+rank = "kernel-theorem"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.missing_not_gap"
+expected_type = "∀ {Distinction : Type u_1} {Skill E : Set Distinction} {d : Distinction}, SSM.SelfSimilarity.MissingDistinction Skill E d → ¬d ∈ SSM.SelfSimilarity.Gap Skill E"
+headline = true
+mutant = "mutants/mut_selfsim_conflate.lean"
+mutant_result = "mut_selfsim_conflate.lean:26:38: error: Type mismatch — a distinction in Req\\K (false ∉ K skill) cannot be placed in the gap K\\Req; the conflation is unprovable."
+residual = false
+
+[[claim]]
+id = "selfsim.sharpening"
+statement = "SharpeningCandidate(d): d ∈ G(Skill,E*) and E* spans repeated use."
+rank = "kernel-definition"
+lean_module = "SelfSimilarity"
+lean_decl = "SSM.SelfSimilarity.SharpeningCandidate"
+expected_type = "{Distinction : Type u_1} → Set Distinction → Set Distinction → Prop → Distinction → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "selfsim.spans_repeated_use_residual"
+statement = "The E* premise: the evidence spans repeated use, so the rule does not fire vacuously on one case."
+rank = "evaluator-judgment"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "'E* spans repeated use' is an empirical claim about evidence accumulation across sessions; no command can verify a corpus 'spans repeated use'. It is carried as the abstract hypothesis `spansRepeatedUse : Prop` in SharpeningCandidate and proved load-bearing by `sharpening_requires_span` (the structural part is kernel; the premise itself is the residual)."
+
+[[claim]]
+id = "selfsim.type_pin_body_mutant_residual"
+statement = "A theorem's statement is pinned by its TYPE (type-pin); a Prop definition's content lives in its BODY, which the type-pin does not guard, so a kernel-definition headline needs a complementary RED body-mutant. Statement-shaped obligations -> type-pin; body-carried obligations -> red body-mutant."
+rank = "honest-doc"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "This documents the gate's own guard discipline: check_claims pins each non-residual decl by printing its #check type, which IS the full statement for a theorem but only the signature for a Prop definition (its body is unguarded by the type-pin). The remedy — a red body-mutant for body-carried content — is a property of check_claims' mutant gate, not a theorem over the target calculus. No command can decide for an arbitrary claim whether its obligation is statement-shaped or body-carried, so the distinction is an honest-doc residual about the enforcement mechanism itself."
+
+# ─────────────────────── Artifact calculus / Strict ───────────────────
+
+[[claim]]
+id = "strict.contract_pinned"
+statement = "Strict premise C(A')=C(A): the contract is pinned (cannot widen the contract to discharge the rule)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ContractPinned"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
+headline = true
+mutant = "mutants/mut_strict_drop_pin.lean"
+mutant_result = "mut_strict_drop_pin.lean:36:2: error: Tactic `rfl` failed — widening C to univ cannot satisfy ContractPinned (univ ≠ {true})."
+residual = false
+
+[[claim]]
+id = "strict.states_preserved"
+statement = "Strict premise C(A) ⊆ S(A'): the well-formedness obligation on the embedding."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ContractStatesPreserved"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "strict.behavior_preserved"
+statement = "Strict premise B(A')|_C = B(A)|_C: contract behavior preserved on both sides."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ContractBehaviorPreserved"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → (A A' : Artifact State Obs) → A.C ⊆ A'.S → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "strict.rule"
+statement = "Strict(A,A'): a refinement step in which I_repr strictly shrinks while the contract is pinned and behavior preserved."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Strict"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
+headline = false
+residual = false
+
+# ─────────────────────── Selection / encoding order ───────────────────
+
+[[claim]]
+id = "select.rank"
+statement = "Rank: positive positions in a per-architecture derived order (not a closed enum)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Rank"
+expected_type = "Type"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.mechanism"
+statement = "Mechanism m: apply, rank; inducing m(A)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Mechanism"
+expected_type = "Type u_1 → Type u_2 → Type (max u_1 u_2)"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.residual_set"
+statement = "Residual(m,A) = I_repr(m(A)) — the residual invalid set after m."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Residual"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → Artifact State Obs → Set State"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.behavior_ok"
+statement = "BehaviorOK(m,A): m pins the contract and preserves behavior on C(A)."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.BehaviorOK"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → Artifact State Obs → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.sufficient_rank1"
+statement = "Sufficient(m) for rank-1 strengthens to I_repr(m(A)) = ∅."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.SufficientRank1"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → Artifact State Obs → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.construction_paths"
+statement = "ConstructionPaths: the enumerated path set with a coverage witness tying it to m(A)'s actual constructors."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ConstructionPaths"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → Artifact State Obs → Type (max u_1 (u_3 + 1))"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.sufficient_paths"
+statement = "Sufficient(m) := I_reach(m(A),b) = ∅ for every enumerated, COVERING construction path b; coverage closes the Paths=Empty vacuity."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.sufficientWithPaths_imp_irepr_empty"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} (cp : SSM.ConstructionPaths m A), SSM.SufficientWithPaths m A cp → SSM.I_repr (m.apply A) = ∅"
+headline = true
+mutant = "mutants/mut_sufficient_empty_paths.lean"
+mutant_result = "mut_sufficient_empty_paths.lean:37:33: error: Type mismatch — an empty path set cannot satisfy the coverage obligation for an artifact with S=univ, so it can no longer vacuously discharge sufficiency."
+residual = false
+
+[[claim]]
+id = "select.subset_minimal"
+statement = "SubsetMinimalOn: ⊆-minimality of the residual — inclusion, never cardinality; incomparable residuals stay unordered."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.SubsetMinimalOn"
+expected_type = "{State : Type u_1} → {M : Type u_2} → Set M → (M → Set State) → M → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.eligible"
+statement = "EligibleMechanisms: only sufficient, behavior-preserving candidates compete for rank."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.EligibleMechanisms"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Artifact State Obs → (SSM.Mechanism State Obs → Prop) → Set (SSM.Mechanism State Obs)"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.earliest_sufficient"
+statement = "EarliestSufficient: ⊆-minimal residual then earliest rank among eligible mechanisms."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.EarliestSufficient"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Artifact State Obs → (SSM.Mechanism State Obs → Prop) → SSM.Mechanism State Obs → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.earliest_admissible"
+statement = "The selected mechanism is admissible: an EarliestSufficient mechanism is Sufficient and preserves behavior (the eligibility gate is load-bearing). This is the kernel theorem justifying the selection lattice's normative presence."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.earliestSufficient_admissible"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {Candidates : Set (SSM.Mechanism State Obs)} {A : Artifact State Obs} {Sufficient : SSM.Mechanism State Obs → Prop} {m : SSM.Mechanism State Obs}, SSM.EarliestSufficient Candidates A Sufficient m → Sufficient m ∧ SSM.BehaviorOK m A"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.fallback"
+statement = "FallbackChoice: when no mechanism is sufficient, the earliest that detects/documents/rejects the targeted invalid states."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.FallbackChoice"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Set State → (SSM.Mechanism State Obs → Set State → Prop) → (SSM.Mechanism State Obs → Prop) → SSM.Mechanism State Obs → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.rank_metric_residual"
+statement = "The encoding-order table (type/constructor/adapter/schema/test/doc/runtime) is DERIVED per architecture by the governing-construction-paths metric, not an axiom."
+rank = "operator-policy"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "The rank assignment is an architecture-dependent derivation ('a mechanism ranks earlier when it governs more construction paths; ties break by earlier detection phase'). The Rank STRUCTURE is formalized (positive index, used by the selectors), but WHICH concrete mechanism gets which rank is an operator judgment per architecture — no command can derive the table for an arbitrary system."
+
+[[claim]]
+id = "select.rank_vocabularies_residual"
+statement = "Two distinct rank axes: encoding-order rank ranks the mechanism CLASS in the TARGET system (where the invariant is encoded); enforcement rank classifies how strongly the SKILL'S OWN claim is discharged. They map only via self-similarity — kernel-theorem/definition ≈ the skill-as-artifact's rank-1/2, evaluator-judgment/operator-policy/honest-doc ≈ its rank-5/6 fallback positions."
+rank = "honest-doc"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "This is META-documentation about the gate's own enforcement-rank semantics versus the target-system encoding order — a distinction between two ranking axes, not a machine-checkable theorem over the target calculus. The enforcement-rank set is a field check_claims validates (KNOWN_RANKS / RESIDUAL_RANKS), a property of the gate, and the encoding-order table is itself the operator-policy residual select.rank_metric_residual. No command can verify the mapping between the two axes for an arbitrary artifact, so it is an honest-doc residual."
+
+[[claim]]
+id = "dominance.constructive"
+statement = "ConstructiveDominance: A_c ≺ A_p when S(A_c)=C(A) and S(A_p)⊋C(A) with pinned contract and equal behavior on C."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ConstructiveDominance"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
+headline = false
+residual = false
+
+# ─────────────────────────── Operations ───────────────────────────────
+
+[[claim]]
+id = "ops.shrink_domain"
+statement = "Shrink domain: replace D by D' ⊊ D; the range shrinks monotonically."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.shrink_domain_range_mono"
+expected_type = "∀ {D : Type u_1} {K : Type u_2} {f : D → K} {Dom Dom' : Set D}, Dom' ⊆ Dom → SSM.Fn.Range f Dom' ⊆ SSM.Fn.Range f Dom"
+headline = false
+residual = false
+
+[[claim]]
+id = "ops.shrink_codomain"
+statement = "Shrink codomain: replace K by K' with R(f) ⊆ K' ⊊ K; the side condition R(f) ⊆ K' keeps it total."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.shrink_codomain_keeps_range"
+expected_type = "∀ {D : Type u_1} {K : Type u_2} {f : D → K} {Dom : Set D} {K' : Set K}, SSM.Fn.Range f Dom ⊆ K' → ∀ (x : D), x ∈ Dom → f x ∈ K'"
+headline = true
+mutant = "mutants/mut_shrink_codomain_drop_value.lean"
+mutant_result = "mut_shrink_codomain_drop_value.lean:26:2: error: Type mismatch — shrinking the codomain below the range (dropping a produced value) leaves an output outside K'."
+residual = false
+
+[[claim]]
+id = "ops.bound_ranges_residual"
+statement = "Bound ranges and cardinality: replace an unbounded component by a finite/ordered/measured subset."
+rank = "honest-doc"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "This is an operation TEMPLATE ('replace an unbounded component by a bounded one'). It is a design instruction whose admissibility is the same shrink-domain/shrink-codomain content already formalized (ops.shrink_domain, ops.shrink_codomain); as a standalone prose operation it has no separable Lean obligation, so it is an honest-doc residual pointing at those theorems."
+
+[[claim]]
+id = "ops.remove_intermediate_residual"
+statement = "Remove intermediate: compose g∘f and eliminate exposed state W with no independent contract role."
+rank = "honest-doc"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "'No independent contract role' is a per-artifact design judgment about whether W carries contract meaning; it cannot be decided by a command for an arbitrary W. The mechanical part (composition is total) is trivial; the load-bearing premise is the operator judgment, so this is an honest-doc residual."
+
+[[claim]]
+id = "ops.normalize_single_source"
+statement = "Normalize: each fact has one determinant (X → Y is functional); two determinants for one fact is unrepresentable."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.singleSource_functional"
+expected_type = "∀ {Fact Det Val : Type u_1} {key : Fact → Det} {val : Fact → Val}, SSM.Fn.SingleSource key val → ∀ {a b : Fact}, key a = key b → val a = val b"
+headline = false
+residual = false
+
+[[claim]]
+id = "ops.single_source_def"
+statement = "SingleSource(key,val): the value is a function of the determinant."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.SingleSource"
+expected_type = "{Fact Det Val : Type u_1} → (Fact → Det) → (Fact → Val) → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "ops.ratchet_residual"
+statement = "Ratchet: replace threshold θ by stricter θ' when current evidence satisfies θ' (an estimated bound may move the other way)."
+rank = "operator-policy"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "Ratcheting depends on 'current evidence satisfies θ'' — an empirical check against live evidence, and the caveat that an estimated bound may move the other way is owned by state-space-minimization references/ratchet.md. No command can decide whether evidence justifies a stricter threshold for an arbitrary artifact."
+
+# ────────────────────────── Invariants ────────────────────────────────
+
+[[claim]]
+id = "inv.totality"
+statement = "Totality: every exposed function is total on its declared domain (Range ⊆ Cod is the well-typedness obligation)."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.Total"
+expected_type = "{D : Type u_1} → {K : Type u_2} → (D → K) → Set D → Set K → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "inv.exhaustiveness_residual"
+statement = "Exhaustiveness: closed sums are matched without a catch-all; a catch-all is admissible only when the sum is open."
+rank = "operator-policy"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "Exhaustiveness is enforced STRUCTURALLY by the Lean kernel: a `match` on a closed inductive that omits a constructor does not typecheck, and a catch-all is only needed for open sums. A project-level Prop would restate that compiler fact vacuously (True) or be unfalsifiable, so it is allowlisted with the type checker as its enforcement rank rather than a fabricated theorem."
+
+[[claim]]
+id = "inv.idempotent_normalizer"
+statement = "Idempotent normalizer: re-normalizing a normalized value is a no-op (nf (nf x) = nf x); every normalized value is a fixed point. This does NOT claim distinct reduction orders converge."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.idempotent_fixes_image"
+expected_type = "∀ {S : Type u_1} {nf : S → S}, SSM.Fn.Idempotent nf → ∀ (x : S), nf (nf x) = nf x"
+headline = false
+residual = false
+
+[[claim]]
+id = "inv.idempotent_def"
+statement = "Idempotent(nf): the normalizer is a retraction onto its image (nf (nf x) = nf x)."
+rank = "kernel-definition"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.Idempotent"
+expected_type = "{S : Type u_1} → (S → S) → Prop"
+headline = false
+residual = false
+
+# NOTE: The "Invariants" section's contract-preservation, single-
+# source, and boundary-monotonicity entries are NOT separate rows.
+# They re-index theorems already inventoried above against the SAME
+# Lean decls, so they are cross-references in SKILL.md prose, not
+# duplicate claims:
+#   contract preservation   -> strict.behavior_preserved
+#                              (SSM.ContractBehaviorPreserved)
+#   single source           -> ops.normalize_single_source
+#                              (SSM.Fn.singleSource_functional)
+#   boundary monotonicity   -> cvp.trusted_reaches_valid
+#                              (SSM.trusted_boundary_reaches_valid)
