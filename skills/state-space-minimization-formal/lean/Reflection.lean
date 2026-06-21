@@ -1,13 +1,19 @@
 /-
-Lean reflection of the state-space-minimization calculus in
-`../SKILL.md`. Calculus version: 2026-06-v3 — must match the
-SKILL.md `metadata.version`; a mismatch means this reflection is
-stale. See README.md for purpose, provenance, determinant, naming
-parity, scope, and build instructions.
+Lean formalization of the state-space-minimization calculus that
+`../SKILL.md` OWNS. Formalization version: 2026-06-v8 — versioned
+INDEPENDENTLY of `../SKILL.md`; it tracks the skill's calculus by
+content and review, not by a shared stamp (the `check_claims` version
+gate cross-checks only the Lean-internal stamps and never reads
+SKILL.md). This module is a DERIVED, NON-NORMATIVE reflection: if it
+and `../SKILL.md` disagree, SKILL.md is right. See README.md for
+purpose, provenance, determinant, naming parity, scope, and build
+instructions.
 -/
 
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.Basic
+
+set_option autoImplicit false
 
 open Set
 
@@ -128,7 +134,6 @@ The contract pin `C(m(A)) = C(A)` is required via `BehaviorOK`. -/
 structure Mechanism (State : Type u) (Obs : Type v) where
   apply : Artifact State Obs → Artifact State Obs
   rank : Rank
-  cost : Nat
 
 def Residual (m : Mechanism State Obs) (A : Artifact State Obs) : Set State :=
   I_repr (m.apply A)
@@ -143,14 +148,58 @@ rank-1 mechanisms to `I_repr(m(A)) = ∅`. -/
 def SufficientRank1 (m : Mechanism State Obs) (A : Artifact State Obs) : Prop :=
   I_repr (m.apply A) = ∅
 
+/-- SKILL.md § "Inputs": "The construction paths of `A`: the set of
+all boundary morphisms that can produce values of `A`. Quantifiers
+`∀b` range over this set; it must be enumerated, not assumed." This
+structure ties the path set to the artifact's *actual* constructors:
+`covers` is the coverage witness requiring that every representable
+state of `m(A)` is reachable through some enumerated path. Without
+this field, `Paths` was caller-supplied and `Paths = Empty`
+discharged sufficiency vacuously (the closed defect). -/
+structure ConstructionPaths
+    (m : Mechanism State Obs) (A : Artifact State Obs) where
+  Paths : Type w
+  path : Paths → Σ U : Type w, Boundary (m.apply A) U
+  /-- Coverage: each representable state of `m(A)` is the value of
+  some enumerated construction path. This is what makes `∀b` over
+  this set meaningful — an under-enumerated set (e.g. `Empty`) is
+  rejected unless `S(m(A))` is itself empty. -/
+  covers :
+    ∀ x ∈ (m.apply A).S, ∃ p : Paths, x ∈ R (path p).2
+
 /-- SKILL.md § "Encoding Order": `Sufficient(m)` — `I_reach = ∅` for
-every construction path. Per § "Inputs", `Paths` must be the
-enumerated construction-path set, not a convenient subset. -/
+every *enumerated, covering* construction path. The quantifier
+ranges over `cp.Paths`, and `cp.covers` ties that set to the
+artifact's constructors, so the predicate is no longer vacuously
+dischargeable by a convenient (e.g. empty) subset. -/
 def SufficientWithPaths
     (m : Mechanism State Obs) (A : Artifact State Obs)
-    (Paths : Type w)
-    (path : Paths → Σ U : Type w, Boundary (m.apply A) U) : Prop :=
-  ∀ p : Paths, I_reach (path p).2 = ∅
+    (cp : ConstructionPaths m A) : Prop :=
+  ∀ p : cp.Paths, I_reach (cp.path p).2 = ∅
+
+/-- Coverage makes `SufficientWithPaths` non-vacuous: over a covering
+path set, `I_reach = ∅` on every path forces `I_repr(m(A)) = ∅`.
+This is the theorem an empty/subset path set cannot satisfy when
+`I_repr(m(A)) ≠ ∅` — it is the kernel content the old definition
+lacked. -/
+theorem sufficientWithPaths_imp_irepr_empty
+    {m : Mechanism State Obs} {A : Artifact State Obs}
+    (cp : ConstructionPaths m A)
+    (h : SufficientWithPaths m A cp) :
+    I_repr (m.apply A) = ∅ := by
+  ext x
+  constructor
+  · intro hx
+    -- `x` is representable-and-invalid; coverage gives a path that
+    -- reaches it; sufficiency on that path empties `I_reach`,
+    -- contradiction.
+    have hxS : x ∈ (m.apply A).S := hx.1
+    obtain ⟨p, hxR⟩ := cp.covers x hxS
+    have hmem : x ∈ I_reach (cp.path p).2 := ⟨hxR, hx⟩
+    rw [h p] at hmem
+    exact (Set.notMem_empty x hmem)
+  · intro hx
+    exact (Set.notMem_empty x hx).elim
 
 /-- SKILL.md § "Artifact Calculus": ⊆-minimality of the residual —
 inclusion, never cardinality; incomparable residuals stay
@@ -169,6 +218,9 @@ def EligibleMechanisms
     Set (Mechanism State Obs) :=
   {n | n ∈ Candidates ∧ Sufficient n ∧ BehaviorOK n A}
 
+/-- SKILL.md § "Artifact Calculus": the selection objective — among
+eligible mechanisms, ⊆-minimal residual then earliest rank. This is
+the whole lexicographic order the calculus selects by. -/
 def EarliestSufficient
     (Candidates : Set (Mechanism State Obs))
     (A : Artifact State Obs)
@@ -180,24 +232,21 @@ def EarliestSufficient
   ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
     Residual n A = Residual m A → m.rank.index ≤ n.rank.index
 
-def CostMinimalAmongTies
-    (Candidates : Set (Mechanism State Obs))
-    (A : Artifact State Obs)
-    (Sufficient : Mechanism State Obs → Prop)
-  (m : Mechanism State Obs) : Prop :=
-  ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
-    Residual n A = Residual m A → n.rank.index = m.rank.index →
-    m.cost ≤ n.cost
-
-/-- SKILL.md § "Artifact Calculus": the lexicographic objective —
-invalidity (⊆-minimal), then earliest sufficient rank, then cost. -/
-def ObjectiveChoice
-    (Candidates : Set (Mechanism State Obs))
-    (A : Artifact State Obs)
-    (Sufficient : Mechanism State Obs → Prop)
-    (m : Mechanism State Obs) : Prop :=
-  EarliestSufficient Candidates A Sufficient m ∧
-  CostMinimalAmongTies Candidates A Sufficient m
+/-- Proves the lattice is normatively sound: the selected mechanism is
+always one the calculus admits — it is sufficient AND preserves
+behavior. The eligibility gate is load-bearing: `EarliestSufficient`
+cannot return an insufficient or behavior-breaking mechanism. This is
+the kernel content that justifies the whole selection lattice's
+presence (without it the definitions would model an order with no
+guaranteed property of its chosen element). -/
+theorem earliestSufficient_admissible
+    {Candidates : Set (Mechanism State Obs)}
+    {A : Artifact State Obs}
+    {Sufficient : Mechanism State Obs → Prop}
+    {m : Mechanism State Obs}
+    (h : EarliestSufficient Candidates A Sufficient m) :
+    Sufficient m ∧ BehaviorOK m A :=
+  ⟨h.1.2.1, h.1.2.2⟩
 
 /-- SKILL.md § "Encoding Order": the fallback when no mechanism is
 sufficient — earliest mechanism that detects, documents, or rejects

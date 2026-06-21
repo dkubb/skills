@@ -1,8 +1,19 @@
 name = "ssm-formal-reflection"
-# Tracks ../SKILL.md metadata.version "2026-06-v3" as 2026.6.3.
-version = "2026.6.3"
+# Formalization version, versioned INDEPENDENTLY of ../SKILL.md. The
+# reflection tracks the skill's calculus by content and review, not by a
+# shared stamp; `check_claims` never reads ../SKILL.md. This semver
+# (2026.6.8) mirrors the Reflection.lean header (2026-06-v8) and is
+# cross-checked against claims.toml and README.md by the gate.
+version = "2026.6.8"
 keywords = ["math"]
-defaultTargets = ["Reflection"]
+# The root module `Ssm` imports every calculus module and is the SOLE
+# default target. The `check_claims` orphan gate fails if any module
+# under lean/ (except the root, the checker, and mutants/) is not
+# transitively imported by `Ssm` — so an unimported module cannot keep
+# the build green. Headline statements are pinned by `check_claims`'s
+# type pin (it compares each decl's printed type to claims.toml's
+# `expected_type`), not by an in-build guard module.
+defaultTargets = ["Ssm"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
@@ -16,4 +27,10 @@ scope = "leanprover-community"
 rev = "v4.30.0"
 
 [[lean_lib]]
-name = "Reflection"
+name = "Ssm"
+# All calculus modules are roots so Lake can resolve `Ssm`'s imports,
+# but `defaultTargets = ["Ssm"]` makes the root the SOLE build target.
+# `check_claims` enforces that every module listed here (except the
+# root) is reached transitively from `Ssm` — an orphan added to roots
+# without an `import` in `Ssm` fails the gate.
+roots = ["Ssm", "Reflection", "ProofPreservation", "Reception", "SelfSimilarity", "Operations"]
