@@ -15,4 +15,4 @@ rev = "v4.30.0"
 
 [[lean_lib]]
 name = "Ssm"
-roots = ["Ssm", "Reflection", "ProofPreservation"]
+roots = ["Ssm", "Reflection", "ProofPreservation", "Reception"]
