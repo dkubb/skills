@@ -157,6 +157,17 @@ Rank mismatch: proving an API-surface fact as a definitional theorem =
 proving a runtime scheduling property in a pure model = **impossible** (reify the
 scheduler or downgrade the rank).
 
+**The bad-lowerer test (kernel theorem vs lowering obligation).** For any claimed
+run-OUTPUT property, ask: *can a bad lowerer falsify this while every reducer rule
+behaves correctly?* If yes, the property reads from AUTHORED program data the
+reducer consumes but does not compute (an occurrence id, a slot index, a template),
+so it is conditional on lowering well-formedness — a *lowering / admitted-code
+obligation*, not a kernel theorem. Carry the conditional in the *statement*
+("…under lowered-occurrence uniqueness"), never only in the docs; the uniqueness
+stays a hypothesis until the lowering relation is itself modeled and proved. This
+is the read-from-program asymmetry: a reducer theorem quantifies over all programs;
+a property a bad program can break is predicated on the program being well-formed.
+
 ## Stance
 
 1. **Presuppose defects; FIND-AND-PROVE them.** Open every review/subagent prompt
@@ -247,8 +258,13 @@ triggers — use them *after* you have a target and witness. Full lineage:
   prove validity & conservation *under composition*; mark resources
   exclusive/fractional/duplicable/affine/linear; **attack aliasing** (two keys ↦
   one resource; one key ↦ two; derived/cached handles; parent/child overlap);
-  name the minting boundary if disjointness is an obligation. **Frame rule**:
-  prove unrelated capabilities unchanged.
+  name the minting boundary if disjointness is an obligation. **Per minting
+  rule, ask what it mints and what same-uniqueness-family token is already
+  present that key-freshness does NOT rule out** — a fresh per-*key* guard stops
+  a duplicate key but not a duplicate owner-scoped token (`pending pid k` minted
+  onto a strand already holding `pending pid k'`); close the gap with a separate
+  phase precondition (a per-owner guard), not a negative premise in the rule.
+  **Frame rule**: prove unrelated capabilities unchanged.
 - **POLA / object-capability + confused deputy / ambient authority** — is
   authority ambient (from position/global/session) rather than an explicit
   carried capability? Ambient authority is the confused-deputy /
@@ -260,6 +276,14 @@ triggers — use them *after* you have a target and witness. Full lineage:
   values are copyable; runtime state copies via snapshot, crash recovery, branch
   fork, test isolation, serialization, repeated submission. Prove the no-fork
   condition, reify the scheduler, or downgrade to a bridge/operator obligation.
+- **Resource-or-fact (the dual of fork)** — fork *admits* invalid states by
+  treating a copyable value as affine; the dual *deletes* valid states by treating
+  a FACT as affine. A derived datum / SSA value with multiple legitimate readers
+  (a later call AND an audit/export step) is a fact, not a one-shot resource —
+  modeling it linear starves the second reader (an artificial consumer race that
+  the contract never asked for). Ask *"affine resource or fact?"* before imposing
+  linearity; a fact is persistent + owner-scoped with a write-once `≤1`
+  coherence bound, never consumed.
 - **Best correct approximation / strongest postcondition** — merely *sound*, or
   the *most precise* sound one? Is the slack an authored choice or baked-in
   over-approximation?
@@ -274,6 +298,27 @@ triggers — use them *after* you have a target and witness. Full lineage:
   hyperproperties, not arbitrary ones.
 - **Linearizability / linearization points**; **injective agreement** (Lowe —
   unique/fresh, not just "something similar ran"); crash / idempotence.
+- **Composition non-monotonicity (the A∪B trap)** — a property proven
+  per-component does NOT transfer to a union/append:
+  `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
+  (recorded-run vs candidate-run frontiers; two writers; two sessions
+  reusing an id). Any theorem over `A ++ B` needs a BRIDGE invariant
+  naming the cross term, and the certificate must be STRONGER than "the
+  lossy projections matched" (else it assumes what it proves — the bridge
+  must say prior facts matched at the real seam, not just that a lossy
+  view agreed). State the bridge shape
+  (`perRunInj ∧ crossAgreement → unionInj`) now; prove it with the
+  comparison fixture, not before. Do not let a future rung quietly prove
+  only the weaker per-side facts.
+- **Obligation transfer to a durable successor** — when an invariant protects a
+  LIVE token later consumed into a DURABLE one (`pending → observed`), ask
+  whether the support obligation should transfer to the successor. A co-presence
+  clause (`pending has matching intent`) is SUPPORT, not PROVENANCE — it cannot
+  express authorship when the durable token carries no owner (real provenance is
+  a run/replay property, not a state invariant). Name the clause for exactly what
+  it discharges ("…-has-matching-… *support*"), and record the
+  successor-obligation question explicitly rather than letting the name imply the
+  stronger property.
 - **Codec / canonicalization lawfulness** — round-trip, idempotence,
   soundness+completeness, canonical uniqueness. A bad canonicalizer is a
   *replay-semantics* bug. **Runtime-bridge laws**: lowering preserves/narrows
@@ -287,6 +332,78 @@ triggers — use them *after* you have a target and witness. Full lineage:
 
 - **Vacuity + mutation** — break a definition / weaken a hypothesis; does it still
   prove? Un-killed mutant = spec too weak. (See the vacuity test below.)
+- **Annotation / label vacuity (the all-constant sweep — fire on every decorated
+  relation/step/run)** — whenever a relation/step/run is decorated with a label,
+  tag, event, or annotation, ask: *can ALL my advertised theorems survive if every
+  annotation is replaced by ONE constant, or by `none` / a no-op?* If yes, the
+  annotation's CORRECTNESS is UNPINNED — erasure + lifting + single-valuedness
+  together prove only "the labeled relation is the graph of a single-valued partial
+  function refining the base," and the constant function is in that set (the
+  `StepWithEvent := Step ∧ e = none` countermodel goes green RECORDING NOTHING).
+  Single-valuedness proves DETERMINISTIC annotation, not CORRECT annotation —
+  "deterministic garbage passes." A label is real only once one theorem READS IT
+  BACK against what the step produced. Fix-trigger: require at least one theorem
+  that EXACTLY ties the label to an independent observable (an exact +1 count
+  delta against the real durable residue: `some x` → exactly that residue +1,
+  `none` → all unchanged), and confirm it reddens BOTH the all-constant mutant
+  AND a swapped-annotation mutant. Apply the sweep across the whole annotation
+  SUITE, not per-theorem — the per-theorem vacuity check passes each one yet the
+  suite records nothing.
+- **Existential coupling / witness-hiding** — fire on every corollary of shape
+  "given a relation hiding witnesses, `∃ <new witnesses>, P`". When a theorem
+  CONSUMES a relation/`∃` that binds its witnesses INTERNALLY and RETURNS fresh
+  existential witnesses, ask: *does the CONCLUSION explicitly relate the two sets
+  of witnesses — or could an UNRELATED witness already present in the state
+  satisfy it?* The exactness that lives only in the proof BODY does not bind a
+  client: a body that unpacks the firing's exact `(pid,bind,v)` but concludes
+  only `∃ pid bind v, Origin …` is satisfiable by a DECOY origin (separating
+  state: two persistent vals, firing reads the 2nd, conclusion met by the 1st).
+  Opaque-contract corollary: *would a downstream client know the claimed
+  correspondence from the theorem's TYPE alone, without inspecting the proof
+  body?* If the docstring says "the EXACT triple it reads" but the type is a bare
+  `∃`, that load-bearing word is untested against the type. Fix-trigger: move the
+  identifying indices into explicit parameters (an indexed read relation,
+  `Reads code G G' pid bind v → Origin …`, or
+  `∃ triple, Reads triple ∧ Origin triple`) so the conclusion type-couples to
+  the exact witnesses.
+- **Word-class closed-world doc sweep (fire on every constructor/rule/arm
+  addition)** — after adding a constructor / rule / instruction, grep the ENTIRE
+  module for every closed-world WORD-CLASS — NOT a phrase list and NOT just the
+  old declaration name (`Step :=`): "both", "only producer", "the producer", "the
+  only", "all N" / "two rules" / "N rules", "the persistent token", "yet", "no rule
+  … yet", "later increment", "deferred". Each hit IN A COMMENT is a candidate stale
+  closed-world claim a new constructor may have falsified (a "two rules" comment
+  next to a now-six-arm def FALSELY NARROWS the case split a reviewer audits). The
+  lesson: a phrase-list or old-decl-name sweep MISSES whole clusters (it greps
+  `Step :=` and skips the "only producer" / "no routing yet" / token-taxonomy
+  comments) — the word-class sweep is exhaustive where the phrase list re-commits
+  the narrow-grep miss it was meant to fix.
+- **Load-bearing-hypothesis witness audit** — to show hypothesis C is
+  necessary for a theorem `{A, B, C} → G`, the necessity-witness must
+  satisfy ALL the OTHER hypotheses (A, B) and fail *only* when C is
+  dropped — else a critic says "your counterexample also violates B." A
+  witness proving merely `A ∧ ¬C → ¬G` is "a nearby bad state," not a
+  clean load-bearing witness; discharge every sibling hypothesis in the
+  witness (often cheap, and the proof is what makes the necessity claim
+  adversary-binding).
+- **Temporal-inversion test for bag / unordered state** — when a theorem reads
+  "A THEN B" but the state is an unordered bag / frame, ask: *can a supposedly-
+  LATER token sit in the INITIAL frame?* If yes, the theorem proves
+  COMPATIBILITY / REACHABILITY, not causal ARRIVAL — a pre-supplied reply makes
+  "the emit *sources* the reply" an overclaim (the rule sources only what it
+  actually mints; the reply is exogenous start-bag input). Calibrate the claim to
+  what the rule produces, and name the exogenous tokens as environment input.
+- **Two-step phase-closure test** — don't only test a hand-inserted bad state:
+  start CLEAN, take one LEGAL step, then ask whether the next enabled instruction
+  invalidates the side invariant the next step needs. Catches an invariant
+  sufficient for ONE step but not closed under the relation (two back-to-back
+  `emitAwait` on one strand → the no-pending precondition is false at step 2, yet
+  the raw rule still fires). A consumed invariant that isn't step-closed is a
+  LOWERING / PHASE discipline, not a run invariant: bundle it into a named
+  `PhaseWF` with a preservation/lowering theorem, OR keep the looser run
+  invariant but stop calling it "sufficient" and name the obligation. Keep it OUT
+  of the rule premise (preserve orthogonality); make it a NAMED admitted-code
+  obligation, never an informal comment.
 - **Theorem-set minimality (the delete-a-headline mutant)** — extend mutation
   from *definitions* to the *theorem set itself*: delete each headline and
   recompile the rest. If it re-derives from the others plus already-pinned
@@ -431,6 +548,42 @@ Audit the exported environment as a hostile downstream module: #check rec/recOn/
 casesOn/noConfusion/projections; #synth Repr/BEq/DecidableEq/Hashable/Inhabited;
 try .1/.2/parent projections/coercions/structure-update/import-all. Prove what
 each leaks; anything past the role's authority is a defect.
+```
+
+```text
+For each new consumed hypothesis and each reachability/"A-then-B" headline, run
+three audits a mutation sweep misses: (1) LOAD-BEARING-HYPOTHESIS — if a witness
+claims hypothesis C is necessary, check it satisfies every OTHER hypothesis and
+fails only on C; if it also violates B it is "a nearby bad state," not a clean
+witness. (2) TEMPORAL-INVERSION — if the state is an unordered bag, check whether
+a supposedly-later token sits in the INITIAL frame; if so the theorem proves
+reachability/compatibility, not arrival, and any "the rule sources X" prose where
+X is pre-supplied is an overclaim. (3) PHASE-CLOSURE — start clean, take one legal
+step, and check whether the next enabled instruction breaks the consumed side
+invariant; if it does, the invariant is a lowering/phase discipline, not
+step-closed, and the run-invariant must not be called "sufficient." Report each as
+a calibration (rename / re-scope / name-the-obligation), not necessarily a
+soundness defect.
+```
+
+```text
+Run three TRIGGER sweeps targeted reasoning skips. (1) ANNOTATION/LABEL VACUITY —
+for every relation/step/run decorated with a label/tag/event, replace EVERY
+annotation with one constant (or `none`/no-op) ACROSS THE WHOLE SUITE and recompile
+all advertised theorems; if they stay green the annotation is unpinned (erasure +
+lifting + single-valuedness prove only deterministic garbage). Demand one theorem
+tying the label to an independent observable by an EXACT count delta, and confirm
+it reddens both the all-`none` mutant and a swapped-annotation mutant. (2)
+EXISTENTIAL COUPLING — for every corollary of shape "given <relation hiding
+witnesses>, ∃ <new witnesses>, P", check the CONCLUSION's TYPE (not the proof body)
+forces the returned witnesses to equal the hidden ones; build the two-value
+separating state where a DECOY witness already in the state satisfies the bare `∃`.
+If the docstring says "the EXACT triple," that word is untested unless the type
+contains the equation. (3) WORD-CLASS DOC SWEEP — after any constructor/rule/arm
+addition, grep the WHOLE module for the closed-world word-class ("both", "only
+producer", "the producer", "the only", "two rules"/"all N", "the persistent token",
+"yet", "no rule … yet", "later increment", "deferred"), NOT a phrase list or the
+old decl name; flag each comment a new arm may have falsified.
 ```
 
 ## References (load on demand)

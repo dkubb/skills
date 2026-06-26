@@ -55,6 +55,34 @@ everything before it is an ordinary construction path. Treating
 shape-evidence as contract-evidence is how invalid states arrive
 "validated".
 
+## Keep the core typed; the boundary owns encoding
+
+Parse-at-ingress has an egress dual. Just as raw bytes become typed
+values *coming in*, typed values become raw bytes only *going out* — at
+the adapter, never inside the core. The core's state space stays typed
+end to end. A datum that is a typed object in the core must not be
+re-encoded into wire bytes inside the core in order to be routed onward;
+**route the typed value and let the boundary render it.**
+
+The anti-pattern is the *control-plane-as-encoder*: the core builds an
+outbound request by concatenating, encoding, or normalizing pieces into
+the wire shape itself. That widens the core's representation with
+wire-format concerns — provider-specific bytes, field ordering, escaping,
+template syntax — which is exactly the invalid-state surface that parsing
+exists to keep out, reintroduced on the egress side. It also couples
+identity and replay to *rendered bytes* instead of the typed payload, so
+two renderings of the same value become two identities.
+
+The test is **who owns the semantics of construction**: if the core
+concatenates / encodes / normalizes to produce the request, it has
+absorbed a boundary concern. The fix is a **sealed template owned by the
+boundary** — `instantiate : Template -> Value -> Ctx -> Request` as
+authored adapter data — with the core routing only the typed value into
+it and proving structural facts about the routing. The core decides
+*which* value flows where; the adapter decides *how* it is rendered.
+Scope ownership with `architectural-scopes.md`; this is the boundary
+counterpart to "parse, don't validate."
+
 ## Restructure data to remove the constraint
 
 When stacked refinements explode (`NonEmpty AND Sorted AND

@@ -197,6 +197,20 @@ evidence predicate.) Adding a second construction path `b' ≠ b` with
 For constructive `A`, `Obl(f)` is discharged by the type and survives
 the addition of arbitrary new construction paths.
 
+**The bad-lowerer test (is a claimed run output constructive or
+predicative?).** When a property `Q` is asserted of an artifact's
+*outputs* and one of the construction paths `b` is an authored lowering
+— program data the reducer reads but does not compute (an occurrence id,
+a template, a slot) — ask: *can a bad lowerer `b'` falsify `Q` while
+every reducer rule behaves correctly?* If yes, `Q` is established only
+through the trusted boundary `b`, so `R(b') ⊄ C(A)` voids it exactly as
+above: `Q` is predicative, conditional on lowering well-formedness, not a
+constructive (rule-level) theorem. State it with the conditional in the
+statement (`Q under LoweredOccUnique`), and keep `LoweredOccUnique` a
+hypothesis until the lowering relation is itself an artifact with its own
+`C`. A rule-level theorem quantifies over all programs; a property a bad
+program breaks is predicated on the program inhabiting `C`.
+
 ## Artifact Calculus
 
 - Minimization is contract-preserving invalidity reduction.
@@ -455,6 +469,72 @@ Semantics: `state-space-minimization`
 capability tokens, temporal invariants) and
 `references/proof-preservation.md` (proofs that survive
 conversions).
+
+### Transitions as boundary morphisms
+
+A rewrite / transition rule `t: A -> A` that mints state is a
+construction path, so it has a range `R(t)` and a reachable-invalid set
+`I_reach(A,t) = R(t) ∩ I_repr(A)` like any boundary. To find it,
+**enumerate each minted token against each uniqueness bound in `C(A)`**: a
+per-*key* freshness premise narrows `R(t)` on the by-key family but not on
+an owner-scoped family, so a pre-existing owner-scoped token plus the mint
+gives `R(t) ∩ I_repr(A) ≠ ∅` (mint `pending pid k` onto a strand already
+holding `pending pid k'`). Close it with a per-owner *phase* premise on
+`t`, never a contract widening and never a negative premise that couples
+the rule to global state.
+
+**Step-closure of a consumed premise.** A premise `φ` that `t` consumes is
+sound for one application; soundness of a *run* requires `φ` closed under
+the transition relation. If it is not, `φ` is predicative — held by a
+boundary/lowering, not by the carrier — and the run invariant that omits
+its preservation is under-scoped.
+
+$$
+\begin{array}{c}
+\varphi(A)
+\qquad
+t(A, A')
+\qquad
+\neg\,\mathrm{Preserves}(t, \varphi)
+\\
+\hline
+\varphi \text{ is a lowering/phase discipline, not a run invariant}
+\end{array}
+$$
+
+Discharge `Preserves(t, φ)` and fold `φ` into the run invariant, OR keep
+`φ` as a named admitted-code obligation and stop asserting the smaller run
+invariant is *sufficient*. Two consecutive minting `t` at the same owner
+is the canonical witness that a one-step premise is not step-closed.
+
+**Reachability is not arrival.** `x ∈ R(t)` says the state is *reachable*,
+not that a token *arrived* by `t`. In an unordered carrier a
+supposedly-later token may inhabit the initial state, so a reachability
+theorem `Reaches(A_0, A_f)` proves compatibility along a schedule, not
+causal sourcing: "`t` sources `y`" holds only for the `y` that `t` mints;
+exogenous start-state tokens are inputs, not outputs.
+
+**Composition is non-monotone (the union trap).** For a carrier
+composition `⊕` (append, union),
+
+$$
+\begin{array}{c}
+\varphi(A)
+\qquad
+\varphi(B)
+\qquad
+A, B \text{ independently constructed}
+\\
+\hline
+\varphi(A \oplus B) \text{ does not follow}
+\end{array}
+$$
+
+when `A` and `B` come from different worlds (recorded vs candidate run,
+two writers). The union needs a cross term `χ(A,B)` with
+`φ(A) ∧ φ(B) ∧ χ(A,B) → φ(A ⊕ B)`. Name `χ` before applying any
+per-component result; `χ` must be stronger than "the lossy projections
+agreed" (else it assumes the conclusion).
 
 ## Reception Semantics
 

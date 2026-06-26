@@ -144,6 +144,37 @@ used once and dropped." Phantom tags compose with affine types to record
 not just "this proof exists" but "this proof has not yet been spent."
 Capability tokens are usually affine for this reason.
 
+### Resource or fact: classify before imposing linearity
+
+Substructural typing controls *how often* a value is used, so it is the
+right mechanism only for actual **resources** (capabilities, handles,
+nonces, budgets). A **fact** — a derived datum or single-assignment value
+that is simply true once established, and readable by any number of
+consumers — is not a resource. The classification is two-sided, and both
+errors leak:
+
+- **Fact modeled as affine deletes valid states.** A value that a later
+  step *and* an audit/export step both legitimately read can be read only
+  once under linearity, so the second reader starves — an artificial
+  consumer race the contract never asked for. This breaks contract
+  preservation (`B(A')|_C ≠ B(A)|_C`): strictness is a means to remove
+  invalid states, not an objective, and linearity here removes states the
+  contract requires (`references/principles.md` § "Core principle";
+  the skill's own "do not delete or make awkward any state the contract
+  requires").
+- **Resource modeled non-linearly admits invalid states.** The familiar
+  direction: a true one-shot capability used twice (double-spend, replayed
+  nonce, reset-attack on a token) is a representable-invalid state that
+  affine/linear typing exists to remove.
+
+Decision: ask **"affine resource or fact?"** before reaching for
+linearity. A fact is **persistent and owner-scoped**, with its coherence
+expressed as a write-once cardinality bound (`≤ 1` value per
+`(owner, binder)`) — uniqueness of the *fact*, not single *use*. A
+resource is affine/linear with conservation under composition. Misreading
+one for the other is the substructural analogue of a primitive-obsession
+slip.
+
 ## Cross-references
 
 - `principles.md` § "Encode invariants into types" — the full ladder.
