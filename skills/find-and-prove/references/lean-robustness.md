@@ -149,13 +149,13 @@ eliminates by giving a branch that receives those parameters. So:
 
 ## Mutation operators — derive by least-power simplification
 
-Don't memorize a list; *generate* it. Every operator replaces an operation with one
-that has a **smaller state space** — a strictly less-powerful form the types still
-accept (`mutant`'s principle of least power: "use the most constrained primitive
-that satisfies the requirement"; `kind_of?`→`instance_of?` narrows to one exact
-class, `method`→`public_method` drops private access). When a mutant **survives**
-(every proof/test still passes), it forces a binary — and *both* answers improve
-the artifact:
+Don't memorize a list; *generate* it. Every operator replaces an operation with
+one that has a **smaller state space** — a strictly less-powerful form the types
+still accept (`mutant`'s principle of least power: "use the most constrained
+primitive that satisfies the requirement"; `kind_of?`→`instance_of?` narrows to
+one exact class, `method`→`public_method` drops private access). When a mutant
+**survives** (every proof/test still passes), it forces a binary — and *both*
+answers improve the artifact:
 
 - **Lower-power operator is sufficient** — nothing needed the extra power;
   adopt the simpler form as the new source (shrink the state space; the code

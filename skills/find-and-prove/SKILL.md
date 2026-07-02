@@ -14,6 +14,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
+  version: "2026-06-v1"
   type: review-methodology
 ---
 
@@ -487,8 +488,8 @@ because another lens exists.
    theorem adequacy; error-algebra for failure tags; provenance for
    record-now-judge-later.
 6. **Classify by rank** (theorem / export drill / runtime bridge / operator
-   policy / evaluator / doc) and by threat scope (in-scope defect vs escalation vs
-   out-of-scope).
+   policy / evaluator / doc) and by threat scope (in-scope defect vs
+   escalation vs out-of-scope).
 7. Read proof bodies LAST — after the target and expected theorem shape are known.
 
 ## Reusable subagent prompts (find-and-prove)
@@ -561,17 +562,18 @@ reachability/compatibility, not arrival, and any "the rule sources X" prose wher
 X is pre-supplied is an overclaim. (3) PHASE-CLOSURE — start clean, take one legal
 step, and check whether the next enabled instruction breaks the consumed side
 invariant; if it does, the invariant is a lowering/phase discipline, not
-step-closed, and the run-invariant must not be called "sufficient." Report each as
-a calibration (rename / re-scope / name-the-obligation), not necessarily a
+step-closed, and the run-invariant must not be called "sufficient." Report each
+as a calibration (rename / re-scope / name-the-obligation), not necessarily a
 soundness defect.
 ```
 
 ```text
-Run three TRIGGER sweeps targeted reasoning skips. (1) ANNOTATION/LABEL VACUITY —
-for every relation/step/run decorated with a label/tag/event, replace EVERY
-annotation with one constant (or `none`/no-op) ACROSS THE WHOLE SUITE and recompile
-all advertised theorems; if they stay green the annotation is unpinned (erasure +
-lifting + single-valuedness prove only deterministic garbage). Demand one theorem
+Run three TRIGGER sweeps targeted reasoning skips. (1) ANNOTATION/LABEL VACUITY
+— for every relation/step/run decorated with a label/tag/event, replace EVERY
+annotation with one constant (or `none`/no-op) ACROSS THE WHOLE SUITE and
+recompile all advertised theorems; if they stay green the annotation is unpinned
+(erasure + lifting + single-valuedness prove only deterministic garbage).
+Demand one theorem
 tying the label to an independent observable by an EXACT count delta, and confirm
 it reddens both the all-`none` mutant and a swapped-annotation mutant. (2)
 EXISTENTIAL COUPLING — for every corollary of shape "given <relation hiding
