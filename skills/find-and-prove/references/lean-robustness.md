@@ -55,6 +55,17 @@ eliminates by giving a branch that receives those parameters. So:
 11. **Public metaprograms / macros / elaborators.** Run during term construction
     (stronger coupling than ordinary defs); if they touch private state or emit
     public terms with private reductions, they belong in the TCB/export audit.
+12. **`@[implemented_by]` / `@[extern]` / `opaque` — kernel/runtime
+    divergence.** The compiled program runs the substitute, not the verified
+    definition, and NONE of these appear in `#print axioms` — the axiom audit
+    passes clean while the executable semantics are unverified. Grep the
+    module and its dependencies for these attributes whenever anything is
+    executed or extracted; each hit is at best a runtime-bridge obligation.
+13. **Shadowed notation / statement inauthenticity.** Local `notation` /
+    `macro_rules` / `infix` can shadow core symbols so a headline *reads* as
+    one claim and *elaborates* as another — an attack on the review itself,
+    not on downstream code. Re-elaborate headlines under
+    `set_option pp.all true` / `#print` before trusting what they say.
 
 ## The adversary-import drill (write it BEFORE the implementation is finished)
 
@@ -74,6 +85,8 @@ eliminates by giving a branch that receives those parameters. So:
 #synth Inhabited T
 -- also try: .1, .2, pattern matching, structure update, parent projections
 -- (toParent), coercions, inferInstance, and any serializers (ToJson/Encodable).
+-- also grep: @[implemented_by], @[extern], opaque, partial, native_decide —
+-- none of these show in #print axioms.
 ```
 
 ## Writing robust Lean — habits
@@ -133,6 +146,11 @@ eliminates by giving a branch that receives those parameters. So:
   (proof-irrelevant, noncomputational); evidence in `Type` only when downstream
   may inspect it. Don't move a secret from erased proof-land into executable
   data-land.
+- **Re-elaborate before you read.** Audit headline statements under
+  `set_option pp.all true` / `#print`; confirm no local notation or macro
+  shadows a core symbol (`=`, `¬`, `→`, `∀`, `∃`). For untrusted authors
+  (LLM-generated proofs included), finish with an external kernel pass
+  (`lean4checker`) — elaborator exploits do not show in `#print axioms`.
 - **Keep a `DocClaims`-style module.** Every prose phrase — "unrepresentable",
   "exact", "complete", "only", "faithful", "no fabricated" — gets a declaration
   whose *type* says the same thing, compile-pinned.
@@ -167,8 +185,11 @@ There is no third option (rewriting to mask the mutant without coverage is mutan
 explicit trap — same rule as the proof ladder). The catalog below is the common
 cross-language core + Lean specializations; the generator (smaller-state-space
 substitution) finds the artifact-specific operators a fixed list misses — survivors
-hide where the types DON'T already constrain (type-compatible value choices). Floor,
-not ceiling.
+hide where the types DON'T already constrain (type-compatible value choices).
+Floor, not ceiling. Under budget, rank mutation targets the way oracle targets
+are ranked: defs under strong-word headlines and defs feeding public
+observations first — and report the unswept remainder explicitly (a silent
+partial sweep reads as full adequacy).
 
 **Universal core (every language; specialized to Lean):**
 

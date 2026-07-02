@@ -14,7 +14,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-06-v1"
+  version: "2026-07-v2"
   type: review-methodology
 ---
 
@@ -88,7 +88,9 @@ For each, fill a **target table** row:
    operator policy / evaluator judgment / doc.
 10. Fix or invariant.
 
-**Rank targets** (attack in descending score):
+**Rank targets.** The strongest-claim → public-oracle triage list below is the
+authoritative order; the score is a tiebreaker mnemonic *within* a triage tier
+— do not compute it numerically (that produces fake precision):
 
 ```text
 score ~= claim_strength x hidden_value_importance x adversary_control
@@ -418,14 +420,41 @@ triggers — use them *after* you have a target and witness. Full lineage:
   defect, and does not weaken *definition*-mutation resistance (a definition
   mutant is still caught, by one or both); flag it as such, don't overstate
   severity.
+- **Fuel / partiality vacuity** — a liveness-flavored headline over a
+  fuel-indexed definition is vacuously conditional when the fuel is existential
+  (`∃ fuel`) or a fixed constant never related to input size: it proves
+  reachability-in-principle, not progress. Demand `∀ fuel ≥ bound(input)` with
+  an explicit bound function, or downgrade the claim. `partial def` (and any
+  `termination_by` / `decreasing_by` hole) opts the definition out of the
+  theorem story entirely — flag every headline whose subject is `partial`
+  while the prose still claims total coverage.
+- **Statement authenticity (the shadowed-notation check)** — the reviewer
+  audits the *rendered* statement; local `notation` / `macro_rules` / `infix`
+  can shadow core symbols so a headline reads as one claim and elaborates as
+  another. Re-elaborate every headline under `set_option pp.all true` (or
+  `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
+  When the artifact author is untrusted (LLM-generated proofs included), add
+  an external kernel pass (`lean4checker`) — elaborator exploits are outside
+  the reach of `#print axioms`.
 - **Adequacy of encodings** — is the model the *real* object, or one with extra
-  inhabitants / collapsed distinctions?
+  inhabitants / collapsed distinctions? Don't leave this as judgment: build the
+  **bidirectional coverage table** — every real-world event / behavior /
+  failure mode ↔ the model constructor or rule representing it. An unmatched
+  row on EITHER side is a finding (unmodeled behavior, or a model inhabitant
+  with no real counterpart — the extra inhabitant IS the adequacy gap). Where
+  both a model interpreter and an implementation run, add differential
+  execution on shared inputs. This is the adequacy analogue of the mutation
+  sweep: executable, not argued.
 - **Kernel conservativity** (did a def/quotient/axiom enlarge what the *kernel*
   proves?) vs **elaboration-surface stability** (did public instances/simp/
   reducibility change what downstream constructs or what proofs *mean*?).
-- **Axiom / TCB budget** — `#print axioms`; `Classical.choice` is debt only under
-  a constructive/extraction gate; `sorryAx`/`native_decide`/unsafe are the real
-  red flags.
+- **Axiom / TCB budget** — `#print axioms`; `Classical.choice` is debt only
+  under a constructive/extraction gate; `sorryAx`/`native_decide`/unsafe are
+  the real red flags. `#print axioms` is NOT the whole TCB: `@[implemented_by]`
+  and `@[extern]` swap the *compiled* code out from under the verified
+  definition and appear in no axiom report — grep for them (and `opaque`)
+  whenever anything executes or extracts; each hit is at best a runtime-bridge
+  obligation.
 
 ### Evidence generation
 
@@ -482,15 +511,19 @@ because another lens exists.
    proof-gap.
 4. Attack the top target: the two-run distinguisher / forgery pair /
    admitted-invalid-state; then run the **schedule amplifier**.
-5. Only now pull lenses: codec law for canonicalization targets; export-surface
+5. After any confirmed defect, RE-RANK before moving on: defects cluster —
+   bump every target sharing its definition family, seam, or authoring session
+   (a confirmed defect falsifies the "care was taken here" prior).
+6. Only now pull lenses: codec law for canonicalization targets; export-surface
    drill for sealed targets; resource algebra for authority/fuel; non-interference
    for confidentiality; simulation for bridge/runtime; mutation/small-scope for
    theorem adequacy; error-algebra for failure tags; provenance for
    record-now-judge-later.
-6. **Classify by rank** (theorem / export drill / runtime bridge / operator
+7. **Classify by rank** (theorem / export drill / runtime bridge / operator
    policy / evaluator / doc) and by threat scope (in-scope defect vs
    escalation vs out-of-scope).
-7. Read proof bodies LAST — after the target and expected theorem shape are known.
+8. Read proof bodies LAST — after the target and expected theorem shape are
+   known.
 
 ## Reusable subagent prompts (find-and-prove)
 
@@ -548,7 +581,9 @@ is a minimal-basis prune finding, not a vacuity or soundness defect.
 Audit the exported environment as a hostile downstream module: #check rec/recOn/
 casesOn/noConfusion/projections; #synth Repr/BEq/DecidableEq/Hashable/Inhabited;
 try .1/.2/parent projections/coercions/structure-update/import-all. Prove what
-each leaks; anything past the role's authority is a defect.
+each leaks; anything past the role's authority is a defect. Also grep
+@[implemented_by]/@[extern]/opaque/partial — none show in #print axioms — and
+re-elaborate every headline under pp.all to rule out shadowed notation.
 ```
 
 ```text
@@ -587,6 +622,22 @@ producer", "the producer", "the only", "two rules"/"all N", "the persistent toke
 "yet", "no rule … yet", "later increment", "deferred"), NOT a phrase list or the
 old decl name; flag each comment a new arm may have falsified.
 ```
+
+### Adjudication (the orchestrator's side of a delegated hunt)
+
+The prompts above put subagents under a find-something presupposition; the
+witness rule only binds if the receiver enforces it. On receipt:
+
+1. **Re-run every claimed witness yourself** — recompile the counterexample,
+   re-execute the drill. A witness that fails re-check RETRACTS the finding;
+   do not soften it to a suspicion and keep it.
+2. **Dedupe by (target, hidden predicate, witness shape)**, not by prose
+   similarity — two hunters describing one oracle differently is one finding.
+3. **When independent hunters disagree, the compiled witness wins** — never
+   majority vote, never deference to the stronger model.
+4. **Log the exact re-check command and output** next to each accepted
+   finding; an unreproduced finding is a suspicion in the report, not a
+   defect.
 
 ## References (load on demand)
 
