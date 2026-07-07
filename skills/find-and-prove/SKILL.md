@@ -506,6 +506,12 @@ triggers — use them *after* you have a target and witness. Full lineage:
   finite parameters to small bounds and search (`decide`/`#eval`/enumerators)
   BEFORE proving; require a non-degenerate witness per headline. **Mutation ·
   metamorphic · differential · CEGAR · Hughes property taxonomy.**
+- **Coverage-guided fuzzing** (AFL/libFuzzer lineage) — for anything the rank
+  classifier sends to *runtime bridge*: round-trip fuzz codecs and
+  canonicalizers (`decode ∘ encode = id`, canon idempotent), differential-fuzz
+  the implementation against the model interpreter on shared inputs.
+  Property-based testing searches the spec's input space; coverage guidance
+  searches the IMPLEMENTATION's branch space — they find different bugs.
 
 ## Calibration
 

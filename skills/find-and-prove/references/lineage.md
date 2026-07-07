@@ -146,6 +146,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   *Jackson; Hughes/Paraskevopoulou* — small counterexamples first.
 - **metamorphic testing** — *T.Y. Chen 1998* — relations without an oracle.
 - **differential testing** — *(classical)* — compare two implementations.
+- **coverage-guided fuzzing** — *Zalewski (AFL); Serebryany (libFuzzer)* —
+  mutate inputs to maximize branch coverage; the workhorse for codecs,
+  parsers, and runtime bridges.
 - **property taxonomy** (invariant/postcondition/metamorphic/model-based/
   inductive) — *Hughes, How to Specify It! 2019* — which property kinds to
   write.
