@@ -58,6 +58,18 @@ one GLOBAL store, the lowering must MANUFACTURE the namespace (derived
 disjoint addresses), never assume separation. [Anchors: content
 addressing; De Bruijn indices.]
 
+## E5 Lossy compatibility layers
+
+FIRE on every fix that ISOLATES a collision into a lossy projection: the
+fix is sound only for consumers reading the injective truth — name exactly
+WHICH consumers those are. Demote the frozen lossy identity to a
+projection with a truth→projection theorem (the lossy side derives from
+the injective side, never stands alone). A bridge is honest, a destination
+is not: the moment a downstream claim reads the lossy side as identity,
+the isolation is unsound. And check the recorded trace retains every
+identity axis the NEXT theorem needs after proof witnesses are forgotten —
+erasure that drops an axis makes the future theorem unstatable.
+
 ## Multi-field coherence / evidence binding
 
 Every payload with id+args+result+proof+version+authority+parents must prove
