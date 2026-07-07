@@ -25,6 +25,12 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   trivial-implementation check is the executable feasibility test.
 - **mutation analysis** — *mCoq; "Proof Process Evaluation with Mutation
   Analysis"* — spec/proof too weak (kill the mutant).
+- **specification mutation** — *Ammann–Black 1999* — mutate the SPEC/predicate
+  itself, not only the implementation; a predicate mutant no theorem kills is
+  an unpinned predicate (the predicate-collapse lattice walks its classes).
+- **coverage metrics for formal verification** — *Chockler–Kupferman–Vardi* —
+  measure what a passing property actually constrains by which model/spec
+  mutations it still detects.
 - **adequacy of encodings** — *Harper–Honsell–Plotkin (LF)* — model faithful
   to the real object; the two failure directions are **"no junk, no
   confusion"** — *Burstall–Goguen (algebraic specification)* — junk = model

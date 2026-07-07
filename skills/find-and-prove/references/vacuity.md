@@ -21,6 +21,49 @@ feasibility is a proof obligation, not a given. One `#eval`/`decide` sweep
 instantiating every headline at the trivial model; the all-constant
 annotation sweep below is its per-annotation form.
 
+## A2 Predicate-collapse lattice
+
+FIRE on every NEW predicate, including one in CONCLUSION position: a "the
+predicate is real" theorem must be pinned against the WHOLE collapse lattice.
+Descend all seven levels — each is a distinct surviving-mutant class; assume
+each level survives until you have built the killing mutant:
+
+1. **Truth-value** — test `:= True` AND `:= False`. An existential
+   counter-witness (`∃ C, ¬ P C`) kills only the `True` mutant; `:= False`
+   survives because consumers go VACUOUS for the interesting case, not false
+   — the asymmetry hides it. Kill: a two-sided distinguishing theorem
+   (positive AND negative for the predicate).
+2. **Quantifier scope** — head-only / last-only / first-only mutants, plus
+   wrong-request (the predicate ignores which request was delivered). A
+   finite `[good, bad]` witness puts `bad` in a fixed position, so a
+   head-only check still rejects it. Kill: a request-sensitivity witness plus
+   mixed-list negatives.
+3. **Value restriction** — `P o := o = c ∧ …` for any FIXED `c` survives a
+   hardcoded witness value. Kill: parametrize the witness over an ARBITRARY
+   caller-chosen value.
+4. **Position/cardinality** — last-only / singleton-only mutants pass finite
+   examples. Kill: negatives parametric over position
+   (`pre ++ bad :: post`) — bad anywhere, neither end special.
+5. **OVER-restriction (the symmetric blind spot)** — fully parametric
+   negatives with finite positives let a predicate survive that accepts only
+   the narrow positive SHAPES the finite witness lists. Kill: positives
+   exactly as parametric as negatives (`∀ all-good structure → accepted`).
+   Symmetry is the convergence criterion.
+6. **Witness shape** — `∃!` (unique-witness) and identity-parse
+   over-restrictions survive even arbitrary-value, non-identity witnesses
+   (each can be built with exactly one accepting raw). Kill: level 7.
+7. **Close the class** — pin the INTRODUCTION RULE as a theorem
+   (`evidence → predicate`, e.g. `decode raw = some o → P o`) instead of
+   chasing one more witness; one theorem states the actual invariant and
+   kills the whole over-restriction class at the predicate level. Headline it
+   iff the predicate definition is mutable design surface in the declared
+   mutation universe (`references/basis.md`, G1).
+
+[Anchors: specification mutation — Ammann–Black; spec coverage metrics —
+Chockler–Kupferman–Vardi.] The worked origin was a seven-round hunt on a
+decode-image predicate, one lattice level per round — walking the lattice up
+front replaces the rounds.
+
 ## A3 Annotation / label vacuity (the all-constant sweep)
 
 Fire on every decorated relation/step/run: whenever a relation/step/run is
