@@ -110,9 +110,41 @@ the construction is proved. This blocks a finding only when the headline
 claims universality; an honest exhibit is a valid rung. [Anchor: angelic vs
 demonic nondeterminism.]
 
-## C7 Word-class closed-world doc sweep
+## C7 Docs & prose battery
 
-Fire on every constructor/rule/arm addition: after adding a constructor /
+FIRE per docs pass — each check below is one leak class:
+
+- **The three-leak taxonomy** — (1) a fixture qualifier dropped (a
+  fixture-scoped result stated as general); (2) a claim-changing guard
+  dropped (the hypothesis that scopes the claim vanishes from the prose);
+  (3) vocabulary imported from a richer, unlanded layer — an altitude
+  overclaim ("decoded" / "provenance" before that layer exists).
+- **Two-snapshot drift on promotion** — when a "future" item lands, grep
+  the WHOLE document for the old future-tense framing; a half-migrated doc
+  is worse than either pure snapshot. "Converged" cannot coexist with a
+  named open fork.
+- **Verb tense sets claim altitude** — "is decoded" vs "will be decoded"
+  vs "is decode-admitted" are three different claims; audit tense per
+  guarantee verb.
+- **Determinism ≠ cause-uniqueness** — a determinism theorem pins the
+  successor is unique, never WHICH cause fired; docstrings must not let
+  "deterministic" imply the system knows or exposes the firing cause.
+- **Injectivity hypotheses belong to inversion, never forward
+  projection** — a forward map needs no injectivity premise; one appearing
+  there marks a statement built backwards.
+- **Fixture-valid distinguisher scoping** — scope a distinguisher's prose
+  to the class of states where it survives, not to all states.
+- **Plumbing-vs-laundering** — ban the forbidden DERIVATION by theorem
+  name, not the carrier hypothesis (data may flow; the prohibited use is
+  deriving the banned fact from it). The anti-laundering tell: a lemma
+  arbitrary in exactly the index a laundered version would need to fix.
+- **Lossy-projection scoping** — after any lossy projection, scope every
+  downstream claim to what survives the projection.
+
+### Word-class closed-world doc sweep (the C7 grep)
+
+Fire on every constructor/rule/arm addition AND on every status promotion
+(a "deferred" / "future" item landing): after adding a constructor /
 rule / instruction, grep the ENTIRE module for every closed-world WORD-CLASS —
 NOT a phrase list and NOT just the old declaration name (`Step :=`): "both",
 "only producer", "the producer", "the only", "all N" / "two rules" / "N
