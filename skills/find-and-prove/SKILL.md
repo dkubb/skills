@@ -231,13 +231,11 @@ and the representation-seal lenses (ADT abstraction-barrier leak,
 least-authority representation, contextual equivalence), plus
 declassification/endorsement discipline: `references/information-flow.md`.
 
-### Representation & API surface — *is the seal real?*
+### Identity & causality (defect class E)
 
-- **Multi-field coherence / evidence binding** — every payload with
-  id+args+result+proof+version+authority+parents must prove its fields describe
-  the *same* event. Attack by swapping one field while preserving the others;
-  require ok-coherence, error-coherence, frame, provenance-binding, hash/payload
-  agreement.
+Multi-field coherence / evidence binding, and codec / canonicalization
+lawfulness (identity is decided by equality, hashing, normalization):
+`references/identity.md`.
 
 ### Authority, resources & composition (defect class F)
 
@@ -259,9 +257,7 @@ A∪B composition trap: `references/resources.md`.
   successor-obligation question explicitly rather than letting the name imply the
   stronger property.
 - **Codec / canonicalization lawfulness** — round-trip, idempotence,
-  soundness+completeness, canonical uniqueness. A bad canonicalizer is a
-  *replay-semantics* bug. **Runtime-bridge laws**: lowering preserves/narrows
-  authority; "Lean proved it" ≠ "Rust does it".
+  canonical uniqueness, runtime-bridge laws: `references/identity.md`.
 - **Evaluator / provenance poisoning** (record-now-judge-later) — the
   declassification/endorsement half of information flow:
   `references/information-flow.md` (I6).
@@ -608,6 +604,9 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/identity.md` — defect class E: identity & causality
+  (multi-field coherence / evidence binding, codec & canonicalization
+  lawfulness).
 - `references/resources.md` — defect class F: authority/resource conservation
   (separation-logic lenses, aliasing, minting, forkability, resource-or-fact)
   and composition (refinement caveats, linearizability, the A∪B trap).
