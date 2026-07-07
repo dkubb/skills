@@ -20,6 +20,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **vacuity / antecedent failure** — *Beer–Ben-David–Eisner–Rodeh;
   Kupferman–Vardi* — passes trivially / weakest theorem.
+- **inherent vacuity** — *Fisman–Kupferman et al. 2008* — a specification
+  satisfied vacuously in every model of interest; the echo lens's
+  conclusion-restates-hypothesis case.
 - **feasibility / the miracle** — *Morgan, refinement calculus* — an
   infeasible (unimplementable) spec refines to anything; the
   trivial-implementation check is the executable feasibility test.

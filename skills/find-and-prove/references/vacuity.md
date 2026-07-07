@@ -83,6 +83,20 @@ confirm it reddens BOTH the all-constant mutant AND a swapped-annotation
 mutant. Apply the sweep across the whole annotation SUITE, not per-theorem —
 the per-theorem vacuity check passes each one yet the suite records nothing.
 
+## A4 Echo lens
+
+FIRE on every theorem whose conclusion shares atoms with a hypothesis: a
+conclusion conjunct restating a hypothesis does no work but reads as proven —
+the theorem's advertised strength includes a clause its hypotheses hand it
+for free. Decide by the delete-BOTH counter-mutant: drop the hypothesis AND
+the echoing conjunct together; if the remainder still proves, the conjunct
+was an echo (inherent vacuity), not a guarantee. Sibling probe: swap the
+exhibited run witness for the trivial one and require failure — a
+non-vacuity witness that the do-nothing run also satisfies exhibits nothing.
+
+[Anchor: inherent vacuity — vacuity present in every model of interest, not
+just the artifact at hand.]
+
 ## A5 Fuel / partiality vacuity
 
 A liveness-flavored headline over a fuel-indexed definition is vacuously
