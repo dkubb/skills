@@ -92,3 +92,13 @@ identifying indices into explicit parameters (an indexed read relation,
 `Reads code G G' pid bind v → Origin …`, or
 `∃ triple, Reads triple ∧ Origin triple`) so the conclusion type-couples to
 the exact witnesses.
+
+**The grammatical-subject half (B5b).** FIRE on every `∃`-headline: every
+conjunct's grammatical SUBJECT must be the bound variable, never a ground
+helper term that happens to equal the witness (`∃ t, Reads t ∧ P (helper x)`
+where `helper x` equals `t` at the exhibited witness). Both forms are defeq
+AT THE WITNESS, so no mutant can distinguish them — the mutation gate is
+structurally blind here, and the defect and its fix are syntactic: rewrite
+each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
+P t`). A conjunct whose subject is a ground term binds the helper, not the
+existential — a different witness satisfying `Reads` is left unconstrained.
