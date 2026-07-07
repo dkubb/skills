@@ -103,6 +103,12 @@ references/
   evidence.md          — defect class H (mutation mechanics, witness rules,
                          mechanical floor; absorbs lean-robustness "Mutation
                          operators" + "Mutate intentionally")
+  information-flow.md  — defect class I (confidentiality: the oracle-hunt's
+                         leak lenses — partition oracle, error algebra,
+                         non-interference/LowEq, QIF, declassification,
+                         chosen-prefix; representation-seal: least-authority,
+                         contextual equivalence); lean-robustness is its
+                         Lean drill
   lean-robustness.md   — export-surface catalog + robust-Lean habits (kept)
   lineage.md           — extended with every new anchor in §3
   prompts.md           — subagent prompts incl. reproduced winning prompts
@@ -466,6 +472,45 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   over an arbitrary handle so only the public step op is usable); two-tier
   failure honesty (request divergence fail-closed vs local miss
   advance-and-continue, each pinned).
+
+### I — Confidentiality & information flow (the oracle-hunt's leak lenses)
+
+This class is the original skill's information-flow spine, preserved intact —
+the catalog is theorem-adequacy-oriented and barely touched it, so nothing
+here is shed. It is the confidentiality half of the hunt: what can the role
+observe or distinguish? `references/lean-robustness.md` is its Lean-specific
+attack drill.
+
+- **I1 Public-result partition / decision oracle** — FIRE on every public
+  result type: its constructors induce a partition of hidden states; derive
+  it, then ask whether the role may learn it. Witness = two hidden states
+  differing only in the protected fact that produce different observations.
+- **I2 Error algebra / diagnostic side channel** [padding-oracle family,
+  Vaudenay, Bleichenbacher] — FIRE on every distinct failure reason: each is
+  a declassification, compounded by cross-run adaptivity; prove the role may
+  learn each distinction, or collapse candidate-facing errors and keep rich
+  diagnostics offline.
+- **I3 Non-interference** [two-run / low-equivalence; relational Hoare /
+  self-composition; unwinding per-step; QIF / min-entropy for measurement] —
+  FIRE on every confidentiality claim: prove `LowEq role s₁ s₂ ∧ secrets vary
+  → low observations equal ∧ next states LowEq` by self-composition; a
+  constructor count is a smell (crude `log₂k`), not a measurement.
+- **I4 Chosen-prefix oracle / active automaton learning** [Angluin L*] — FIRE
+  when the adversary drives execution to a boundary: each public tag after the
+  prefix is a membership query about the hidden trace/policy/state machine;
+  generalizes cross-run replay.
+- **I5 Representation-seal reality** [ADT abstraction-barrier leak;
+  least-authority; contextual equivalence / full abstraction] — FIRE on every
+  sealed handle: is the abstraction barrier real, or does a public eliminator
+  (recursor, projection, `noConfusion`, deriving instance, coercion) leak the
+  hidden field? Store the capability, not the secret; ask whether any context
+  could distinguish the sealed handle from a non-leaking ideal. The full drill
+  is `lean-robustness.md`.
+- **I6 Declassification discipline** [dimensions & principles; robust
+  declassification / transparent endorsement] — FIRE on every intended
+  release: name what/who/where/when is released and prove the attacker cannot
+  influence it (robustness) and attacker data cannot launder into trusted
+  evidence (the integrity dual).
 
 ### Adjudication additions (SKILL.md)
 
