@@ -60,6 +60,8 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   tricked by the caller.
 - **complete mediation** (+ fail-safe defaults, least privilege) —
   *Saltzer–Schroeder* — check every path, no cached bypass.
+- **TOCTOU (time-of-check-to-time-of-use)** — *Bishop–Dilger 1996* — state
+  mutates between check and use; a schedule race, not a mediation gap.
 - **membranes / attenuation** — *Miller; ocap* — recursive seal + revoke.
 - **affine / linear types** — *(Wadler; Rust ownership)* — single-use.
 - **best correct approximation / optimal abstract transformer / strongest

@@ -137,6 +137,9 @@ learned in one step, rerun:
 - **crash / restart** — does recovery replay the query, double-consume, or reveal
   a phase bit?
 - **concurrency** — two actors racing the same affine/linear capability?
+- **check-then-use (TOCTOU)** — can the hidden state change between an
+  admission check and the consumption of its result? A passed check is
+  itself a stale observation.
 - **batching** — does the evaluator reveal per-case or only aggregate results?
 
 ### The rank classifier (assign every claim exactly one)
