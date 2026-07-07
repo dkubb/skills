@@ -46,3 +46,21 @@ Reception may beat bare minimality: keep `= 1` over `≤ 1` when the
 stronger form is the contract readers need — document the tiebreak
 ("semantic headline, honestly labeled") rather than silently keeping the
 derivable form.
+
+## G3 Placement rules
+
+- **Projection-straddling**: state the load-bearing theorem in PUBLIC
+  vocabulary, prove it by internal induction, and demote the readable
+  weakening; at most ONE projection headline per projection (treat
+  `trace = revTrace.reverse` as fixed background or give it exactly one
+  headline — never inflate every public-trace corollary).
+- Per-element relation is the headline; the aggregate view is an
+  extensionality corollary.
+- **Subsumption-as-theorem, never churn**: when a rung generalizes a
+  landed concept, keep the specific one (its pins and mutation tests stay
+  green) and add `old ≡ new instance` as a bridge theorem, rather than
+  collapsing old into new.
+- A non-vacuity reachability witness EARNS basis status (it kills the
+  "nothing happens, so all safety holds" mutant — that is a unique kill).
+- Split an assumption-free algebraic core from the invariant-concluding
+  semantic theorem, and headline the semantic one.
