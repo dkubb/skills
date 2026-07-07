@@ -113,3 +113,15 @@ spelled-out content (not against another name that unfolds with it). And
 calibrate every "this theorem reddens mutant X" claim to the locus that
 actually reddens — the caller — never to the helper the docstring names; a
 kill-claim at the wrong locus overstates the helper's coverage.
+
+## B8 Law-basis minimality + widening distinguisher
+
+FIRE on every stored law field / carried law bundle: store the VALUE-exact
+law and DERIVE bit-exactness — the converse (store bit-exactness, derive
+value-exactness) admits fabricators. Prove the minimality claim
+adversary-binding by compiling an inhabitant of the WEAKER law that fails
+the stored one, committed as an in-module negative guard, never argued in
+prose. State-space WIDENING of a law field is a mutation-operator class the
+delete/weaken operators cannot generate — add it to the sweep's operator
+catalog (`references/evidence.md`, H1) whenever a law field is in the
+mutable surface.
