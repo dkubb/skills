@@ -239,69 +239,16 @@ declassification/endorsement discipline: `references/information-flow.md`.
   require ok-coherence, error-coherence, frame, provenance-binding, hash/payload
   agreement.
 
-### Authority & resources — *does ownership/budget add up?*
+### Authority, resources & composition (defect class F)
 
-- **Separation logic / resource algebra / ownership** — identify the algebra;
-  prove validity & conservation *under composition*; mark resources
-  exclusive/fractional/duplicable/affine/linear; **attack aliasing** (two keys ↦
-  one resource; one key ↦ two; derived/cached handles; parent/child overlap);
-  name the minting boundary if disjointness is an obligation. **Per minting
-  rule, ask what it mints and what same-uniqueness-family token is already
-  present that key-freshness does NOT rule out** — a fresh per-*key* guard stops
-  a duplicate key but not a duplicate owner-scoped token (`pending pid k` minted
-  onto a strand already holding `pending pid k'`); close the gap with a separate
-  phase precondition (a per-owner guard), not a negative premise in the rule.
-  **Frame rule**: prove unrelated capabilities unchanged.
-- **POLA / object-capability + confused deputy / ambient authority** — is
-  authority ambient (from position/global/session) rather than an explicit
-  carried capability? Ambient authority is the confused-deputy /
-  prompt-injection enabler.
-- **Complete mediation** — every access checked on every path, including
-  cached/derived.
-- **Forkability / reset attack on linearity** — affine/linear guarantees are void
-  unless the use-record cannot be copied, rewound, replayed, or re-decoded. Pure
-  values are copyable; runtime state copies via snapshot, crash recovery, branch
-  fork, test isolation, serialization, repeated submission. Prove the no-fork
-  condition, reify the scheduler, or downgrade to a bridge/operator obligation.
-  The published rank ceiling is **fork consistency / fork-linearizability**
-  (SUNDR): an untrusted store cannot be *prevented* from forking views, only
-  forced to keep the fork forever — detection plus commitment, not prevention.
-- **Resource-or-fact (the dual of fork)** — fork *admits* invalid states by
-  treating a copyable value as affine; the dual *deletes* valid states by treating
-  a FACT as affine. A derived datum / SSA value with multiple legitimate readers
-  (a later call AND an audit/export step) is a fact, not a one-shot resource —
-  modeling it linear starves the second reader (an artificial consumer race that
-  the contract never asked for). Ask *"affine resource or fact?"* before imposing
-  linearity; a fact is persistent + owner-scoped with a write-once `≤1`
-  coherence bound, never consumed.
-- **Best correct approximation / strongest postcondition** — merely *sound*, or
-  the *most precise* sound one? Is the slack an authored choice or baked-in
-  over-approximation?
+Separation-logic/resource-algebra lenses (conservation, aliasing, minting,
+frame rule), POLA/confused-deputy, complete mediation, forkability/reset and
+resource-or-fact, best-correct-approximation, safety/liveness, refinement
+mapping and the CSP caveat, linearizability/injective agreement, and the
+A∪B composition trap: `references/resources.md`.
 
 ### Dynamics & composition — *across time, substitution, runtime*
 
-- **Safety / liveness / fairness** (Alpern–Schneider) — is "authorization safety"
-  silently assuming progress, freshness, cleanup, revocation?
-- **Refinement mapping / simulation / bisimulation** (Abadi–Lamport;
-  history/prophecy) — the way to prove a bridge (a shared helper is not a proof).
-  Caveat: trace refinement preserves trace properties and *subset-closed*
-  hyperproperties, not arbitrary ones — and no liveness: in the CSP hierarchy
-  only failures/divergences refinement carries progress claims through, so a
-  liveness claim riding a traces-level refinement is an overclaim.
-- **Linearizability / linearization points**; **injective agreement** (Lowe —
-  unique/fresh, not just "something similar ran"); crash / idempotence.
-- **Composition non-monotonicity (the A∪B trap)** — a property proven
-  per-component does NOT transfer to a union/append:
-  `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
-  (recorded-run vs candidate-run frontiers; two writers; two sessions
-  reusing an id). Any theorem over `A ++ B` needs a BRIDGE invariant
-  naming the cross term, and the certificate must be STRONGER than "the
-  lossy projections matched" (else it assumes what it proves — the bridge
-  must say prior facts matched at the real seam, not just that a lossy
-  view agreed). State the bridge shape
-  (`perRunInj ∧ crossAgreement → unionInj`) now; prove it with the
-  comparison fixture, not before. Do not let a future rung quietly prove
-  only the weaker per-side facts.
 - **Obligation transfer to a durable successor** — when an invariant protects a
   LIVE token later consumed into a DURABLE one (`pending → observed`), ask
   whether the support obligation should transfer to the successor. A co-presence
@@ -661,6 +608,9 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/resources.md` — defect class F: authority/resource conservation
+  (separation-logic lenses, aliasing, minting, forkability, resource-or-fact)
+  and composition (refinement caveats, linearizability, the A∪B trap).
 - `references/information-flow.md` — defect class I (confidentiality): the
   leak lenses (partition oracle, error algebra, non-interference/`LowEq`, QIF,
   chosen-prefix) and representation-seal lenses (least-authority, contextual
