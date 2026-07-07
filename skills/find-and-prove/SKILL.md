@@ -262,57 +262,18 @@ A∪B composition trap: `references/resources.md`.
 - **Overclaim & reception (defect class C)** — the word-class closed-world doc
   sweep (fire on every constructor/rule/arm addition) and the
   temporal-inversion test for bag/unordered state: `references/reception.md`.
-- **Load-bearing-hypothesis witness audit** — to show hypothesis C is
-  necessary for a theorem `{A, B, C} → G`, the necessity-witness must
-  satisfy ALL the OTHER hypotheses (A, B) and fail *only* when C is
-  dropped — else a critic says "your counterexample also violates B." A
-  witness proving merely `A ∧ ¬C → ¬G` is "a nearby bad state," not a
-  clean load-bearing witness; discharge every sibling hypothesis in the
-  witness (often cheap, and the proof is what makes the necessity claim
-  adversary-binding).
 - **Mis-scoping (defect class D)** — the two-step phase-closure test
   (counterexample-to-induction; is the consumed invariant step-closed?) and
   the bad-lowerer test: `references/scope.md`.
 - **Basis curation (defect class G)** — theorem-set minimality (the
   delete-a-headline mutant; keep vs demote): `references/basis.md`.
-- **Statement authenticity (Pollack-inconsistency)** — the reviewer
-  audits the *rendered* statement; local `notation` / `macro_rules` / `infix`
-  can shadow core symbols so a headline reads as one claim and elaborates as
-  another (Wiedijk's Pollack-inconsistency: the printer/parser as attack
-  surface — the system prints a statement that reads as a different claim
-  than it elaborates to). Re-elaborate every headline under `set_option pp.all true` (or
-  `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
-  When the artifact author is untrusted (LLM-generated proofs included), add
-  an external kernel pass (`lean4checker`) — elaborator exploits are outside
-  the reach of `#print axioms`. Re-elaboration does NOT catch homoglyphic
-  identifiers or bidi-reordered rendering (Trojan Source): a lookalike code
-  point makes two names render identically while naming different
-  declarations. Add a confusables / non-ASCII scan over headline statements
-  and exported names.
-- **Kernel conservativity** (did a def/quotient/axiom enlarge what the *kernel*
-  proves?) vs **elaboration-surface stability** (did public instances/simp/
-  reducibility change what downstream constructs or what proofs *mean*?).
-- **Axiom / TCB budget** — `#print axioms`; `Classical.choice` is debt only
-  under a constructive/extraction gate; `sorryAx`/`native_decide`/unsafe are
-  the real red flags. `#print axioms` is NOT the whole TCB: `@[implemented_by]`
-  and `@[extern]` swap the *compiled* code out from under the verified
-  definition and appear in no axiom report — grep for them (and `opaque`)
-  whenever anything executes or extracts; each hit is at best a runtime-bridge
-  obligation.
+### Evidence mechanics & generation (defect class H)
 
-### Evidence generation
-
-- **Small-scope / property-based** (Alloy small-scope; QuickChick) — instantiate
-  finite parameters to small bounds and search
-  (`decide`/`#eval`/`plausible`/enumerators) BEFORE proving; require a
-  non-degenerate witness per headline. **Mutation ·
-  metamorphic · differential · CEGAR · Hughes property taxonomy.**
-- **Coverage-guided fuzzing** (AFL/libFuzzer lineage) — for anything the rank
-  classifier sends to *runtime bridge*: round-trip fuzz codecs and
-  canonicalizers (`decode ∘ encode = id`, canon idempotent), differential-fuzz
-  the implementation against the model interpreter on shared inputs.
-  Property-based testing searches the spec's input space; coverage guidance
-  searches the IMPLEMENTATION's branch space — they find different bugs.
+Mutation discipline and the operator catalog (absorbing the lean-robustness
+mutation material), the load-bearing-hypothesis witness audit, the mechanical
+floor (statement authenticity / Pollack-inconsistency, kernel conservativity,
+axiom/TCB budget), and evidence generation (small-scope / property-based
+search before proving, coverage-guided fuzzing): `references/evidence.md`.
 
 ## Calibration
 
@@ -490,6 +451,9 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/evidence.md` — defect class H: evidence mechanics (mutation
+  discipline and operators, witness discipline, the mechanical floor,
+  small-scope search, fuzzing).
 - `references/basis.md` — defect class G: basis curation (headline vs
   corollary; the delete-a-headline mutant).
 - `references/scope.md` — defect class D: mis-scoping (right claim, wrong
