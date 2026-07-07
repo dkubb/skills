@@ -98,3 +98,13 @@ two ledgers have different conservation laws. Audit that no proof under a
 boundary imports a theorem from the incompatible resource regime (a
 fuel-ledger fact discharging an authority-ledger obligation is a category
 error that typechecks).
+
+## D7 Run-position of an invariant
+
+"For every emitted X, f(state)" quantified over FINAL-trace membership is
+wrong when the property is about the state immediately BEFORE the
+witnessing step — the final state may have consumed or overwritten what
+the property reads. Factor the run as prefix → step → suffix and state the
+invariant over the PREFIX projection at the witnessing step. The deciding
+witness: a run whose later steps destroy the property that held at the
+step, making the final-membership form false while the prefix form holds.
