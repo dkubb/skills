@@ -20,6 +20,19 @@ is the read-from-program asymmetry: a reducer theorem quantifies over all
 programs; a property a bad program can break is predicated on the program
 being well-formed.
 
+## D2 Reach-past-boundary
+
+FIRE on every success/positive witness: a premise about a step LATER than
+the property being pinned is the mechanical tell of overbuild. Stop the
+witness AT the boundary — a boundary guarantee's positive witness terminates
+right after reaching it, carrying no premise about continuation; the
+full-run version DEMOTES to an integration corollary. The headline fixture
+is the SMALLEST net that reaches the new boundary and stops right after it —
+never a prefix of a richer fixture (a cross-layer witness must be a
+same-shape machine that terminates). The tell is mechanical: scan each
+witness's hypotheses for references to steps past the pinned property; each
+one found is either overbuild to strip or a mis-scoped claim to re-state.
+
 ## D3 Two-step phase-closure test (a counterexample-to-induction hunt)
 
 Don't only test a hand-inserted bad state: start CLEAN, take one LEGAL step,
