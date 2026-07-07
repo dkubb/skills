@@ -60,6 +60,19 @@ named distinguisher. The deciding mutant is the constant-producer
 neutralization; the fix pins the conclusion to the named difference
 (equalize every other field in the witness pair).
 
+## C5 Bystander / frame-generic overclaim
+
+FIRE on every uniqueness / confluence headline stated over `∀ frame` plus
+named participants: can the named parties be instantiated as BYSTANDERS
+while other owners inside the frame do the real steps? A frame-generic
+quantification admits frames containing other owners' tokens, so "the named
+pair is confluent / unique" is satisfiable with the named parties idle — the
+theorem is true of a run its name never intended. The deciding witness is
+the bystander instantiation (named parties inert, a frame owner fires). Fix:
+index the hypotheses to the ACTUAL firing step/owner, and demote the
+frame-generic form to an internal engine lemma the indexed headline is
+proved from.
+
 ## C7 Word-class closed-world doc sweep
 
 Fire on every constructor/rule/arm addition: after adding a constructor /
