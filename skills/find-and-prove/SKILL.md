@@ -223,51 +223,21 @@ Pull the lens that explains the current target. Canonical terms are latent-space
 triggers — use them *after* you have a target and witness. Full lineage:
 `references/lineage.md`.
 
-### Decision-oracle extraction — *the operational core of information flow*
+### Confidentiality & information flow (defect class I)
 
-- **Public-result partition / decision oracle** — a public result type with
-  constructors `c1…cn` induces a *partition* of hidden states; derive it, then
-  ask whether the role may learn it. Witness = two hidden states differing only
-  in the protected fact that produce different observations. (Replay's
-  `ok / intentMismatch / recordExhausted` is not "an error type" — it computes
-  `head.intent = actual` and `trace_nonempty`.)
-- **Error algebra / diagnostic side channel (the padding-oracle family)** —
-  every distinct failure reason is a declassification, and cross-run
-  adaptivity compounds bits-per-query into full recovery (Vaudenay's padding
-  oracle; Bleichenbacher). Prove the role may learn each distinction, or
-  collapse candidate-facing errors and keep rich diagnostics offline. Attack `not-found`
-  vs `forbidden`, `mismatch` vs `exhausted`, timeout vs denial, parse-error vs
-  auth-error, stale-version vs nonexistent.
-- **Non-interference** as the two-run / **low-equivalence** theorem
-  (`LowEq role s1 s2` ∧ secrets vary → low observations equal ∧ next states
-  `LowEq`), proved by **relational Hoare / self-composition / product programs**;
-  **unwinding** is the per-step form. **QIF / min-entropy** (Smith): `k`
-  distinguishable outputs is a *crude* `log2 k` upper bound, distribution-
-  dependent — constructor count is a smell, not a measurement.
-- **Chosen-prefix oracle / active automaton learning** — if the adversary drives
-  execution to a boundary, each public tag after that prefix is a membership
-  query about the hidden trace/policy/state machine. Generalizes cross-run
-  replay; catches trace-length, branch-shape, hidden-policy probing.
+The leak lenses — public-result partition / decision oracle, error algebra /
+diagnostic side channel, non-interference / `LowEq`, chosen-prefix oracle —
+and the representation-seal lenses (ADT abstraction-barrier leak,
+least-authority representation, contextual equivalence), plus
+declassification/endorsement discipline: `references/information-flow.md`.
 
 ### Representation & API surface — *is the seal real?*
 
-- **ADT abstraction-barrier leak / public elimination-surface exposure** (the
-  precise name for the `casesOn` bug — the type was never abstract). Audit
-  recursors, projections (`.1`, parent `toParent`), `noConfusion`, **deriving**
-  (`Repr`/`BEq`/`DecidableEq`/`Ord`/`Hashable`/`SizeOf` — each an observer),
-  instances + coercions, **`import all`**, reducible aliases, `autoImplicit`.
-  Drill in `references/lean-robustness.md`.
-- **Least-authority representation** — store the **capability** (a `step`
-  closure), not the secret, so a total representation leak yields only the
-  capability. Pair with terminality + affine use.
 - **Multi-field coherence / evidence binding** — every payload with
   id+args+result+proof+version+authority+parents must prove its fields describe
   the *same* event. Attack by swapping one field while preserving the others;
   require ok-coherence, error-coherence, frame, provenance-binding, hash/payload
   agreement.
-- **Contextual equivalence / refinement** — could *any* context distinguish the
-  sealed handle from a non-leaking ideal? (Refinement/simulation by default; full
-  abstraction only for hostile linking.)
 
 ### Authority & resources — *does ownership/budget add up?*
 
@@ -345,15 +315,9 @@ triggers — use them *after* you have a target and witness. Full lineage:
   soundness+completeness, canonical uniqueness. A bad canonicalizer is a
   *replay-semantics* bug. **Runtime-bridge laws**: lowering preserves/narrows
   authority; "Lean proved it" ≠ "Rust does it".
-- **Evaluator / provenance poisoning** (record-now-judge-later) — can a candidate
-  produce a trace that's *safe as execution* but *misleading as evidence*
-  (labels, region boundaries, version mapping, divergence spans, check
-  identities, corpus, evaluator prompts) while staying within hard stops?
-  Canonical home: **specification gaming / reward hacking** and the Goodhart
-  taxonomy — optimize the *measure* (the trace as evidence) while respecting
-  the *metric*'s hard stops. Endorsement discipline (transparent endorsement,
-  the integrity dual of robust declassification): attacker-influenced data
-  must not launder into trusted evidence.
+- **Evaluator / provenance poisoning** (record-now-judge-later) — the
+  declassification/endorsement half of information flow:
+  `references/information-flow.md` (I6).
 
 ### Claim / spec truth — *is this the right theorem, honestly stated?*
 
@@ -697,6 +661,10 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/information-flow.md` — defect class I (confidentiality): the
+  leak lenses (partition oracle, error algebra, non-interference/`LowEq`, QIF,
+  chosen-prefix) and representation-seal lenses (least-authority, contextual
+  equivalence), plus declassification/endorsement discipline.
 - `references/lean-robustness.md` — the Lean export-surface attack catalog, the
   `#check`/`#synth` adversary-import drill, and robust-Lean habits
   (capability-sealed handles, four theorem families, `LowEq`/two-run,
