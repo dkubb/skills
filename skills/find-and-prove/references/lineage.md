@@ -86,6 +86,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   postcondition** — *Cousot; Dijkstra predicate transformers* — sound but not
   tightest.
 - **frame conditions / frame problem** — *(classical)* — what does not change.
+- **small footprint / tight specifications** — *O'Hearn–Reynolds–Yang
+  (separation logic locality)* — a rule's specification speaks only about
+  the state it touches; a whole-bag "no X" claim needs an explicit
+  frame-absence hypothesis.
 - **kernel of a map** — *(algebra, classical)* — the equivalence
   `f a = f b` classifies exactly what a projection forgets; compute it per
   constructor instead of asking injectivity yes/no.

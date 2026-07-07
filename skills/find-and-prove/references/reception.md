@@ -51,7 +51,22 @@ says), never keep the aspirational name with a clarifying docstring alone —
 the name is what readers carry. The deciding witness is the satisfying
 violator; building it is cheap and settles the argument.
 
-## C4 Temporal-inversion test for bag / unordered state
+## C4 Frame honesty ("no X" claims in redex ++ frame systems)
+
+FIRE on every "no X" / "contains no X" claim in a `redex ++ frame` rewrite
+system: disambiguate THREE readings — (a) the RHS-PRODUCED block has no X;
+(b) no NEW X appears; (c) the WHOLE output bag has no X. Reading (c) is
+almost always FALSE without an explicit frame-absence hypothesis: the frame
+may already carry an X, especially for PERSISTENT accumulating facts. The
+honest forms: a frame-clean IMPLICATION (`frame has no X → output has no
+X`) or a claim scoped to the produced residue. Prose for a bare local
+rewrite says "residue block", never "in G′". [Anchor: small-footprint /
+tight specifications — a rule's spec talks only about the footprint it
+touches; whole-bag claims need the frame made explicit.] The
+temporal-inversion test and the shadow-difference probe below are this
+item's siblings — all three police what the frame smuggles in.
+
+### Temporal-inversion test for bag / unordered state (C4 sibling)
 
 When a theorem reads "A THEN B" but the state is an unordered bag / frame,
 ask: *can a supposedly-LATER token sit in the INITIAL frame?* If yes, the
