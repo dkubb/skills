@@ -49,3 +49,19 @@ theorem, OR keep the looser run invariant but stop calling it "sufficient"
 and name the obligation. Keep it OUT of the rule premise (preserve
 orthogonality); make it a NAMED admitted-code obligation, never an informal
 comment.
+
+**WF-uniqueness ≠ semantic cleanliness.** Multiplicity bounds admit orphan
+garbage: a `≤1` well-formedness clause permits the one orphan it bounds, so
+uniqueness invariants do not prove the state is clean. A needed
+no-orphan condition is a named `Clean` predicate consumed as a PHASE
+obligation, never a negative premise inside a rule.
+
+**Persistent-fact re-entry.** For every rule adding a PERSISTENT
+(accumulating) fact under a `≤1` cardinality clause, ask: can history
+already contain the fact I am about to add? A WF state may already hold the
+slot's one permitted occupant, so firing makes two — the invariant is not
+step-preserved alone. Fix = a freshness/phase precondition as a SEPARATE
+consumed phase invariant (`NoValAtAwaitBind`), keeping the rule orthogonal;
+if slots are provably non-revisited (single assignment), freshness is
+derived and no guard is needed. This is the two-step test generalized to
+persistent facts.
