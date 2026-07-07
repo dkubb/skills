@@ -79,7 +79,10 @@ For each, fill a **target table** row:
 6. **Predicate leaked or confused** — the hidden predicate this observation
    computes (e.g. `head.intent = actual`, `trace_nonempty`, `grant_has cap`,
    `canon xs = canon ys`, `key aliases physical resource`). *Every public tag is
-   a predicate over hidden state.*
+   a predicate over hidden state.* The knowledge-based reading (gradual
+   release): each observation shrinks the adversary's knowledge set; an
+   *allowed* declassification is a stated bound on how fast it may shrink —
+   demand that bound, not a judgment call.
 7. Minimal witness: two states distinguished, or two distinct states
    confused/admitted.
 8. Schedule lift: single call → same-run retry → cross-run resubmission →

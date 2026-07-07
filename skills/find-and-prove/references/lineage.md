@@ -78,6 +78,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   proof.
 - **declassification: dimensions & principles** — *Sabelfeld–Sands 2007* —
   controlled release (what/who/where/when).
+- **knowledge-based security / gradual release** — *Askarov–Sabelfeld 2007*
+  — attacker knowledge as the semantic object: each observation refines a
+  knowledge set; declassification policies bound the refinement.
 - **quantitative information flow / min-entropy** — *Geoffrey Smith* — measure
   leak in bits (guess-in-one-try).
 - **termination-/timing-sensitive NI** — *Askarov et al.; Stefan et al.* —
