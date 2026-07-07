@@ -545,6 +545,10 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## Relationship to other skills
 
+- `formal-design` — the build-time sibling: pre-flight decision procedures
+  (identity design, carrier choice, primitive forcing, increment scoping,
+  seam extraction) run BEFORE authoring a slice, pre-empting the defect
+  classes this skill hunts at review time.
 - `state-space-minimization-formal` — the state-validity calculus; this adds the
   oracle hunt, information-flow, capability/resource-separation, and
   representation-leak reasoning on top.
