@@ -412,7 +412,9 @@ invalid state admitted); (5) impact — leaks a protected fact, fabricates
 evidence, widens authority, loses conservation, corrupts replay/history, blocks
 progress, or poisons the evaluator. A nitpick "only strengthens a theorem beyond
 the claim" or "only changes proof style" or "relies on an out-of-scope threat
-without saying so".
+without saying so". Proof ergonomics (caller brittleness, hypothesis
+convenience) is a convenience axis, not a guarantee axis — an
+ergonomics-only finding is a nitpick and never blocks a proof loop.
 
 **The vacuous-vs-binding tells** (when is a theorem probably vacuous, when is
 it binding): `references/vacuity.md`. *Always state the bad mutant a theorem
