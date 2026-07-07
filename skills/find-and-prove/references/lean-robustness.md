@@ -61,10 +61,11 @@ eliminates by giving a branch that receives those parameters. So:
     passes clean while the executable semantics are unverified. Grep the
     module and its dependencies for these attributes whenever anything is
     executed or extracted; each hit is at best a runtime-bridge obligation.
-13. **Shadowed notation / statement inauthenticity.** Local `notation` /
+13. **Shadowed notation / Pollack-inconsistency.** Local `notation` /
     `macro_rules` / `infix` can shadow core symbols so a headline *reads* as
     one claim and *elaborates* as another — an attack on the review itself,
-    not on downstream code. Re-elaborate headlines under
+    not on downstream code (the canonical name: Pollack-inconsistency,
+    Wiedijk). Re-elaborate headlines under
     `set_option pp.all true` / `#print` before trusting what they say.
 
 ## The adversary-import drill (write it BEFORE the implementation is finished)

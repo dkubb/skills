@@ -439,10 +439,12 @@ triggers — use them *after* you have a target and witness. Full lineage:
   `termination_by` / `decreasing_by` hole) opts the definition out of the
   theorem story entirely — flag every headline whose subject is `partial`
   while the prose still claims total coverage.
-- **Statement authenticity (the shadowed-notation check)** — the reviewer
+- **Statement authenticity (Pollack-inconsistency)** — the reviewer
   audits the *rendered* statement; local `notation` / `macro_rules` / `infix`
   can shadow core symbols so a headline reads as one claim and elaborates as
-  another. Re-elaborate every headline under `set_option pp.all true` (or
+  another (Wiedijk's Pollack-inconsistency: the printer/parser as attack
+  surface — the system prints a statement that reads as a different claim
+  than it elaborates to). Re-elaborate every headline under `set_option pp.all true` (or
   `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
   When the artifact author is untrusted (LLM-generated proofs included), add
   an external kernel pass (`lean4checker`) — elaborator exploits are outside

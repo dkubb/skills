@@ -32,6 +32,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   (IC3/PDR) 2011; Sheeran–Singh–Stålmarck (k-induction) 2000* — an invariant
   true of reachable states need not be closed under the step relation; the
   CTI is the state that proves it, and k-induction deepens the test.
+- **Pollack-inconsistency** — *Wiedijk 2012* — the printer/parser as attack
+  surface: the system prints a statement that reads as a different claim
+  than it elaborates to.
 
 ## Group 2 — representation & API surface
 
