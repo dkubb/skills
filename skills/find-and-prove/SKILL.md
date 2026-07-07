@@ -14,7 +14,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-07-v2"
+  version: "2026-07-v3"
   type: review-methodology
 ---
 
