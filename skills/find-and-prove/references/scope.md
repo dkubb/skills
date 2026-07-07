@@ -75,3 +75,15 @@ scope-and-rename the claim to the covered channels or fix the mechanism
 first. Classify a bypassing channel as a MODEL BOUNDARY, not a proof bug —
 the theorems are true of the model; the model just doesn't route that
 channel through the mechanism.
+
+## D5 Forward pressure
+
+Does the theorem's scope survive the NEXT planned rung, or plant a
+landmine? A whole-run parametricity ("changing the frontier changes
+nothing") becomes FALSE when a later layer deliberately makes that data
+part of identity — the right theorem denies a narrower axis. Some axes are
+denied forever (authority: the frontier never grants capability); some
+will be affirmed later (identity: parents become part of replay keys).
+Deny the right axis and scope the theorem to it; refuse both the vacuous
+framing (nothing reads it, tautology) and the over-strong one (the
+landmine).
