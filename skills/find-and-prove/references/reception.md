@@ -6,6 +6,40 @@ class: the theorem can be true and every mutant can die while the reception —
 what a reader takes away — is still wrong. Statement-surface defects need
 statement-level audits, not more mutants.
 
+## C1 Object-referent audit
+
+FIRE on every theorem whose NAME references a concrete object or quantity
+(`…Trace`, `…authority`, `…frontier`, `…spend`, `…schedule`): verify the
+STATEMENT actually mentions/compares THAT object — not a DIFFERENT object,
+at a different representation level, that happens to be the correct thing to
+compare. The origin case: a guard named `…_not_fixedBlockReducerTrace`
+proved inequality against the token block traces (the correct, necessary
+level — the reducer trace is their lossy projection) and never mentioned the
+reducer trace. True theorem, non-vacuous, every mutant dies — a pure
+NAME↔referent reception defect the mutation gate structurally cannot catch.
+Fix: rename to the actual referent, or add the docstring clause naming the
+level. Three sibling lenses from the same review; apply together:
+
+- **Run-independence of a transported `∃`** — when a `∀`-over-runs theorem
+  reuses a lemma whose `∃`-witness must be run-independent to serve every
+  run, confirm the reused lemma's ARGUMENT LIST omits the quantified run.
+- **Lossy-projection comparison-level check** — comparing at the SOURCE
+  level is CORRECT (not a gap) when the projection is lossy; a
+  projected-level (in)equality is a DIFFERENT, weaker statement. Flip "why
+  not compare the projected object?" into a correctness point.
+- **Cosmetic-defeq-vs-genuine-read** — break the INPUT with a mutant to
+  prove a `rfl`/defeq bridge genuinely READS its input, not an accidental
+  defeq that would hold for any input.
+
+## C2 N-distinct arity audit
+
+FIRE on every `*_distinct` / `*_disjoint` name: N distinct objects need
+exactly C(N,2) pairwise inequalities in the statement — `¬(A ∧ B)` does not
+exclude A alone, and a two-of-three statement leaves one pair free to
+collide. The tell: a docstring case taxonomy that silently omits a case
+points at the missing conjunct. Decide by counting the inequalities against
+the name's arity — this is arithmetic, not judgment.
+
 ## C4 Temporal-inversion test for bag / unordered state
 
 When a theorem reads "A THEN B" but the state is an unordered bag / frame,
@@ -15,6 +49,29 @@ pre-supplied reply makes "the emit *sources* the reply" an overclaim (the
 rule sources only what it actually mints; the reply is exogenous start-bag
 input). Calibrate the claim to what the rule produces, and name the exogenous
 tokens as environment input.
+
+**The shadow-difference probe (the C4 sibling).** FIRE on every certified
+distinguisher: NEUTRALIZE it (make the producer constant so the certified
+difference disappears) and check whether another already-varying field still
+proves the conclusion. If the theorem still goes through, the intended
+premise is DEAD — the conclusion was riding a shadow difference in a field
+the claim never mentions, and the certificate certifies nothing about the
+named distinguisher. The deciding mutant is the constant-producer
+neutralization; the fix pins the conclusion to the named difference
+(equalize every other field in the witness pair).
+
+## C5 Bystander / frame-generic overclaim
+
+FIRE on every uniqueness / confluence headline stated over `∀ frame` plus
+named participants: can the named parties be instantiated as BYSTANDERS
+while other owners inside the frame do the real steps? A frame-generic
+quantification admits frames containing other owners' tokens, so "the named
+pair is confluent / unique" is satisfiable with the named parties idle — the
+theorem is true of a run its name never intended. The deciding witness is
+the bystander instantiation (named parties inert, a frame owner fires). Fix:
+index the hypotheses to the ACTUAL firing step/owner, and demote the
+frame-generic form to an internal engine lemma the indexed headline is
+proved from.
 
 ## C7 Word-class closed-world doc sweep
 

@@ -5,6 +5,18 @@ a per-component claim must survive composition (union, append, concurrency,
 runtime lowering). The confidentiality half of the hunt is
 `references/information-flow.md`.
 
+## F1 Conservation shape
+
+FIRE on every resource/authority law: the law is an aggregate SUM
+(`childL + childR ≤ parent`), never pointwise containment —
+each-child-≤-parent admits finite-authority duplication (every child
+individually within bounds while the sum is unbounded). In Lean, derive
+`draws ≤ ceiling` BEFORE any truncated subtraction: `Nat.sub` silently masks
+over-draw (`ceiling - draws = 0` reads as exhaustion, not violation). Read
+"remaining" off the REACHED state, never a static expression. The deciding
+mutant: split a parent into two children each equal to the parent —
+pointwise containment passes, the sum law reddens.
+
 ## Authority & resources — *does ownership/budget add up?*
 
 - **Separation logic / resource algebra / ownership** — identify the algebra;
@@ -57,6 +69,16 @@ runtime lowering). The confidentiality half of the hunt is
   liveness claim riding a traces-level refinement is an overclaim.
 - **Linearizability / linearization points**; **injective agreement** (Lowe —
   unique/fresh, not just "something similar ran"); crash / idempotence.
+- **Prove the run, not the store (the store-transplant mutant)** (rubric
+  F4) — FIRE on every cross-rung composition theorem: importing a prior
+  stage's FINAL STORE into a fresh prestate proves nothing about
+  reachability — the transplant fabricates a state no run produces, and
+  every store-shaped invariant still holds of it. Thread the ACTUAL run:
+  the composition theorem's hypothesis is the prior run object (or its
+  run invariant), never the transplanted store. Soundness caveat
+  (physical-execution coupling): couple fuel/physical execution only when
+  the headline EXHIBITS a run; a universal over a SUPPLIED run is
+  legitimately fuel-orthogonal.
 - **Composition non-monotonicity (the A∪B trap)** (rubric F4) — a property
   proven per-component does NOT transfer to a union/append:
   `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
@@ -66,6 +88,7 @@ runtime lowering). The confidentiality half of the hunt is
   lossy projections matched" (else it assumes what it proves — the bridge
   must say prior facts matched at the real seam, not just that a lossy
   view agreed). State the bridge shape
-  (`perRunInj ∧ crossAgreement → unionInj`) now; prove it with the
-  comparison fixture, not before. Do not let a future rung quietly prove
+  (`perRunInj ∧ crossAgreement → unionInj`) now; prove the pure ALGEBRA
+  now, and defer only the semantic implication discharging its
+  hypotheses. Do not let a future rung quietly prove
   only the weaker per-side facts.

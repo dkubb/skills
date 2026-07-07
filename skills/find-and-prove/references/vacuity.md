@@ -21,6 +21,49 @@ feasibility is a proof obligation, not a given. One `#eval`/`decide` sweep
 instantiating every headline at the trivial model; the all-constant
 annotation sweep below is its per-annotation form.
 
+## A2 Predicate-collapse lattice
+
+FIRE on every NEW predicate, including one in CONCLUSION position: a "the
+predicate is real" theorem must be pinned against the WHOLE collapse lattice.
+Descend all seven levels — each is a distinct surviving-mutant class; assume
+each level survives until you have built the killing mutant:
+
+1. **Truth-value** — test `:= True` AND `:= False`. An existential
+   counter-witness (`∃ C, ¬ P C`) kills only the `True` mutant; `:= False`
+   survives because consumers go VACUOUS for the interesting case, not false
+   — the asymmetry hides it. Kill: a two-sided distinguishing theorem
+   (positive AND negative for the predicate).
+2. **Quantifier scope** — head-only / last-only / first-only mutants, plus
+   wrong-request (the predicate ignores which request was delivered). A
+   finite `[good, bad]` witness puts `bad` in a fixed position, so a
+   head-only check still rejects it. Kill: a request-sensitivity witness plus
+   mixed-list negatives.
+3. **Value restriction** — `P o := o = c ∧ …` for any FIXED `c` survives a
+   hardcoded witness value. Kill: parametrize the witness over an ARBITRARY
+   caller-chosen value.
+4. **Position/cardinality** — last-only / singleton-only mutants pass finite
+   examples. Kill: negatives parametric over position
+   (`pre ++ bad :: post`) — bad anywhere, neither end special.
+5. **OVER-restriction (the symmetric blind spot)** — fully parametric
+   negatives with finite positives let a predicate survive that accepts only
+   the narrow positive SHAPES the finite witness lists. Kill: positives
+   exactly as parametric as negatives (`∀ all-good structure → accepted`).
+   Symmetry is the convergence criterion.
+6. **Witness shape** — `∃!` (unique-witness) and identity-parse
+   over-restrictions survive even arbitrary-value, non-identity witnesses
+   (each can be built with exactly one accepting raw). Kill: level 7.
+7. **Close the class** — pin the INTRODUCTION RULE as a theorem
+   (`evidence → predicate`, e.g. `decode raw = some o → P o`) instead of
+   chasing one more witness; one theorem states the actual invariant and
+   kills the whole over-restriction class at the predicate level. Headline it
+   iff the predicate definition is mutable design surface in the declared
+   mutation universe (`references/basis.md`, G1).
+
+[Anchors: specification mutation — Ammann–Black; spec coverage metrics —
+Chockler–Kupferman–Vardi.] The worked origin was a seven-round hunt on a
+decode-image predicate, one lattice level per round — walking the lattice up
+front replaces the rounds.
+
 ## A3 Annotation / label vacuity (the all-constant sweep)
 
 Fire on every decorated relation/step/run: whenever a relation/step/run is
@@ -40,6 +83,20 @@ confirm it reddens BOTH the all-constant mutant AND a swapped-annotation
 mutant. Apply the sweep across the whole annotation SUITE, not per-theorem —
 the per-theorem vacuity check passes each one yet the suite records nothing.
 
+## A4 Echo lens
+
+FIRE on every theorem whose conclusion shares atoms with a hypothesis: a
+conclusion conjunct restating a hypothesis does no work but reads as proven —
+the theorem's advertised strength includes a clause its hypotheses hand it
+for free. Decide by the delete-BOTH counter-mutant: drop the hypothesis AND
+the echoing conjunct together; if the remainder still proves, the conjunct
+was an echo (inherent vacuity), not a guarantee. Sibling probe: swap the
+exhibited run witness for the trivial one and require failure — a
+non-vacuity witness that the do-nothing run also satisfies exhibits nothing.
+
+[Anchor: inherent vacuity — vacuity present in every model of interest, not
+just the artifact at hand.]
+
 ## A5 Fuel / partiality vacuity
 
 A liveness-flavored headline over a fuel-indexed definition is vacuously
@@ -49,6 +106,30 @@ Demand `∀ fuel ≥ bound(input)` with an explicit bound function, or downgrade
 the claim. `partial def` (and any `termination_by` / `decreasing_by` hole)
 opts the definition out of the theorem story entirely — flag every headline
 whose subject is `partial` while the prose still claims total coverage.
+
+## A7 Behavior-drop mutants (premise strengthening)
+
+FIRE on every classification / exact-cases master theorem
+(`step_exact_cases` and kin): it classifies the steps that EXIST and
+structurally CANNOT catch a mutant that DROPS a behavior by adding a hidden
+premise NARROWING when a constructor fires. The deciding mutant: give a rule
+a hidden extra premise excluding one of its trigger conditions (a halt rule
+with `why ≠ .recordExhausted` fires on mismatch, refuses on exhaustion) —
+every headline and the classifier stay green while the dropped behavior's
+witness fails. Premise-STRENGTHENING / behavior-drop is a mutation direction
+the weakening-only operator catalog misses (`references/evidence.md`, H1).
+
+The check: whenever a channel has DISTINGUISHABLE trigger conditions
+(different payload / `why` / tag), ask "does a mutant handling only SOME of
+them survive all my headlines?" If yes, each semantically required trigger
+needs its own reachability witness — or one witness quantifying over all of
+them (a disjunctive-hypothesis broadening keeps the basis minimal).
+Reachability of a boundary is NOT handledness of every refusal trigger at
+that boundary: a run prefix that reaches the boundary proves nothing about a
+narrowed rule that then refuses to fire. Any demotion justified by "shares a
+channel / code path" must first check whether a mutant can distinguish the
+two triggers — if it can, they share only the constructor, not the
+guarantee.
 
 ## Adequacy of encodings
 
