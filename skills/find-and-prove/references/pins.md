@@ -102,3 +102,14 @@ structurally blind here, and the defect and its fix are syntactic: rewrite
 each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
 P t`). A conjunct whose subject is a ground term binds the helper, not the
 existential — a different witness satisfying `Reads` is left unconstrained.
+
+## B7 rfl-headline symbolic passthrough
+
+FIRE on every exact `_eq` headline proved by `rfl` whose RHS names a helper:
+the headline pins the CALLER's shape, not the helper's — mutating the helper
+moves BOTH sides of the definitional equation, so the headline stays green
+under every helper mutant. The helper needs its own `_iff`/`_eq` pin against
+spelled-out content (not against another name that unfolds with it). And
+calibrate every "this theorem reddens mutant X" claim to the locus that
+actually reddens — the caller — never to the helper the docstring names; a
+kill-claim at the wrong locus overstates the helper's coverage.
