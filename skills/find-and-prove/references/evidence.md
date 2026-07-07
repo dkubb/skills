@@ -188,3 +188,24 @@ reasoning. Run these BEFORE any judgment lens:
   the implementation against the model interpreter on shared inputs.
   Property-based testing searches the spec's input space; coverage guidance
   searches the IMPLEMENTATION's branch space — they find different bugs.
+
+## H4 Proof-method skeletons (reference-only)
+
+The constructive duals — proof shapes to reach for once the hunt says the
+claim is real:
+
+- **The ∀-terminal-refinement skeleton** — canonical per-phase bags →
+  control uniqueness → local inversion per operational leaf →
+  snoc-induction phase classification → concrete next-step witnesses for
+  nonterminal exclusion → recouple order-sensitive erasers from terminal
+  membership + uniqueness.
+- **Extensional-agreement-as-transport** for lawful interface bundles —
+  bundle the law as a field plus a payoff theorem that every lawful
+  inhabitant agrees with the concrete adapter; downstream proofs transport
+  along the agreement instead of unfolding the instance.
+- **Sealed-handle stateful drive** — a fail-closed prefix law over an
+  ARBITRARY handle, so the only usable operation is the public step; the
+  seal is enforced by what the law quantifies over, not by privacy.
+- **Two-tier failure honesty** — request divergence fails CLOSED (halt);
+  a local miss advances-and-continues; pin each tier separately, never
+  one "errors halt" blanket.
