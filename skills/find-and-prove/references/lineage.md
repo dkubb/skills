@@ -90,6 +90,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   (separation logic locality)* — a rule's specification speaks only about
   the state it touches; a whole-bag "no X" claim needs an explicit
   frame-absence hypothesis.
+- **content addressing** — *(classical; Merkle)* — identity as a
+  deterministic function of content/structure, schedule-independent.
+- **De Bruijn indices** — *de Bruijn 1972* — position-derived identity
+  with structural laws instead of authored names.
 - **freshness / nominal logic** — *Gabbay–Pitts* — fresh names and their
   swapping/apartness laws; sibling-vs-sibling distinctness and
   new-vs-pre-existing freshness are distinct obligations.

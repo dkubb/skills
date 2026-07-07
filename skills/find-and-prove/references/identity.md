@@ -44,6 +44,20 @@ from new-vs-any-pre-existing (freshness); never write "cannot collide"
 unqualified — say which tier. [Anchor: freshness / nominal logic —
 Gabbay–Pitts.]
 
+## E4 Identity construction
+
+Fresh identities are DETERMINISTIC functions of local structure — tree
+addresses with injectivity/disjointness laws — never scheduler-dependent
+counters (a counter reintroduces schedule-dependence; a static id breaks
+under loops; origin + site + iteration ordinals survive both). The
+renderer/canonicalizer VERSION is part of replay identity: two versions
+canonicalizing differently are two identities. In-memory truth vs durable
+projection: persist the structured identity, or prove it reconstructs from
+what is persisted — state which. When two owner-scoped facts lower into
+one GLOBAL store, the lowering must MANUFACTURE the namespace (derived
+disjoint addresses), never assume separation. [Anchors: content
+addressing; De Bruijn indices.]
+
 ## Multi-field coherence / evidence binding
 
 Every payload with id+args+result+proof+version+authority+parents must prove
