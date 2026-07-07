@@ -164,6 +164,21 @@ change-factoring as an exact-delta DISJUNCTION over the possible deltas,
 never a `≠`-triggered hypothesis (a hypothesis conditioned on inequality
 silently drops the equal case from coverage).
 
+## B10 Multiplicity-parametric positives
+
+FIRE on every list-level function (`map` / projection / erasure over a
+list) in the declared mutable surface: a singleton demo is NOT a basis —
+a length-1 example survives the `_ :: _ :: _ ↦ []` mutant (correct on
+singletons, drops everything longer). Pin the function with an exact
+nil/cons/`_eq_map` characterization, OR a witness parametric over
+multiplicity. For a carrier-swap-preparing bridge, also pin the
+future-carrier-facing per-record CONTENT independently: a raw-facing
+bridge hides a reversed / inverse-pair projection that cancels under
+erasure but delivers wrong order to the new carrier. Judge every
+demotion against the DECLARED mutation universe (`references/basis.md`,
+G1), not defeq intuition — "defeq so no content" holds only if the list
+function is fixed background.
+
 ## B13 Def-level substitution (pseudo-oracle / common-mode failure)
 
 FIRE when one shared helper defines the net AND the config AND the run — or
