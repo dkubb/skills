@@ -86,6 +86,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   postcondition** — *Cousot; Dijkstra predicate transformers* — sound but not
   tightest.
 - **frame conditions / frame problem** — *(classical)* — what does not change.
+- **kernel of a map** — *(algebra, classical)* — the equivalence
+  `f a = f b` classifies exactly what a projection forgets; compute it per
+  constructor instead of asking injectivity yes/no.
 
 ## Group 4 — information flow
 
