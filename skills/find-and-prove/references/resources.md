@@ -101,6 +101,11 @@ analysis.]
   (physical-execution coupling): couple fuel/physical execution only when
   the headline EXHIBITS a run; a universal over a SUPPLIED run is
   legitimately fuel-orthogonal.
+- **Packaged witness before parallel generalization** (rubric F4) — a
+  same-source+target pairing proven under a FORCED schedule is sound only
+  under that schedule; package the witness (source, target, schedule) as
+  one object before generalizing to parallel settings, else the pairing
+  silently assumes the serial order that parallelism removes.
 - **Composition non-monotonicity (the A∪B trap)** (rubric F4) — a property
   proven per-component does NOT transfer to a union/append:
   `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
