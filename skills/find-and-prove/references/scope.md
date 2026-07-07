@@ -108,3 +108,20 @@ the property reads. Factor the run as prefix → step → suffix and state the
 invariant over the PREFIX projection at the witnessing step. The deciding
 witness: a run whose later steps destroy the property that held at the
 step, making the final-membership form false while the prefix form holds.
+
+## D8 Assembly discipline
+
+"All N conjuncts are proven" is not "they assemble" — an assembly
+theorem's JOB is to expose the quantifier/object mismatch. Before
+conjoining separately-proven facts into one headline, check they share ONE
+run object with COMPATIBLE quantifiers. Three traps: (a) facts proven over
+a refined object don't all transfer to the real object the same way —
+run-level trace/grant facts pull back through the erasure relation, but
+STRUCTURAL step-level facts (determinism, halt payload, inertness) need
+their own same-object analogues (a mutant of the real reducer can break
+them while still erasing to a valid step); (b) a property may not hold of
+every PREFIX — a boundary completing later than its trigger makes "every
+emitted effect is keyed" false over arbitrary prefixes; scope the assembly
+to terminal + clean-start + the supply shape it needs; (c) a FIXTURE
+witness never masquerades as a universal predicate — the honest interim
+milestone is fixture-scoped and named so.
