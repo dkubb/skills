@@ -128,6 +128,28 @@ adversary-binding).
 
 ## H3 Mechanical floor (run before judging)
 
+Anything checkable by compile/probe/linter is never discharged by
+reasoning. Run these BEFORE any judgment lens:
+
+- **`#lint` / environment linters** — mathlib-style linters (unused
+  hypotheses, simp-normal-form, doc linters) mechanize several rubric
+  items (unused-hypothesis mutation, docstring drift) for free.
+- **`#guard_msgs` elaboration snapshots** — pin statements and error
+  messages byte-stable across refactors; mechanizes statement
+  authenticity and the interface-extraction "statements byte-stable"
+  question.
+- **`plausible`/`#eval`/`decide` before proving** — search every headline
+  for a counterexample before attempting the proof.
+- **`exact?` / premise selection as a redundancy probe** — mechanizes half
+  of delete-a-headline (`references/basis.md`, G1): if `exact?` closes a
+  deleted headline from the others, the derivation exists.
+- **Compile-the-prose** — discharge every "this lifts to the general
+  case" doc claim by compiling the general corollary in a scratch probe;
+  a lift that doesn't compile is an altitude overclaim
+  (`references/reception.md`, C7).
+- **CI ratchets** — promote the greps below (`@[implemented_by]`,
+  `@[extern]`, `opaque`, `partial`, `native_decide`) from review habits to
+  CI checks that only tighten.
 - **Statement authenticity (Pollack-inconsistency)** — the reviewer
   audits the *rendered* statement; local `notation` / `macro_rules` / `infix`
   can shadow core symbols so a headline reads as one claim and elaborates as
