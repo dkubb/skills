@@ -102,6 +102,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 - **linearizability** — *Herlihy–Wing* — the commit/visibility point.
 - **injective agreement** (aliveness/weak/non-injective/injective) — *Lowe* —
   fresh/unique anti-replay.
+- **fork consistency / fork-linearizability** — *Li–Mazières (SUNDR) 2004;
+  Cachin et al.* — an untrusted server can fork clients' views but can never
+  rejoin them undetected; the enforceable ceiling for no-fork claims.
 - **codec / canonical laws** — *(classical)* — round-trip, idempotence,
   normalization soundness/completeness, canonical uniqueness.
 

@@ -281,6 +281,9 @@ triggers — use them *after* you have a target and witness. Full lineage:
   values are copyable; runtime state copies via snapshot, crash recovery, branch
   fork, test isolation, serialization, repeated submission. Prove the no-fork
   condition, reify the scheduler, or downgrade to a bridge/operator obligation.
+  The published rank ceiling is **fork consistency / fork-linearizability**
+  (SUNDR): an untrusted store cannot be *prevented* from forking views, only
+  forced to keep the fork forever — detection plus commitment, not prevention.
 - **Resource-or-fact (the dual of fork)** — fork *admits* invalid states by
   treating a copyable value as affine; the dual *deletes* valid states by treating
   a FACT as affine. A derived datum / SSA value with multiple legitimate readers
