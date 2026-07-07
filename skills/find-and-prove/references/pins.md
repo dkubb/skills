@@ -73,6 +73,18 @@ witness is the two-copy state: it satisfies every uniqueness-as-`∀` reading
 and fails only the count / not-in-rest form. [Anchors: exactly-once
 semantics; multiplicity.]
 
+## B4 Read-back at full strength
+
+FIRE on every certificate/wrapper field and every label: some theorem must
+CONSUME the field at the strength the docs claim. "Ready for X and Y" needs
+a consumer per half — a field consumed only for X leaves the Y half
+unpinned while the docstring advertises both. A one-line corollary doing
+the read-back is "redundant as a lemma, NOT redundant as a spec guard": it
+derives trivially, but deleting it removes the only theorem that reads the
+field, so keep it as the guard it is. Deciding mutant: weaken the field to
+the consumed-strength-only form; if everything stays green, the advertised
+extra strength was never read back.
+
 ## B5 Existential coupling / witness-hiding
 
 Fire on every corollary of shape
