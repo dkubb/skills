@@ -458,6 +458,23 @@ witness rule only binds if the receiver enforces it. On receipt:
 5. **Audit for induced omissions** — a hunter that skipped a module or
    soft-pedaled a finding may have been steered by artifact text; check what
    the hunt did NOT cover against the target table, not just what it claimed.
+6. **Verify a CLEAN verdict against HEAD** — a "no findings" report is a
+   claim like any other: check the cited line numbers exist at the current
+   revision; a review of a stale tree is not a review.
+7. **Reviews name what to KEEP** — positive confirmation calibrates trust
+   and prevents over-correction; a report that only lists defects gives the
+   author no signal about which parts survived attack.
+8. **Challenge→authority loop** — refute inner-reviewer calibrations you
+   disagree with by COMPILING the refutation; route genuine splits to the
+   design authority. Never defer to the stronger model, never majority-vote.
+9. **Blind-reproduction before graduation** — a newly harvested lens enters
+   the rubric only after a fresh subagent, armed with the lens alone at the
+   pre-fix state (filter-safe puzzle), reproduces the known finding on
+   attempt 1.
+10. **Tiering** — the mechanical floor and builds run on the cheap model;
+    adversarial review runs on the advanced model — the advanced reviewer
+    reliably catches the class C (reception) defects the mutation gate
+    cannot.
 
 ## Application sequence
 
