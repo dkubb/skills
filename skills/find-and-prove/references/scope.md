@@ -65,3 +65,13 @@ consumed phase invariant (`NoValAtAwaitBind`), keeping the rule orthogonal;
 if slots are provably non-revisited (single assignment), freshness is
 derived and no guard is needed. This is the two-step test generalized to
 persistent facts.
+
+## D4 Channel coverage
+
+FIRE on every "full X for every Y" claim: does the mechanism actually RUN
+on every channel quantified over? If one channel bypasses it (an effect
+kind the check never sees, a path that skips the boundary), either
+scope-and-rename the claim to the covered channels or fix the mechanism
+first. Classify a bypassing channel as a MODEL BOUNDARY, not a proof bug —
+the theorems are true of the model; the model just doesn't route that
+channel through the mechanism.
