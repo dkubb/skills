@@ -42,6 +42,25 @@ The highest-yield family in the harvest. Three FIRE-ONs:
   surface but is TAGGED an "export twin", never cited later as independent
   basis.
 
+## B2 Producer pin
+
+FIRE on every type-level injectivity / no-collision headline: the theorem is
+about the TYPE — it does not bite unless a theorem also pins that the live
+RULE advances/records using the full structured identity. The surviving
+mutant: collapse the rule's produced value to a PARTIAL key (a constant
+occurrence — the exact collision class the slice exists to close); the
+type-injectivity headline still passes because nothing reads the rule's
+output value (well-formedness counts are blind to it, and diamond theorems
+carry the frontier opaquely, using the SAME mutated producer on both sides,
+so they are invariant to the mutation). Fix = the producer pin:
+`produced-token-with-full-identity ∈ ruleOutput`, and make the HEADLINE
+producer-grounded — read the events off the rule's output, THEN assert
+distinctness. Also pin a kept lossy projection's NON-DEGENERACY:
+`proj _ := constant` survives unless a theorem forces the projection to
+separate its inputs. "The type can't collide" is not "the rule can't
+collide." When executing these mutants, apply detector isolation
+(`references/evidence.md`, H1): mutate only the def body, never the pin.
+
 ## B5 Existential coupling / witness-hiding
 
 Fire on every corollary of shape
