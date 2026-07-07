@@ -108,6 +108,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 - **subset-closure / robust hyperproperty preservation** — *Clarkson–Schneider;
   secure-compilation survey* — refinement preserves only subset-closed
   hyperproperties.
+- **CSP refinement hierarchy** (traces ⊂ failures ⊂ failures-divergences) —
+  *Hoare; Roscoe (FDR)* — traces refinement preserves no liveness;
+  failures-divergences is the level that does.
 - **assume-guarantee** — *Pnueli tradition* — module assumptions vs guarantees.
 - **linearizability** — *Herlihy–Wing* — the commit/visibility point.
 - **injective agreement** (aliveness/weak/non-injective/injective) — *Lowe* —

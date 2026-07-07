@@ -303,7 +303,9 @@ triggers — use them *after* you have a target and witness. Full lineage:
 - **Refinement mapping / simulation / bisimulation** (Abadi–Lamport;
   history/prophecy) — the way to prove a bridge (a shared helper is not a proof).
   Caveat: trace refinement preserves trace properties and *subset-closed*
-  hyperproperties, not arbitrary ones.
+  hyperproperties, not arbitrary ones — and no liveness: in the CSP hierarchy
+  only failures/divergences refinement carries progress claims through, so a
+  liveness claim riding a traces-level refinement is an overclaim.
 - **Linearizability / linearization points**; **injective agreement** (Lowe —
   unique/fresh, not just "something similar ran"); crash / idempotence.
 - **Composition non-monotonicity (the A∪B trap)** — a property proven
