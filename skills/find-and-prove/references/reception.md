@@ -31,6 +31,15 @@ level. Three sibling lenses from the same review; apply together:
   prove a `rfl`/defeq bridge genuinely READS its input, not an accidental
   defeq that would hold for any input.
 
+## C2 N-distinct arity audit
+
+FIRE on every `*_distinct` / `*_disjoint` name: N distinct objects need
+exactly C(N,2) pairwise inequalities in the statement — `¬(A ∧ B)` does not
+exclude A alone, and a two-of-three statement leaves one pair free to
+collide. The tell: a docstring case taxonomy that silently omits a case
+points at the missing conjunct. Decide by counting the inequalities against
+the name's arity — this is arithmetic, not judgment.
+
 ## C4 Temporal-inversion test for bag / unordered state
 
 When a theorem reads "A THEN B" but the state is an unordered bag / frame,
