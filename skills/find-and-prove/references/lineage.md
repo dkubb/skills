@@ -143,6 +143,12 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   failures-divergences is the level that does.
 - **assume-guarantee** — *Pnueli tradition* — module assumptions vs guarantees.
 - **linearizability** — *Herlihy–Wing* — the commit/visibility point.
+- **Mazurkiewicz traces** — *Mazurkiewicz 1977* — equivalence classes of
+  interleavings modulo independent-event commutation; causal structure is
+  the trace, never one serialization of it.
+- **happens-before** — *Lamport 1978* — the partial order of causality;
+  events it does not order are concurrent and must not appear in each
+  other's parent sets.
 - **injective agreement** (aliveness/weak/non-injective/injective) — *Lowe* —
   fresh/unique anti-replay.
 - **fork consistency / fork-linearizability** — *Li–Mazières (SUNDR) 2004;

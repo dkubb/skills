@@ -17,6 +17,17 @@ collapsing into `{x}`). The deciding witness: two distinct sources in one
 kernel class that a downstream consumer must distinguish. [Anchor: kernel of
 a map.]
 
+## E2 Two-schedule test
+
+FIRE on every "causal / parent / frontier" structure: run the update on two
+INDEPENDENT events under both orders A;B and B;A. If either parent set
+contains the other event purely from serial order, the structure is a prefix
+log wearing a causal label. Replay keys must be invariant under topological
+reorder; result ORDER belongs in the payload, never in the parent set. The
+deciding witness is the run pair whose recorded causal structures differ
+only by the scheduling of independent events. [Anchors: Mazurkiewicz traces;
+happens-before — Lamport.]
+
 ## Multi-field coherence / evidence binding
 
 Every payload with id+args+result+proof+version+authority+parents must prove
