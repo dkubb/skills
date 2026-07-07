@@ -20,6 +20,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **vacuity / antecedent failure** — *Beer–Ben-David–Eisner–Rodeh;
   Kupferman–Vardi* — passes trivially / weakest theorem.
+- **feasibility / the miracle** — *Morgan, refinement calculus* — an
+  infeasible (unimplementable) spec refines to anything; the
+  trivial-implementation check is the executable feasibility test.
 - **mutation analysis** — *mCoq; "Proof Process Evaluation with Mutation
   Analysis"* — spec/proof too weak (kill the mutant).
 - **adequacy of encodings** — *Harper–Honsell–Plotkin (LF)* — model faithful

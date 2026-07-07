@@ -374,6 +374,14 @@ triggers — use them *after* you have a target and witness. Full lineage:
   AND a swapped-annotation mutant. Apply the sweep across the whole annotation
   SUITE, not per-theorem — the per-theorem vacuity check passes each one yet the
   suite records nothing.
+- **Trivial-model realizability (the do-nothing mutant)** — the dual of the
+  leaky-mutant test: can the DO-NOTHING implementation (empty trace,
+  reject-everything, no-op step) satisfy the whole advertised theorem set? A
+  suite the trivial model passes constrains nothing it claims to — the
+  refinement-calculus "miracle": an infeasible spec refines to anything, so
+  feasibility is a proof obligation, not a given. One `#eval`/`decide` sweep
+  instantiating every headline at the trivial model; the all-constant
+  annotation sweep above is its per-annotation form.
 - **Existential coupling / witness-hiding** — fire on every corollary of shape
   "given a relation hiding witnesses, `∃ <new witnesses>, P`". When a theorem
   CONSUMES a relation/`∃` that binds its witnesses INTERNALLY and RETURNS fresh
