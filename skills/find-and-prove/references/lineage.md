@@ -137,6 +137,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **safety / liveness decomposition** — *Alpern–Schneider* — bad-never vs
   good-eventually + fairness.
+- **angelic vs demonic nondeterminism** — *(refinement calculus /
+  game semantics, classical)* — who resolves the choice: an exhibited
+  schedule (angelic) proves strictly less than every-schedule projection
+  (demonic); prose must not upgrade one into the other.
 - **refinement mapping / simulation / bisimulation** (history/prophecy) —
   *Abadi–Lamport 1991* — prove an implementation/bridge.
 - **subset-closure / robust hyperproperty preservation** — *Clarkson–Schneider;

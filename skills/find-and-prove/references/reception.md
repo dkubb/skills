@@ -99,6 +99,17 @@ index the hypotheses to the ACTUAL firing step/owner, and demote the
 frame-generic form to an internal engine lemma the indexed headline is
 proved from.
 
+## C6 Exhibits-vs-projects (angelic vs demonic nondeterminism)
+
+A direct construction of a witness for ONE schedule is a legitimate weaker
+theorem than a projection binding the quantified run's own state — the
+first says "there exists a schedule where X" (angelic), the second "under
+every schedule, the run's own state satisfies X" (demonic). Prose must say
+"exhibits, for this schedule", never "projects" / "the same run", when only
+the construction is proved. This blocks a finding only when the headline
+claims universality; an honest exhibit is a valid rung. [Anchor: angelic vs
+demonic nondeterminism.]
+
 ## C7 Word-class closed-world doc sweep
 
 Fire on every constructor/rule/arm addition: after adding a constructor /
