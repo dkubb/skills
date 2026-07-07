@@ -125,3 +125,15 @@ prose. State-space WIDENING of a law field is a mutation-operator class the
 delete/weaken operators cannot generate — add it to the sweep's operator
 catalog (`references/evidence.md`, H1) whenever a law field is in the
 mutable surface.
+
+## B13 Def-level substitution (pseudo-oracle / common-mode failure)
+
+FIRE when one shared helper defines the net AND the config AND the run — or
+any two of spec, fixture, and oracle: everything can be coherently wrong and
+every theorem still proves, because the comparison is a pseudo-oracle and
+the failure mode is common-mode. Pin guarantees over LITERAL authored
+values, not over the shared helper's output; make witnesses use
+non-degenerate field values so a coherent drift is visible. Self-question
+before accepting the suite: "could all three be wrong the SAME way?"
+[Anchors: pseudo-oracle — Davis–Weyuker; common-mode failure —
+Knight–Leveson.]

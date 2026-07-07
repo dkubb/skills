@@ -158,6 +158,12 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   *Jackson; Hughes/Paraskevopoulou* — small counterexamples first.
 - **metamorphic testing** — *T.Y. Chen 1998* — relations without an oracle.
 - **differential testing** — *(classical)* — compare two implementations.
+- **pseudo-oracle** — *Davis–Weyuker 1981* — test without a true oracle by
+  comparing independently produced implementations; a shared helper defining
+  spec, fixture, and run is not independent.
+- **common-mode failure** — *Knight–Leveson 1986* — redundant versions fail
+  together when they share assumptions or components; the def-level
+  substitution smell.
 - **coverage-guided fuzzing** — *Zalewski (AFL); Serebryany (libFuzzer)* —
   mutate inputs to maximize branch coverage; the workhorse for codecs,
   parsers, and runtime bridges.
