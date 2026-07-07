@@ -80,6 +80,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   no transitive flow.
 - **adaptive/chosen-query adversary** (Dolev–Yao *only* for symbolic
   protocols) — *Dolev–Yao 1983* — explicit attacker capabilities.
+- **active automaton learning (L\*)** — *Angluin 1987; Vaandrager, Model
+  Learning, CACM 2017* — each public tag after a chosen prefix is a
+  membership query; the adversary learns the hidden state machine.
 
 ## Group 5 — dynamics & composition
 
