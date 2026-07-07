@@ -5,6 +5,18 @@ a per-component claim must survive composition (union, append, concurrency,
 runtime lowering). The confidentiality half of the hunt is
 `references/information-flow.md`.
 
+## F1 Conservation shape
+
+FIRE on every resource/authority law: the law is an aggregate SUM
+(`childL + childR ≤ parent`), never pointwise containment —
+each-child-≤-parent admits finite-authority duplication (every child
+individually within bounds while the sum is unbounded). In Lean, derive
+`draws ≤ ceiling` BEFORE any truncated subtraction: `Nat.sub` silently masks
+over-draw (`ceiling - draws = 0` reads as exhaustion, not violation). Read
+"remaining" off the REACHED state, never a static expression. The deciding
+mutant: split a parent into two children each equal to the parent —
+pointwise containment passes, the sum law reddens.
+
 ## Authority & resources — *does ownership/budget add up?*
 
 - **Separation logic / resource algebra / ownership** — identify the algebra;
