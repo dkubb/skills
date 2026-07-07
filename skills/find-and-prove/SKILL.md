@@ -219,9 +219,11 @@ triggers — use them *after* you have a target and witness. Full lineage:
   in the protected fact that produce different observations. (Replay's
   `ok / intentMismatch / recordExhausted` is not "an error type" — it computes
   `head.intent = actual` and `trace_nonempty`.)
-- **Error algebra / diagnostic side channel** — every distinct failure reason
-  is a declassification. Prove the role may learn each distinction, or collapse
-  candidate-facing errors and keep rich diagnostics offline. Attack `not-found`
+- **Error algebra / diagnostic side channel (the padding-oracle family)** —
+  every distinct failure reason is a declassification, and cross-run
+  adaptivity compounds bits-per-query into full recovery (Vaudenay's padding
+  oracle; Bleichenbacher). Prove the role may learn each distinction, or
+  collapse candidate-facing errors and keep rich diagnostics offline. Attack `not-found`
   vs `forbidden`, `mismatch` vs `exhausted`, timeout vs denial, parse-error vs
   auth-error, stale-version vs nonexistent.
 - **Non-interference** as the two-run / **low-equivalence** theorem

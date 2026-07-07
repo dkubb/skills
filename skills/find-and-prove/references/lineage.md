@@ -83,6 +83,11 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 - **active automaton learning (L\*)** — *Angluin 1987; Vaandrager, Model
   Learning, CACM 2017* — each public tag after a chosen prefix is a
   membership query; the adversary learns the hidden state machine.
+- **padding-oracle attacks** — *Bleichenbacher 1998; Vaudenay 2002* —
+  distinct failure reasons plus cross-run adaptivity turn bits-per-query
+  into full plaintext/key recovery; the canonical error-algebra exploit.
+- **game hopping / sequences of games** — *Shoup 2004; Bellare–Rogaway
+  2006* — the published home of the distinguisher/oracle proof vocabulary.
 
 ## Group 5 — dynamics & composition
 
