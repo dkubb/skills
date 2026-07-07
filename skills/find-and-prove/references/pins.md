@@ -179,6 +179,18 @@ demotion against the DECLARED mutation universe (`references/basis.md`,
 G1), not defeq intuition — "defeq so no content" holds only if the list
 function is fixed background.
 
+## B11 Halt-arm full-field pin
+
+FIRE on every failure/halt rule: "records nothing" still CARRIES every
+prior field — a halt arm that copies the configuration forward can
+silently change any carried field and no "nothing happens on halt" prose
+notices. Pin the halt arm with the `∃`-free full-config matcher (the
+exact halted configuration, every field spelled out); each carried field
+is a silent-change candidate and the matcher is the only theorem that
+watches all of them. Deciding mutant: perturb one carried field in the
+halt arm (drop a trace entry, zero a balance) — the full-config matcher
+reddens; anything weaker stays green.
+
 ## B13 Def-level substitution (pseudo-oracle / common-mode failure)
 
 FIRE when one shared helper defines the net AND the config AND the run — or
