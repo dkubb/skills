@@ -269,23 +269,9 @@ A∪B composition trap: `references/resources.md`.
   all-constant sweep), fuel/partiality vacuity, adequacy of encodings
   (junk/confusion), and the vacuous-vs-binding tells:
   `references/vacuity.md`.
-- **Existential coupling / witness-hiding** — fire on every corollary of shape
-  "given a relation hiding witnesses, `∃ <new witnesses>, P`". When a theorem
-  CONSUMES a relation/`∃` that binds its witnesses INTERNALLY and RETURNS fresh
-  existential witnesses, ask: *does the CONCLUSION explicitly relate the two sets
-  of witnesses — or could an UNRELATED witness already present in the state
-  satisfy it?* The exactness that lives only in the proof BODY does not bind a
-  client: a body that unpacks the firing's exact `(pid,bind,v)` but concludes
-  only `∃ pid bind v, Origin …` is satisfiable by a DECOY origin (separating
-  state: two persistent vals, firing reads the 2nd, conclusion met by the 1st).
-  Opaque-contract corollary: *would a downstream client know the claimed
-  correspondence from the theorem's TYPE alone, without inspecting the proof
-  body?* If the docstring says "the EXACT triple it reads" but the type is a bare
-  `∃`, that load-bearing word is untested against the type. Fix-trigger: move the
-  identifying indices into explicit parameters (an indexed read relation,
-  `Reads code G G' pid bind v → Origin …`, or
-  `∃ triple, Reads triple ∧ Origin triple`) so the conclusion type-couples to
-  the exact witnesses.
+- **Unpinned surface (defect class B)** — existential coupling /
+  witness-hiding (the decoy-witness separating state; conclusion must
+  type-couple to the hidden witnesses): `references/pins.md`.
 - **Word-class closed-world doc sweep (fire on every constructor/rule/arm
   addition)** — after adding a constructor / rule / instruction, grep the ENTIRE
   module for every closed-world WORD-CLASS — NOT a phrase list and NOT just the
@@ -555,6 +541,8 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/pins.md` — defect class B: theorems that hold but bind nothing
+  (existential coupling / witness-hiding; the `_iff` pin family).
 - `references/vacuity.md` — defect class A: does the suite prove anything?
   Trivial-model realizability, annotation vacuity, fuel/partiality vacuity,
   adequacy of encodings, and the vacuous-vs-binding tells.
