@@ -358,6 +358,8 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/rubric.md` — the binding rubric: the full defect-class item
+  catalog (FIRE-ON trigger + deciding mutant/witness per item).
 - `references/prompts.md` — the reusable subagent prompt library for
   delegated hunts.
 - `references/evidence.md` — defect class H: evidence mechanics (mutation
