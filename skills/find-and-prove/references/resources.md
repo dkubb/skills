@@ -66,6 +66,7 @@ runtime lowering). The confidentiality half of the hunt is
   lossy projections matched" (else it assumes what it proves — the bridge
   must say prior facts matched at the real seam, not just that a lossy
   view agreed). State the bridge shape
-  (`perRunInj ∧ crossAgreement → unionInj`) now; prove it with the
-  comparison fixture, not before. Do not let a future rung quietly prove
+  (`perRunInj ∧ crossAgreement → unionInj`) now; prove the pure ALGEBRA
+  now, and defer only the semantic implication discharging its
+  hypotheses. Do not let a future rung quietly prove
   only the weaker per-side facts.
