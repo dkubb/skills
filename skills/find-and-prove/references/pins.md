@@ -191,6 +191,17 @@ watches all of them. Deciding mutant: perturb one carried field in the
 halt arm (drop a trace entry, zero a balance) — the full-config matcher
 reddens; anything weaker stays green.
 
+## B12 Hygiene exports
+
+When a semantic headline cannot catch inert-residue mutants (leftover
+tokens/state that change nothing the headline observes), keep the
+headline SEMANTIC and EXPORT the no-leftover facts as named basis —
+don't contort the headline into a hygiene checker. Validate the exports
+with a compiled leaky-state witness: a state carrying the inert residue
+that PASSES every headline conjunct and REDDENS one of the hygiene
+exports. The witness proves the exports are the only line of defense
+for the residue class, earning them basis status.
+
 ## B13 Def-level substitution (pseudo-oracle / common-mode failure)
 
 FIRE when one shared helper defines the net AND the config AND the run — or
