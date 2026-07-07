@@ -404,12 +404,15 @@ triggers — use them *after* you have a target and witness. Full lineage:
   "the emit *sources* the reply" an overclaim (the rule sources only what it
   actually mints; the reply is exogenous start-bag input). Calibrate the claim to
   what the rule produces, and name the exogenous tokens as environment input.
-- **Two-step phase-closure test** — don't only test a hand-inserted bad state:
-  start CLEAN, take one LEGAL step, then ask whether the next enabled instruction
-  invalidates the side invariant the next step needs. Catches an invariant
-  sufficient for ONE step but not closed under the relation (two back-to-back
-  `emitAwait` on one strand → the no-pending precondition is false at step 2, yet
-  the raw rule still fires). A consumed invariant that isn't step-closed is a
+- **Two-step phase-closure test (a counterexample-to-induction hunt)** — don't
+  only test a hand-inserted bad state: start CLEAN, take one LEGAL step, then
+  ask whether the next enabled instruction invalidates the side invariant the
+  next step needs. Catches an invariant true of reachable states but not
+  INDUCTIVE (not closed under the relation); the breaking state is a
+  counterexample-to-induction — the object IC3/PDR mines — and the two-step
+  test is k-induction at k = 1: take k legal steps when one doesn't expose the
+  gap (two back-to-back `emitAwait` on one strand → the no-pending
+  precondition is false at step 2, yet the raw rule still fires). A consumed invariant that isn't step-closed is a
   LOWERING / PHASE discipline, not a run invariant: bundle it into a named
   `PhaseWF` with a preservation/lowering theorem, OR keep the looser run
   invariant but stop calling it "sufficient" and name the obligation. Keep it OUT

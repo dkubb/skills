@@ -28,6 +28,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   the kernel.
 - **proof engineering / TCB** — *Ringer et al., QED at Large* — TCB / axiom
   hygiene.
+- **inductive invariant / counterexample-to-induction (CTI)** — *Bradley
+  (IC3/PDR) 2011; Sheeran–Singh–Stålmarck (k-induction) 2000* — an invariant
+  true of reachable states need not be closed under the step relation; the
+  CTI is the state that proves it, and k-induction deepens the test.
 
 ## Group 2 — representation & API surface
 
