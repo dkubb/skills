@@ -166,16 +166,10 @@ Rank mismatch: proving an API-surface fact as a definitional theorem =
 proving a runtime scheduling property in a pure model = **impossible** (reify the
 scheduler or downgrade the rank).
 
-**The bad-lowerer test (kernel theorem vs lowering obligation).** For any claimed
-run-OUTPUT property, ask: *can a bad lowerer falsify this while every reducer rule
-behaves correctly?* If yes, the property reads from AUTHORED program data the
-reducer consumes but does not compute (an occurrence id, a slot index, a template),
-so it is conditional on lowering well-formedness — a *lowering / admitted-code
-obligation*, not a kernel theorem. Carry the conditional in the *statement*
-("…under lowered-occurrence uniqueness"), never only in the docs; the uniqueness
-stays a hypothesis until the lowering relation is itself modeled and proved. This
-is the read-from-program asymmetry: a reducer theorem quantifies over all programs;
-a property a bad program can break is predicated on the program being well-formed.
+**The bad-lowerer test (kernel theorem vs lowering obligation).** For any
+claimed run-OUTPUT property: can a bad lowerer falsify it while every reducer
+rule behaves correctly? Then it is a lowering obligation carried in the
+statement, not a kernel theorem — `references/scope.md` (D1).
 
 ## Stance
 
@@ -276,20 +270,9 @@ A∪B composition trap: `references/resources.md`.
   clean load-bearing witness; discharge every sibling hypothesis in the
   witness (often cheap, and the proof is what makes the necessity claim
   adversary-binding).
-- **Two-step phase-closure test (a counterexample-to-induction hunt)** — don't
-  only test a hand-inserted bad state: start CLEAN, take one LEGAL step, then
-  ask whether the next enabled instruction invalidates the side invariant the
-  next step needs. Catches an invariant true of reachable states but not
-  INDUCTIVE (not closed under the relation); the breaking state is a
-  counterexample-to-induction — the object IC3/PDR mines — and the two-step
-  test is k-induction at k = 1: take k legal steps when one doesn't expose the
-  gap (two back-to-back `emitAwait` on one strand → the no-pending
-  precondition is false at step 2, yet the raw rule still fires). A consumed invariant that isn't step-closed is a
-  LOWERING / PHASE discipline, not a run invariant: bundle it into a named
-  `PhaseWF` with a preservation/lowering theorem, OR keep the looser run
-  invariant but stop calling it "sufficient" and name the obligation. Keep it OUT
-  of the rule premise (preserve orthogonality); make it a NAMED admitted-code
-  obligation, never an informal comment.
+- **Mis-scoping (defect class D)** — the two-step phase-closure test
+  (counterexample-to-induction; is the consumed invariant step-closed?) and
+  the bad-lowerer test: `references/scope.md`.
 - **Theorem-set minimality (the delete-a-headline mutant)** — extend mutation
   from *definitions* to the *theorem set itself*: delete each headline and
   recompile the rest. If it re-derives from the others plus already-pinned
@@ -518,6 +501,8 @@ witness rule only binds if the receiver enforces it. On receipt:
 
 ## References (load on demand)
 
+- `references/scope.md` — defect class D: mis-scoping (right claim, wrong
+  boundary or rank) — the bad-lowerer test, the two-step phase-closure test.
 - `references/reception.md` — defect class C: overclaim & reception (statement
   weaker than name/prose) — temporal inversion, the word-class doc sweep,
   obligation transfer.
