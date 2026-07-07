@@ -101,3 +101,82 @@ producer", "the producer", "the only", "two rules"/"all N", "the persistent toke
 "yet", "no rule … yet", "later increment", "deferred"), NOT a phrase list or the
 old decl name; flag each comment a new arm may have falsified.
 ```
+
+## Reproduced winning prompts (blind-reproduction validated, attempt 1)
+
+Each prompt below reproduced a known Pro-level finding with a fresh
+subagent on the first attempt (adjudication rule 9). The filter-safe
+recipe common to all four: state the system as a neutral
+algebraic/multiset puzzle, make the relevant invariants/bounds EXPLICIT,
+give the technique as a single self-question, and ask for a minimal
+witness/decision plus the missing condition. Include the design fact that
+makes the hidden case reachable, but never point at the guilty
+constructor — let the technique lead there.
+
+### Sum-type injectivity audit (E3)
+
+```text
+Here is [a SUM type] + [an injectivity/uniqueness CLAIM over it] + [the
+relevant design facts]. Adversarially verify the claim — try to BREAK it —
+using THIS technique, showing your work: (1) enumerate EVERY constructor;
+(2) for each, ask: does the stated invariant force two DISTINCT runtime
+instances of THAT constructor to have distinct identity — distinct hash
+AND distinct as events? (3) be most suspicious of the constructor the
+invariant does NOT mention, and of the gap between an event's NAME
+(constructor+fields) and the event itself (a distinct runtime occurrence).
+The surviving counterexample usually hides in the kind you didn't quantify
+over. Give the SMALLEST concrete counterexample, or justify
+per-constructor.
+```
+
+Deepening: enumerate the collision SOURCES within each kind, not just the
+kinds — the obvious source (duplicate delivery) can mask a second one
+(cross-key occurrence aliasing) reachable sooner.
+
+### Mint-collision (resources / D3)
+
+Frame as "an algebraic puzzle about a token-rewriting system / multiset
+invariant preservation": give the token families (mark consumed-vs-added),
+the WF invariant as an explicit list of count-bounds (make the per-strand
+AND per-key pending bounds BOTH visible), the new minting rule + its
+freshness hypothesis, then:
+
+```text
+For a rule that MINTS a token, ask: what does it mint, and what existing
+token of the SAME uniqueness family could already be present in a WF bag
+that freshness does NOT rule out? Enumerate each minted token against each
+bound; construct a minimal WF-plus-fresh start bag on which firing
+violates a bound; name the smallest missing precondition.
+```
+
+Ask for the minimal counterexample bag + the exact violated bound + the
+one-line missing precondition.
+
+### Existential-subject (B5)
+
+The teachable core — use this framing verbatim in `∃`-headline reviews:
+
+```text
+Focus your top-ranked attacks on what a CONSUMER of this theorem can
+conclude from its TYPE ALONE (not the proof body), for each conjunct.
+```
+
+The consumer-type view plus per-conjunct decomposition routes a reasoner
+to subject-binding defects; the existential-coupling block
+(`references/pins.md`, B5) supplies the witness shape.
+
+### Annotation-constant (A3)
+
+Hand the exact theorem list + the base relation + the vacuity lens, then:
+
+```text
+Is this rung mutation-vacuous? Exhibit the degenerate countermodel
+(replace every annotation with one constant or `none` across the WHOLE
+suite) and check each theorem against it. For an annotation R⁺(x,y,ℓ) over
+base R(x,y): is ℓ EVER equated to a function of the actual (x,y) witness
+data, or only existentially produced (lifting), erased (R⁺→R), or required
+single-valued? If only the latter three, the constant/degenerate
+annotation satisfies them all — vacuous. A label is real only once one
+theorem READS IT BACK against what the step produced.
+```
+
