@@ -157,6 +157,24 @@ lesson: a phrase-list or old-decl-name sweep MISSES whole clusters (it greps
 comments) — the word-class sweep is exhaustive where the phrase list
 re-commits the narrow-grep miss it was meant to fix.
 
+## C8 Naming vocabulary
+
+- Reserve SLOGAN names (`causal_parents_grant_nothing`) for the final
+  conjunction/wrapper theorem; the discharging lemma is named for exactly
+  what it discharges — a lemma name must not induce a reader-state
+  stronger than its statement.
+- Name the DANGEROUS half: `selectedSuffixEmbed`, not `prefixEmbed` — the
+  name should point at the part a reviewer must audit.
+- "Consume" only for linear removal; "read" for persistent facts.
+- "Support" never "provenance" (a co-presence clause cannot express
+  authorship — see obligation transfer below).
+- Tag export twins (a derived consumer-facing headline is labeled a twin
+  of its basis pin, never cited as independent basis).
+- Boundary-based capstone names over event-based ones: an awaited emit is
+  checked at the await boundary, not the emit event, so
+  `…effect_boundaries_keyed` is honest where `all_emit_events_match` is
+  false of prefixes.
+
 ## Obligation transfer to a durable successor
 
 When an invariant protects a LIVE token later consumed into a DURABLE one
