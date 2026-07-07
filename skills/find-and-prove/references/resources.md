@@ -114,3 +114,15 @@ analysis.]
   now, and defer only the semantic implication discharging its
   hypotheses. Do not let a future rung quietly prove
   only the weaker per-side facts.
+
+## F5 Parallel-rung observables
+
+Once independent redexes exist, exact chronological trace equality is the
+WRONG observable: target DAG / event-set / per-owner-fold invariants, with
+a serial-projection theorem only where the spec genuinely demands order.
+Name single-strand results "forced-schedule", never
+"deterministic/confluent" — the strand forced the schedule; nothing was
+proved about others. The non-vacuity shape for a schedule-set abstraction:
+a swapped-schedule witness ACCEPTED by the new surface and REJECTED by the
+old exact pin, plus at least one interior-visiting schedule — the two
+boundary walls alone do not evidence universality.
