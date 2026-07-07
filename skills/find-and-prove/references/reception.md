@@ -40,6 +40,17 @@ collide. The tell: a docstring case taxonomy that silently omits a case
 points at the missing conjunct. Decide by counting the inequalities against
 the name's arity — this is arithmetic, not judgment.
 
+## C3 Name-vs-semantic-load
+
+FIRE on every named predicate: construct a value SATISFYING the predicate
+that VIOLATES what the name implies. The canonical case: set-level
+injectivity named as occurrence uniqueness is satisfied by `[e, e]` — the
+set has one element, the name promises no duplicates. If the construction
+succeeds, rename to the literal content (what the definition actually
+says), never keep the aspirational name with a clarifying docstring alone —
+the name is what readers carry. The deciding witness is the satisfying
+violator; building it is cheap and settles the argument.
+
 ## C4 Temporal-inversion test for bag / unordered state
 
 When a theorem reads "A THEN B" but the state is an unordered bag / frame,
