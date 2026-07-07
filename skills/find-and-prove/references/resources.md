@@ -17,6 +17,17 @@ over-draw (`ceiling - draws = 0` reads as exhaustion, not violation). Read
 mutant: split a parent into two children each equal to the parent —
 pointwise containment passes, the sum law reddens.
 
+## F2 Split-vs-copy
+
+FIRE on every fork-like rule: it may COPY information (causal history is a
+fact both children legitimately hold) but must SPLIT consumable authority
+(budget, capability, fuel). Decision rule: split iff the invariant bounds a
+SUM over all parties — anything the conservation law adds up must divide,
+anything it doesn't may replicate. The deciding mutant: let the fork copy
+the summed resource; the aggregate conservation law (F1) reddens while
+every per-child law stays green. [Anchor: linear logic exponentials — `!A`
+marks what may be duplicated; everything unmarked is linear.]
+
 ## Authority & resources — *does ownership/budget add up?*
 
 - **Separation logic / resource algebra / ownership** — identify the algebra;
