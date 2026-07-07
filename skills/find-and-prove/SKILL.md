@@ -351,7 +351,9 @@ triggers — use them *after* you have a target and witness. Full lineage:
   identities, corpus, evaluator prompts) while staying within hard stops?
   Canonical home: **specification gaming / reward hacking** and the Goodhart
   taxonomy — optimize the *measure* (the trace as evidence) while respecting
-  the *metric*'s hard stops.
+  the *metric*'s hard stops. Endorsement discipline (transparent endorsement,
+  the integrity dual of robust declassification): attacker-influenced data
+  must not launder into trusted evidence.
 
 ### Claim / spec truth — *is this the right theorem, honestly stated?*
 

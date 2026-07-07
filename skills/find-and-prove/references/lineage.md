@@ -97,6 +97,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   low view.
 - **robust declassification / endorsement** — *Zdancewic–Myers* — attacker
   can't influence release.
+- **nonmalleable information flow / transparent endorsement** —
+  *Cecchetti–Askarov–Myers 2017* — the integrity dual of robust
+  declassification: attacker-influenced data must not launder into trusted
+  evidence.
 - **intransitive non-interference / ipurge** — *Rushby* — authorized relays,
   no transitive flow.
 - **adaptive/chosen-query adversary** (Dolev–Yao *only* for symbolic
