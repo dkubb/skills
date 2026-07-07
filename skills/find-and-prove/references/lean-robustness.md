@@ -55,6 +55,21 @@ eliminates by giving a branch that receives those parameters. So:
 11. **Public metaprograms / macros / elaborators.** Run during term construction
     (stronger coupling than ordinary defs); if they touch private state or emit
     public terms with private reductions, they belong in the TCB/export audit.
+12. **`@[implemented_by]` / `@[extern]` / `opaque` — kernel/runtime
+    divergence.** The compiled program runs the substitute, not the verified
+    definition, and NONE of these appear in `#print axioms` — the axiom audit
+    passes clean while the executable semantics are unverified. Grep the
+    module and its dependencies for these attributes whenever anything is
+    executed or extracted; each hit is at best a runtime-bridge obligation.
+13. **Shadowed notation / Pollack-inconsistency.** Local `notation` /
+    `macro_rules` / `infix` can shadow core symbols so a headline *reads* as
+    one claim and *elaborates* as another — an attack on the review itself,
+    not on downstream code (the canonical name: Pollack-inconsistency,
+    Wiedijk). The sibling channel `pp.all` cannot catch: **Trojan Source /
+    homoglyphs** (Boucher–Anderson) — bidi controls and confusable code
+    points make source render as a different statement than elaborates.
+    Scan headline statements and exported names for non-ASCII/confusables. Re-elaborate headlines under
+    `set_option pp.all true` / `#print` before trusting what they say.
 
 ## The adversary-import drill (write it BEFORE the implementation is finished)
 
@@ -74,6 +89,8 @@ eliminates by giving a branch that receives those parameters. So:
 #synth Inhabited T
 -- also try: .1, .2, pattern matching, structure update, parent projections
 -- (toParent), coercions, inferInstance, and any serializers (ToJson/Encodable).
+-- also grep: @[implemented_by], @[extern], opaque, partial, native_decide —
+-- none of these show in #print axioms.
 ```
 
 ## Writing robust Lean — habits
@@ -102,6 +119,9 @@ eliminates by giving a branch that receives those parameters. So:
   capabilities unchanged), `validity` (nothing goes invalid), `disjointness`
   (distinct keys ↦ distinct physical resources, or a *named* minting boundary
   obligation).
+- **Search before proving.** `plausible` (né `slim_check`) is the
+  in-ecosystem QuickChick: run it on every headline before attempting the
+  proof; a counterexample now is cheaper than a failed induction later.
 - **Don't trust `simp` as a spec.** `[simp]` only for canonical API facts; at
   seams use `simp only [public_def, theorem_name, h]`. A proof that survives only
   because `simp [Internal.secretRep]` ran is not an API proof.
@@ -133,6 +153,11 @@ eliminates by giving a branch that receives those parameters. So:
   (proof-irrelevant, noncomputational); evidence in `Type` only when downstream
   may inspect it. Don't move a secret from erased proof-land into executable
   data-land.
+- **Re-elaborate before you read.** Audit headline statements under
+  `set_option pp.all true` / `#print`; confirm no local notation or macro
+  shadows a core symbol (`=`, `¬`, `→`, `∀`, `∃`). For untrusted authors
+  (LLM-generated proofs included), finish with an external kernel pass
+  (`lean4checker`) — elaborator exploits do not show in `#print axioms`.
 - **Keep a `DocClaims`-style module.** Every prose phrase — "unrepresentable",
   "exact", "complete", "only", "faithful", "no fabricated" — gets a declaration
   whose *type* says the same thing, compile-pinned.
@@ -149,13 +174,13 @@ eliminates by giving a branch that receives those parameters. So:
 
 ## Mutation operators — derive by least-power simplification
 
-Don't memorize a list; *generate* it. Every operator replaces an operation with one
-that has a **smaller state space** — a strictly less-powerful form the types still
-accept (`mutant`'s principle of least power: "use the most constrained primitive
-that satisfies the requirement"; `kind_of?`→`instance_of?` narrows to one exact
-class, `method`→`public_method` drops private access). When a mutant **survives**
-(every proof/test still passes), it forces a binary — and *both* answers improve
-the artifact:
+Don't memorize a list; *generate* it. Every operator replaces an operation with
+one that has a **smaller state space** — a strictly less-powerful form the types
+still accept (`mutant`'s principle of least power: "use the most constrained
+primitive that satisfies the requirement"; `kind_of?`→`instance_of?` narrows to
+one exact class, `method`→`public_method` drops private access). When a mutant
+**survives** (every proof/test still passes), it forces a binary — and *both*
+answers improve the artifact:
 
 - **Lower-power operator is sufficient** — nothing needed the extra power;
   adopt the simpler form as the new source (shrink the state space; the code
@@ -167,8 +192,11 @@ There is no third option (rewriting to mask the mutant without coverage is mutan
 explicit trap — same rule as the proof ladder). The catalog below is the common
 cross-language core + Lean specializations; the generator (smaller-state-space
 substitution) finds the artifact-specific operators a fixed list misses — survivors
-hide where the types DON'T already constrain (type-compatible value choices). Floor,
-not ceiling.
+hide where the types DON'T already constrain (type-compatible value choices).
+Floor, not ceiling. Under budget, rank mutation targets the way oracle targets
+are ranked: defs under strong-word headlines and defs feeding public
+observations first — and report the unswept remainder explicitly (a silent
+partial sweep reads as full adequacy).
 
 **Universal core (every language; specialized to Lean):**
 
