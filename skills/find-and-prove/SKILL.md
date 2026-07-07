@@ -335,6 +335,9 @@ triggers — use them *after* you have a target and witness. Full lineage:
   produce a trace that's *safe as execution* but *misleading as evidence*
   (labels, region boundaries, version mapping, divergence spans, check
   identities, corpus, evaluator prompts) while staying within hard stops?
+  Canonical home: **specification gaming / reward hacking** and the Goodhart
+  taxonomy — optimize the *measure* (the trace as evidence) while respecting
+  the *metric*'s hard stops.
 
 ### Claim / spec truth — *is this the right theorem, honestly stated?*
 

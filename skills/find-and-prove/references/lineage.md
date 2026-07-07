@@ -107,6 +107,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   rejoin them undetected; the enforceable ceiling for no-fork claims.
 - **codec / canonical laws** — *(classical)* — round-trip, idempotence,
   normalization soundness/completeness, canonical uniqueness.
+- **specification gaming / reward hacking / Goodhart's law** — *Krakovna
+  et al. (DeepMind catalog) 2020; Manheim–Garrabrant 2018* — satisfy the
+  stated measure while defeating its intent; evaluator/provenance poisoning
+  is its record-now-judge-later form.
 
 ## Group 6 — evidence generation
 
