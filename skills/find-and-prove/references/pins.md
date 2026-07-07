@@ -151,6 +151,19 @@ delete/weaken operators cannot generate — add it to the sweep's operator
 catalog (`references/evidence.md`, H1) whenever a law field is in the
 mutable surface.
 
+## B9 Exact-object conclusions
+
+Prefer whole-state equality over field-wise conjunction: a future field
+added to the state leaves a field-wise conjunction compiling-but-silent
+(the new field is unconstrained and nobody is told), while exact equality
+fails loudly and forces the decision. Once multiple fields of a reached
+configuration are load-bearing, prefer the witness-pinning equation
+(`cfgF = <concrete config>`) over accumulating per-field conjuncts — one
+conjunct pins atoms, pending, supply, grant, and trace at once. State
+change-factoring as an exact-delta DISJUNCTION over the possible deltas,
+never a `≠`-triggered hypothesis (a hypothesis conditioned on inequality
+silently drops the equal case from coverage).
+
 ## B13 Def-level substitution (pseudo-oracle / common-mode failure)
 
 FIRE when one shared helper defines the net AND the config AND the run — or
