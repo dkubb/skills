@@ -87,3 +87,14 @@ will be affirmed later (identity: parents become part of replay keys).
 Deny the right axis and scope the theorem to it; refuse both the vacuous
 framing (nothing reads it, tautology) and the over-strong one (the
 landmine).
+
+## D6 Ledger separation
+
+Keep two readings of "cost" apart: the ADMISSION predicate quantifies over
+EVERY branch (the security reading — no branch may exceed authority) while
+SELECTED-BRANCH accounting charges only the branch that ran (the
+correctness reading). "Draws no authority" is not "costs no fuel" — the
+two ledgers have different conservation laws. Audit that no proof under a
+boundary imports a theorem from the incompatible resource regime (a
+fuel-ledger fact discharging an authority-ledger obligation is a category
+error that typechecks).
