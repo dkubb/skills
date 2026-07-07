@@ -107,6 +107,16 @@ the claim. `partial def` (and any `termination_by` / `decreasing_by` hole)
 opts the definition out of the theorem story entirely — flag every headline
 whose subject is `partial` while the prose still claims total coverage.
 
+## A6 Inhabitance vs conditional schema
+
+FIRE on every fixture theorem of shape `(h : Step …) ⊢ C`: a
+hypothesis-supplied step is never machine-checked to be INHABITABLE — the
+theorem is a conditional schema that goes vacuous if no such step exists,
+and nothing in the suite notices. Compile the concrete `∃`-witness (the
+actual step term at the actual fixture) alongside the schema. The deciding
+check is the witness compiling, not the schema proving; a schema whose
+witness cannot be built is the finding.
+
 ## A7 Behavior-drop mutants (premise strengthening)
 
 FIRE on every classification / exact-cases master theorem

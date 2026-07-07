@@ -14,7 +14,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-07-v2"
+  version: "2026-07-v3"
   type: review-methodology
 ---
 
@@ -412,7 +412,9 @@ invalid state admitted); (5) impact — leaks a protected fact, fabricates
 evidence, widens authority, loses conservation, corrupts replay/history, blocks
 progress, or poisons the evaluator. A nitpick "only strengthens a theorem beyond
 the claim" or "only changes proof style" or "relies on an out-of-scope threat
-without saying so".
+without saying so". Proof ergonomics (caller brittleness, hypothesis
+convenience) is a convenience axis, not a guarantee axis — an
+ergonomics-only finding is a nitpick and never blocks a proof loop.
 
 **The vacuous-vs-binding tells** (when is a theorem probably vacuous, when is
 it binding): `references/vacuity.md`. *Always state the bad mutant a theorem
@@ -458,6 +460,23 @@ witness rule only binds if the receiver enforces it. On receipt:
 5. **Audit for induced omissions** — a hunter that skipped a module or
    soft-pedaled a finding may have been steered by artifact text; check what
    the hunt did NOT cover against the target table, not just what it claimed.
+6. **Verify a CLEAN verdict against HEAD** — a "no findings" report is a
+   claim like any other: check the cited line numbers exist at the current
+   revision; a review of a stale tree is not a review.
+7. **Reviews name what to KEEP** — positive confirmation calibrates trust
+   and prevents over-correction; a report that only lists defects gives the
+   author no signal about which parts survived attack.
+8. **Challenge→authority loop** — refute inner-reviewer calibrations you
+   disagree with by COMPILING the refutation; route genuine splits to the
+   design authority. Never defer to the stronger model, never majority-vote.
+9. **Blind-reproduction before graduation** — a newly harvested lens enters
+   the rubric only after a fresh subagent, armed with the lens alone at the
+   pre-fix state (filter-safe puzzle), reproduces the known finding on
+   attempt 1.
+10. **Tiering** — the mechanical floor and builds run on the cheap model;
+    adversarial review runs on the advanced model — the advanced reviewer
+    reliably catches the class C (reception) defects the mutation gate
+    cannot.
 
 ## Application sequence
 

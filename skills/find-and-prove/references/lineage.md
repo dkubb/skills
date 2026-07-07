@@ -79,6 +79,12 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   mutates between check and use; a schedule race, not a mediation gap.
 - **membranes / attenuation** — *Miller; ocap* — recursive seal + revoke.
 - **affine / linear types** — *(Wadler; Rust ownership)* — single-use.
+- **potential method (amortized analysis)** — *Sleator–Tarjan* — a
+  measure that strictly decreases across control-creating steps; a free
+  fork shows as non-decreasing potential.
+- **linear logic exponentials** — *Girard 1987* — `!A` marks the
+  duplicable; consumable authority is linear, copyable facts are
+  exponential — the split-vs-copy line.
 - **exactly-once semantics / multiplicity** — *(distributed systems,
   classical)* — at-least-once ∧ at-most-once; `count = 1` as a first-class
   conjunct, never derived from `∀`-uniqueness.
@@ -86,6 +92,17 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   postcondition** — *Cousot; Dijkstra predicate transformers* — sound but not
   tightest.
 - **frame conditions / frame problem** — *(classical)* — what does not change.
+- **small footprint / tight specifications** — *O'Hearn–Reynolds–Yang
+  (separation logic locality)* — a rule's specification speaks only about
+  the state it touches; a whole-bag "no X" claim needs an explicit
+  frame-absence hypothesis.
+- **content addressing** — *(classical; Merkle)* — identity as a
+  deterministic function of content/structure, schedule-independent.
+- **De Bruijn indices** — *de Bruijn 1972* — position-derived identity
+  with structural laws instead of authored names.
+- **freshness / nominal logic** — *Gabbay–Pitts* — fresh names and their
+  swapping/apartness laws; sibling-vs-sibling distinctness and
+  new-vs-pre-existing freshness are distinct obligations.
 - **kernel of a map** — *(algebra, classical)* — the equivalence
   `f a = f b` classifies exactly what a projection forgets; compute it per
   constructor instead of asking injectivity yes/no.
@@ -133,6 +150,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **safety / liveness decomposition** — *Alpern–Schneider* — bad-never vs
   good-eventually + fairness.
+- **angelic vs demonic nondeterminism** — *(refinement calculus /
+  game semantics, classical)* — who resolves the choice: an exhibited
+  schedule (angelic) proves strictly less than every-schedule projection
+  (demonic); prose must not upgrade one into the other.
 - **refinement mapping / simulation / bisimulation** (history/prophecy) —
   *Abadi–Lamport 1991* — prove an implementation/bridge.
 - **subset-closure / robust hyperproperty preservation** — *Clarkson–Schneider;
@@ -165,6 +186,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **small-scope hypothesis (Alloy); property-based testing (QuickChick)** —
   *Jackson; Hughes/Paraskevopoulou* — small counterexamples first.
+- **boundary value analysis** — *(testing, classical)* — degenerate and
+  extreme fixtures isolate which distinctions a suite actually needs;
+  the degenerate-fixture probe is its proof-side form.
 - **metamorphic testing** — *T.Y. Chen 1998* — relations without an oracle.
 - **differential testing** — *(classical)* — compare two implementations.
 - **pseudo-oracle** — *Davis–Weyuker 1981* — test without a true oracle by

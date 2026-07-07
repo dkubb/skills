@@ -17,6 +17,28 @@ over-draw (`ceiling - draws = 0` reads as exhaustion, not violation). Read
 mutant: split a parent into two children each equal to the parent —
 pointwise containment passes, the sum law reddens.
 
+## F2 Split-vs-copy
+
+FIRE on every fork-like rule: it may COPY information (causal history is a
+fact both children legitimately hold) but must SPLIT consumable authority
+(budget, capability, fuel). Decision rule: split iff the invariant bounds a
+SUM over all parties — anything the conservation law adds up must divide,
+anything it doesn't may replicate. The deciding mutant: let the fork copy
+the summed resource; the aggregate conservation law (F1) reddens while
+every per-child law stays green. [Anchor: linear logic exponentials — `!A`
+marks what may be duplicated; everything unmarked is linear.]
+
+## F3 Control multiplication costs budget
+
+FIRE on every rule that creates control (fork/spawn/loop-back): it consumes
+a budget unit and is FORBIDDEN at zero — else a zero-budget actor
+multiplies unboundedly and every per-actor bound survives (each child is
+individually within bounds; the population is not). Verify with a
+potential-function measure: potential strictly decreases across every
+control-creating step; a fork that pays nothing shows up as
+non-decreasing potential. [Anchor: the potential method of amortized
+analysis.]
+
 ## Authority & resources — *does ownership/budget add up?*
 
 - **Separation logic / resource algebra / ownership** — identify the algebra;
@@ -79,6 +101,11 @@ pointwise containment passes, the sum law reddens.
   (physical-execution coupling): couple fuel/physical execution only when
   the headline EXHIBITS a run; a universal over a SUPPLIED run is
   legitimately fuel-orthogonal.
+- **Packaged witness before parallel generalization** (rubric F4) — a
+  same-source+target pairing proven under a FORCED schedule is sound only
+  under that schedule; package the witness (source, target, schedule) as
+  one object before generalizing to parallel settings, else the pairing
+  silently assumes the serial order that parallelism removes.
 - **Composition non-monotonicity (the A∪B trap)** (rubric F4) — a property
   proven per-component does NOT transfer to a union/append:
   `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
@@ -92,3 +119,15 @@ pointwise containment passes, the sum law reddens.
   now, and defer only the semantic implication discharging its
   hypotheses. Do not let a future rung quietly prove
   only the weaker per-side facts.
+
+## F5 Parallel-rung observables
+
+Once independent redexes exist, exact chronological trace equality is the
+WRONG observable: target DAG / event-set / per-owner-fold invariants, with
+a serial-projection theorem only where the spec genuinely demands order.
+Name single-strand results "forced-schedule", never
+"deterministic/confluent" — the strand forced the schedule; nothing was
+proved about others. The non-vacuity shape for a schedule-set abstraction:
+a swapped-schedule witness ACCEPTED by the new surface and REJECTED by the
+old exact pin, plus at least one interior-visiting schedule — the two
+boundary walls alone do not evidence universality.

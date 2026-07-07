@@ -73,6 +73,18 @@ witness is the two-copy state: it satisfies every uniqueness-as-`∀` reading
 and fails only the count / not-in-rest form. [Anchors: exactly-once
 semantics; multiplicity.]
 
+## B4 Read-back at full strength
+
+FIRE on every certificate/wrapper field and every label: some theorem must
+CONSUME the field at the strength the docs claim. "Ready for X and Y" needs
+a consumer per half — a field consumed only for X leaves the Y half
+unpinned while the docstring advertises both. A one-line corollary doing
+the read-back is "redundant as a lemma, NOT redundant as a spec guard": it
+derives trivially, but deleting it removes the only theorem that reads the
+field, so keep it as the guard it is. Deciding mutant: weaken the field to
+the consumed-strength-only form; if everything stays green, the advertised
+extra strength was never read back.
+
 ## B5 Existential coupling / witness-hiding
 
 Fire on every corollary of shape
@@ -103,6 +115,19 @@ each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
 P t`). A conjunct whose subject is a ground term binds the helper, not the
 existential — a different witness satisfying `Reads` is left unconstrained.
 
+## B6 Quantified-object coverage
+
+FIRE on every run-coupled / `∀`-over-runs headline: every conjunct must
+MENTION the quantified run objects. A conjunct stated over a static
+canonical fixture binds no run — it is true once, globally, and adds
+nothing per-run, while reading as if each run satisfied it. Transport the
+canonical facts onto the run via permutation-invariant properties (state
+the conjunct on the run's own objects, proved from the canonical fixture
+by invariance) instead of leaving the fixture as the subject. Deciding
+check: per conjunct, does the quantified variable occur? A conjunct with
+no free occurrence of the run variables is fixture-scoped — move it or
+rescope the headline.
+
 ## B7 rfl-headline symbolic passthrough
 
 FIRE on every exact `_eq` headline proved by `rfl` whose RHS names a helper:
@@ -125,6 +150,57 @@ prose. State-space WIDENING of a law field is a mutation-operator class the
 delete/weaken operators cannot generate — add it to the sweep's operator
 catalog (`references/evidence.md`, H1) whenever a law field is in the
 mutable surface.
+
+## B9 Exact-object conclusions
+
+Prefer whole-state equality over field-wise conjunction: a future field
+added to the state leaves a field-wise conjunction compiling-but-silent
+(the new field is unconstrained and nobody is told), while exact equality
+fails loudly and forces the decision. Once multiple fields of a reached
+configuration are load-bearing, prefer the witness-pinning equation
+(`cfgF = <concrete config>`) over accumulating per-field conjuncts — one
+conjunct pins atoms, pending, supply, grant, and trace at once. State
+change-factoring as an exact-delta DISJUNCTION over the possible deltas,
+never a `≠`-triggered hypothesis (a hypothesis conditioned on inequality
+silently drops the equal case from coverage).
+
+## B10 Multiplicity-parametric positives
+
+FIRE on every list-level function (`map` / projection / erasure over a
+list) in the declared mutable surface: a singleton demo is NOT a basis —
+a length-1 example survives the `_ :: _ :: _ ↦ []` mutant (correct on
+singletons, drops everything longer). Pin the function with an exact
+nil/cons/`_eq_map` characterization, OR a witness parametric over
+multiplicity. For a carrier-swap-preparing bridge, also pin the
+future-carrier-facing per-record CONTENT independently: a raw-facing
+bridge hides a reversed / inverse-pair projection that cancels under
+erasure but delivers wrong order to the new carrier. Judge every
+demotion against the DECLARED mutation universe (`references/basis.md`,
+G1), not defeq intuition — "defeq so no content" holds only if the list
+function is fixed background.
+
+## B11 Halt-arm full-field pin
+
+FIRE on every failure/halt rule: "records nothing" still CARRIES every
+prior field — a halt arm that copies the configuration forward can
+silently change any carried field and no "nothing happens on halt" prose
+notices. Pin the halt arm with the `∃`-free full-config matcher (the
+exact halted configuration, every field spelled out); each carried field
+is a silent-change candidate and the matcher is the only theorem that
+watches all of them. Deciding mutant: perturb one carried field in the
+halt arm (drop a trace entry, zero a balance) — the full-config matcher
+reddens; anything weaker stays green.
+
+## B12 Hygiene exports
+
+When a semantic headline cannot catch inert-residue mutants (leftover
+tokens/state that change nothing the headline observes), keep the
+headline SEMANTIC and EXPORT the no-leftover facts as named basis —
+don't contort the headline into a hygiene checker. Validate the exports
+with a compiled leaky-state witness: a state carrying the inert residue
+that PASSES every headline conjunct and REDDENS one of the hygiene
+exports. The witness proves the exports are the only line of defense
+for the residue class, earning them basis status.
 
 ## B13 Def-level substitution (pseudo-oracle / common-mode failure)
 

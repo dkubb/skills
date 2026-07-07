@@ -28,6 +28,48 @@ deciding witness is the run pair whose recorded causal structures differ
 only by the scheduling of independent events. [Anchors: Mazurkiewicz traces;
 happens-before — Lamport.]
 
+## E3 Identity coverage
+
+FIRE on every identity type consumed by matching rules: cross-kind
+disjointness is NECESSARY, not SUFFICIENT — prove full-identity
+injectivity per KIND. Enumerate every constructor the identity ranges over
+and every collision AXIS the consuming redex matches on (occurrence,
+owner, branch, position), and compile the "same request, different
+occurrence" witness for each axis the invariant does not mention — the
+surviving counterexample usually hides in the kind you didn't quantify
+over, and each kind can hide several collision SOURCES (a cross-key
+same-occurrence aliasing masked by the more obvious same-key duplicate).
+Namespace tiers: sibling-vs-sibling distinctness is a DIFFERENT obligation
+from new-vs-any-pre-existing (freshness); never write "cannot collide"
+unqualified — say which tier. [Anchor: freshness / nominal logic —
+Gabbay–Pitts.]
+
+## E4 Identity construction
+
+Fresh identities are DETERMINISTIC functions of local structure — tree
+addresses with injectivity/disjointness laws — never scheduler-dependent
+counters (a counter reintroduces schedule-dependence; a static id breaks
+under loops; origin + site + iteration ordinals survive both). The
+renderer/canonicalizer VERSION is part of replay identity: two versions
+canonicalizing differently are two identities. In-memory truth vs durable
+projection: persist the structured identity, or prove it reconstructs from
+what is persisted — state which. When two owner-scoped facts lower into
+one GLOBAL store, the lowering must MANUFACTURE the namespace (derived
+disjoint addresses), never assume separation. [Anchors: content
+addressing; De Bruijn indices.]
+
+## E5 Lossy compatibility layers
+
+FIRE on every fix that ISOLATES a collision into a lossy projection: the
+fix is sound only for consumers reading the injective truth — name exactly
+WHICH consumers those are. Demote the frozen lossy identity to a
+projection with a truth→projection theorem (the lossy side derives from
+the injective side, never stands alone). A bridge is honest, a destination
+is not: the moment a downstream claim reads the lossy side as identity,
+the isolation is unsound. And check the recorded trace retains every
+identity axis the NEXT theorem needs after proof witnesses are forgotten —
+erasure that drops an axis makes the future theorem unstatable.
+
 ## Multi-field coherence / evidence binding
 
 Every payload with id+args+result+proof+version+authority+parents must prove

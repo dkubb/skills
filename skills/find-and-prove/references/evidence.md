@@ -102,6 +102,21 @@ construct):**
 
 ## H2 Witness discipline
 
+**The negative witness carries the identity claim.** Build negatives with
+FREE hypotheses where only the KEY differs (same shape, same fields, one
+axis flipped) — a negative differing in several axes proves only that the
+bundle fails, not which axis is load-bearing. Positives must be exactly as
+parametric as negatives (`references/vacuity.md`, A2 level 5).
+
+**Per-axis non-degeneracy plus one all-axes witness.** One witness
+non-degenerate per axis kills per-axis mutants; add ONE witness
+non-degenerate in ALL axes simultaneously — interaction mutants (two
+weaknesses masking each other) survive the per-axis family. The complement
+is the DEGENERATE-FIXTURE probe: all fields equal, zero fuel — it isolates
+the one intended distinctness source and proves no theorem needs an
+undeclared non-degeneracy hypothesis. [Anchor: boundary value analysis.]
+The minimal boundary fixture rule is `references/scope.md` (D2).
+
 **Load-bearing-hypothesis witness audit** — to show hypothesis C is
 necessary for a theorem `{A, B, C} → G`, the necessity-witness must
 satisfy ALL the OTHER hypotheses (A, B) and fail *only* when C is
@@ -113,6 +128,28 @@ adversary-binding).
 
 ## H3 Mechanical floor (run before judging)
 
+Anything checkable by compile/probe/linter is never discharged by
+reasoning. Run these BEFORE any judgment lens:
+
+- **`#lint` / environment linters** — mathlib-style linters (unused
+  hypotheses, simp-normal-form, doc linters) mechanize several rubric
+  items (unused-hypothesis mutation, docstring drift) for free.
+- **`#guard_msgs` elaboration snapshots** — pin statements and error
+  messages byte-stable across refactors; mechanizes statement
+  authenticity and the interface-extraction "statements byte-stable"
+  question.
+- **`plausible`/`#eval`/`decide` before proving** — search every headline
+  for a counterexample before attempting the proof.
+- **`exact?` / premise selection as a redundancy probe** — mechanizes half
+  of delete-a-headline (`references/basis.md`, G1): if `exact?` closes a
+  deleted headline from the others, the derivation exists.
+- **Compile-the-prose** — discharge every "this lifts to the general
+  case" doc claim by compiling the general corollary in a scratch probe;
+  a lift that doesn't compile is an altitude overclaim
+  (`references/reception.md`, C7).
+- **CI ratchets** — promote the greps below (`@[implemented_by]`,
+  `@[extern]`, `opaque`, `partial`, `native_decide`) from review habits to
+  CI checks that only tighten.
 - **Statement authenticity (Pollack-inconsistency)** — the reviewer
   audits the *rendered* statement; local `notation` / `macro_rules` / `infix`
   can shadow core symbols so a headline reads as one claim and elaborates as
@@ -151,3 +188,24 @@ adversary-binding).
   the implementation against the model interpreter on shared inputs.
   Property-based testing searches the spec's input space; coverage guidance
   searches the IMPLEMENTATION's branch space — they find different bugs.
+
+## H4 Proof-method skeletons (reference-only)
+
+The constructive duals — proof shapes to reach for once the hunt says the
+claim is real:
+
+- **The ∀-terminal-refinement skeleton** — canonical per-phase bags →
+  control uniqueness → local inversion per operational leaf →
+  snoc-induction phase classification → concrete next-step witnesses for
+  nonterminal exclusion → recouple order-sensitive erasers from terminal
+  membership + uniqueness.
+- **Extensional-agreement-as-transport** for lawful interface bundles —
+  bundle the law as a field plus a payoff theorem that every lawful
+  inhabitant agrees with the concrete adapter; downstream proofs transport
+  along the agreement instead of unfolding the instance.
+- **Sealed-handle stateful drive** — a fail-closed prefix law over an
+  ARBITRARY handle, so the only usable operation is the public step; the
+  seal is enforced by what the law quantifies over, not by privacy.
+- **Two-tier failure honesty** — request divergence fails CLOSED (halt);
+  a local miss advances-and-continues; pin each tier separately, never
+  one "errors halt" blanket.
