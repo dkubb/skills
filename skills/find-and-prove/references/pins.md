@@ -61,6 +61,18 @@ separate its inputs. "The type can't collide" is not "the rule can't
 collide." When executing these mutants, apply detector isolation
 (`references/evidence.md`, H1): mutate only the def body, never the pin.
 
+## B3 Cardinality conjunct
+
+FIRE on every universal value claim over a linear/unique resource:
+`∀ x, P x → x = good` is forged by TWO copies of the right thing — the
+most-recurring forgery class in the harvest. `count = 1` is first-class,
+never derived from a `∀`-uniqueness reading; and the `∃ rest` decomposition
+form (`state = good :: rest`) needs an explicit not-in-rest clause
+(`good ∉ rest`), else the second copy hides in the rest. The deciding
+witness is the two-copy state: it satisfies every uniqueness-as-`∀` reading
+and fails only the count / not-in-rest form. [Anchors: exactly-once
+semantics; multiplicity.]
+
 ## B5 Existential coupling / witness-hiding
 
 Fire on every corollary of shape

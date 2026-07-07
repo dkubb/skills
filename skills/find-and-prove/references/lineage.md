@@ -79,6 +79,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   mutates between check and use; a schedule race, not a mediation gap.
 - **membranes / attenuation** — *Miller; ocap* — recursive seal + revoke.
 - **affine / linear types** — *(Wadler; Rust ownership)* — single-use.
+- **exactly-once semantics / multiplicity** — *(distributed systems,
+  classical)* — at-least-once ∧ at-most-once; `count = 1` as a first-class
+  conjunct, never derived from `∀`-uniqueness.
 - **best correct approximation / optimal abstract transformer / strongest
   postcondition** — *Cousot; Dijkstra predicate transformers* — sound but not
   tightest.
