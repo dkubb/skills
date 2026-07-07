@@ -115,6 +115,19 @@ each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
 P t`). A conjunct whose subject is a ground term binds the helper, not the
 existential — a different witness satisfying `Reads` is left unconstrained.
 
+## B6 Quantified-object coverage
+
+FIRE on every run-coupled / `∀`-over-runs headline: every conjunct must
+MENTION the quantified run objects. A conjunct stated over a static
+canonical fixture binds no run — it is true once, globally, and adds
+nothing per-run, while reading as if each run satisfied it. Transport the
+canonical facts onto the run via permutation-invariant properties (state
+the conjunct on the run's own objects, proved from the canonical fixture
+by invariance) instead of leaving the fixture as the subject. Deciding
+check: per conjunct, does the quantified variable occur? A conjunct with
+no free occurrence of the run variables is fixture-scoped — move it or
+rescope the headline.
+
 ## B7 rfl-headline symbolic passthrough
 
 FIRE on every exact `_eq` headline proved by `rfl` whose RHS names a helper:
