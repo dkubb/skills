@@ -6,6 +6,31 @@ class: the theorem can be true and every mutant can die while the reception —
 what a reader takes away — is still wrong. Statement-surface defects need
 statement-level audits, not more mutants.
 
+## C1 Object-referent audit
+
+FIRE on every theorem whose NAME references a concrete object or quantity
+(`…Trace`, `…authority`, `…frontier`, `…spend`, `…schedule`): verify the
+STATEMENT actually mentions/compares THAT object — not a DIFFERENT object,
+at a different representation level, that happens to be the correct thing to
+compare. The origin case: a guard named `…_not_fixedBlockReducerTrace`
+proved inequality against the token block traces (the correct, necessary
+level — the reducer trace is their lossy projection) and never mentioned the
+reducer trace. True theorem, non-vacuous, every mutant dies — a pure
+NAME↔referent reception defect the mutation gate structurally cannot catch.
+Fix: rename to the actual referent, or add the docstring clause naming the
+level. Three sibling lenses from the same review; apply together:
+
+- **Run-independence of a transported `∃`** — when a `∀`-over-runs theorem
+  reuses a lemma whose `∃`-witness must be run-independent to serve every
+  run, confirm the reused lemma's ARGUMENT LIST omits the quantified run.
+- **Lossy-projection comparison-level check** — comparing at the SOURCE
+  level is CORRECT (not a gap) when the projection is lossy; a
+  projected-level (in)equality is a DIFFERENT, weaker statement. Flip "why
+  not compare the projected object?" into a correctness point.
+- **Cosmetic-defeq-vs-genuine-read** — break the INPUT with a mutant to
+  prove a `rfl`/defeq bridge genuinely READS its input, not an accidental
+  defeq that would hold for any input.
+
 ## C4 Temporal-inversion test for bag / unordered state
 
 When a theorem reads "A THEN B" but the state is an unordered bag / frame,
