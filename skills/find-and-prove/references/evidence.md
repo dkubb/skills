@@ -24,6 +24,31 @@ only if SEMANTIC: a mutant dying on a `warningAsError` unused-binder lint is
 incidental and overstates adequacy — rename `_x` and rerun, requiring a
 type/proof failure.
 
+**Operators in BOTH directions.** The weakening catalog below plus two
+directions delete/weaken operators cannot generate:
+premise-STRENGTHENING / behavior-drop (`references/vacuity.md`, A7) and
+law-field WIDENING (`references/pins.md`, B8). A weakening-only sweep reads
+as full adequacy while an entire mutation direction goes untested.
+
+**The false-kill rule.** A kill that manifests only as a PROOF-TERM break —
+an `rfl`/`simp` step inside a witness, a type mismatch a canonical coercion
+repairs — is scored only AFTER applying the minimal semantic repair the
+weakened statement deserves; if the repaired witness passes, the mutant
+SURVIVED and the kill was false. Classic case: a field derivable from a
+sibling via an iff — deleting it breaks proof terms everywhere while the
+semantic content is untouched. Soundness caveat: the =-only proof-term
+style is sound ONLY together with this rule — they correct each other
+(exact-equality pins make kills cheap to see; the false-kill rule stops
+them from over-counting).
+
+**Detector isolation.** Mutate ONLY the def body, never the detector
+theorem: a `replace_all` that moves both the rule and its producer-pin
+moves the detector with the mutant and the test falsely passes.
+
+**Differential per-site isolation.** To localize a survivor among candidate
+sites, weaken each site INDIVIDUALLY and compile — never reason about which
+site is load-bearing.
+
 ## Mutation operators — derive by least-power simplification
 
 Don't memorize a list; *generate* it. Every operator replaces an operation with
