@@ -186,6 +186,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 
 - **small-scope hypothesis (Alloy); property-based testing (QuickChick)** —
   *Jackson; Hughes/Paraskevopoulou* — small counterexamples first.
+- **boundary value analysis** — *(testing, classical)* — degenerate and
+  extreme fixtures isolate which distinctions a suite actually needs;
+  the degenerate-fixture probe is its proof-side form.
 - **metamorphic testing** — *T.Y. Chen 1998* — relations without an oracle.
 - **differential testing** — *(classical)* — compare two implementations.
 - **pseudo-oracle** — *Davis–Weyuker 1981* — test without a true oracle by

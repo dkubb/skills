@@ -102,6 +102,21 @@ construct):**
 
 ## H2 Witness discipline
 
+**The negative witness carries the identity claim.** Build negatives with
+FREE hypotheses where only the KEY differs (same shape, same fields, one
+axis flipped) — a negative differing in several axes proves only that the
+bundle fails, not which axis is load-bearing. Positives must be exactly as
+parametric as negatives (`references/vacuity.md`, A2 level 5).
+
+**Per-axis non-degeneracy plus one all-axes witness.** One witness
+non-degenerate per axis kills per-axis mutants; add ONE witness
+non-degenerate in ALL axes simultaneously — interaction mutants (two
+weaknesses masking each other) survive the per-axis family. The complement
+is the DEGENERATE-FIXTURE probe: all fields equal, zero fuel — it isolates
+the one intended distinctness source and proves no theorem needs an
+undeclared non-degeneracy hypothesis. [Anchor: boundary value analysis.]
+The minimal boundary fixture rule is `references/scope.md` (D2).
+
 **Load-bearing-hypothesis witness audit** — to show hypothesis C is
 necessary for a theorem `{A, B, C} → G`, the necessity-witness must
 satisfy ALL the OTHER hypotheses (A, B) and fail *only* when C is
