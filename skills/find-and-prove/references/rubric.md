@@ -1,128 +1,24 @@
-# Plan: the formal-review skill suite (find-and-prove v3 + formal-design)
-
-**Audience.** A future LLM session (Claude/Fable orchestrator, Codex, or a
-Pro-driving subagent) tasked with (a) building this suite, or (b) reviewing /
-designing Lean 4 and similar formally-proven code before the suite exists.
-Section 3 is directly usable as a review rubric today — start there if you are
-reviewing, not building. **If executing this plan as a goal, read §7's
-execution protocol first** — it tells you how to locate the current phase
-from the repo state and what you may do without asking the operator.
-
-**Sources consolidated.**
-
-1. `skills/find-and-prove/` at 2026-07-06 (post PR #4 — canonical-name +
-   new-technique commits).
-2. The symbiote harvest catalog
-   (`~/.claude/projects/-Users-dkubb-workspace-dkubb-symbiote/memory/reference_pro_reasoning_principles.md`,
-   ~150 techniques from Pro/Codex/Fable review rounds, audited 2026-07-06:
-   ~25 fully graduated, ~35 partial, ~70 missing, rest other-skill territory).
-3. Published literature not yet in either (marked NEW below).
-
-**Verdict that motivated this plan.** The catalog is sound (3 minor caveats,
-all noted below) and ~4x richer than the current skill. Its most
-battle-hardened items — rubric #12/#14/#15/#16/#17, the `_iff` pin family, the
-Fable out-finds — are precisely the ones not yet graduated. A whole defect
-class recurs that the mutation gate *structurally cannot catch*
-(name↔referent, rfl-passthrough, instance wiring, existential subject,
-proof-term false kills): statement-surface defects need statement-level
-audits, not more mutants.
-
----
-
-## 1 Design principles (binding for the build)
-
-1. **LLM-first vocabulary.** Every technique is named by its published term of
-   art where one exists (latent-space anchor), with the operational house name
-   in apposition. New lineage rows for every new anchor.
-2. **Triggers, not lenses.** The catalog's hardest meta-lesson: reviewers had
-   the lens and missed the *application site*. Every rubric item states its
-   FIRE-ON condition ("on every new predicate", "on every ∃-headline", "on
-   every constructor addition"). An item without a trigger is not done.
-3. **Witness discipline.** A finding requires a compiled witness / two-state
-   distinguisher / typechecking adversary import; a technique requires the
-   named mutant it kills. Unchanged from v2; extended by the false-kill rule
-   (H1).
-4. **Execute, don't argue.** Anything checkable by compile/probe/linter is
-   never discharged by reasoning. New: a mechanical floor (H3) of Lean-native
-   checks that runs before any judgment lens.
-5. **Rank honesty.** Every claim gets exactly one enforcement rank (kernel
-   theorem / export drill / runtime bridge / operator policy / evaluator /
-   honest doc). Unchanged from v2.
-6. **Two modes, two skills.** Attacking an artifact (review-time) and choosing
-   a design (build-time) are different activities with different triggers;
-   they get sibling skills that cross-reference.
-7. **Acceptance = blind reproduction.** A graduated technique is validated by
-   handing a fresh subagent a filter-safe puzzle at the pre-fix state, armed
-   only with the technique, and getting the known finding on attempt 1 (the
-   symbiote protocol). The winning prompts ship in the skill.
-
----
-
-## 2 Architecture
-
-### The suite
-
-| Skill | Mode | Owns |
-|---|---|---|
-| `find-and-prove` (keep name) | review-time | stance, oracle hunt, **the binding rubric** (§3), evidence mechanics, enforcement ranks, calibration, adjudication, subagent prompt library, Lean export-surface reference |
-| `formal-design` (new) | build-time | pre-flight decision procedures and keyed question sets run BEFORE authoring a slice: identity design, carrier/representation choice, primitive forcing, increment scoping, seam/interface extraction |
-| `state-space-minimization` (+`-formal`) | unchanged | encoding order, constructive encoding, normalization, boundary parsing — find-and-prove cites, never duplicates |
-
-**Names — BINDING DEFAULTS.** Keep `find-and-prove`; name the sibling
-`formal-design`. An executor proceeds on these without asking, unless the
-operator has said otherwise in the session or a memory. Rationale:
-`find-and-prove` is a coinage but encodes the stance, is already
-cross-referenced (memories, SSM, the symbiote plan), and the latent-space
-work is done by the technique names inside, not the skill slug. Recorded
-alternatives if the operator ever renames: `proof-audit`,
-`adversarial-spec-review`; `theorem-design`, `slice-design`.
-
-### Internal structure of find-and-prove v3
-
-SKILL.md stays a dispatch layer (~its current size); depth moves to reference
-modules. New spine:
-
-```text
-SKILL.md
-  Stance (v2 stance 1-6, incl. reviewer-directed prompt injection)
-  The hunt (oracle table, triage, schedule amplifier, ranks — v2, slimmed)
-  THE BINDING RUBRIC — one line per item + FIRE-ON + reference pointer (§3)
-  Mechanical floor (H3 summary — run these before judging)
-  Calibration (v2 + nitpick/ergonomics rule)
-  Adjudication (v2 + HEAD-check, keep-list, challenge→authority, reproduction)
-  Application sequence
-references/
-  rubric.md            — full rubric with witnesses, mutants, worked examples
-  vacuity.md           — defect class A (the collapse lattice is the core)
-  pins.md              — defect class B (the _iff family is the core)
-  reception.md         — defect class C (the mutation-blind class)
-  scope.md             — defect class D
-  identity.md          — defect class E
-  resources.md         — defect class F
-  basis.md             — defect class G
-  evidence.md          — defect class H (mutation mechanics, witness rules,
-                         mechanical floor; absorbs lean-robustness "Mutation
-                         operators" + "Mutate intentionally")
-  information-flow.md  — defect class I (confidentiality: the oracle-hunt's
-                         leak lenses — partition oracle, error algebra,
-                         non-interference/LowEq, QIF, declassification,
-                         chosen-prefix; representation-seal: least-authority,
-                         contextual equivalence); lean-robustness is its
-                         Lean drill
-  lean-robustness.md   — export-surface catalog + robust-Lean habits (kept)
-  lineage.md           — extended with every new anchor in §3
-  prompts.md           — subagent prompts incl. reproduced winning prompts
-```
-
----
-
-## 3 THE BINDING RUBRIC v1 (usable as a guide today)
+# The binding rubric — full item catalog
 
 Format per item: **FIRE ON** → check → the mutant/witness that decides it.
 [Anchors] are the latent-space terms; ★n = origin in the symbiote catalog's
-Pro-rubric item n; (NEW) = not in catalog or current skill.
+Pro-rubric item n; (NEW) = a new published anchor. Each class has a reference
+module with the full treatments (witnesses, mutants, worked examples) where
+they exist; the entry here is the binding one-screen form.
 
-### A — Vacuity: does the suite prove anything?
+| Class | Module |
+|---|---|
+| A — Vacuity | `references/vacuity.md` |
+| B — Unpinned surface | `references/pins.md` |
+| C — Overclaim / reception | `references/reception.md` |
+| D — Mis-scoped | `references/scope.md` |
+| E — Identity & causality | `references/identity.md` |
+| F — Resources & composition | `references/resources.md` |
+| G — Basis curation | `references/basis.md` |
+| H — Evidence mechanics | `references/evidence.md` |
+| I — Information flow | `references/information-flow.md` |
+
+## A — Vacuity: does the suite prove anything?
 
 - **A1 Trivial-model sweep** [feasibility; Morgan's *miracle*] — FIRE once per
   suite: can the do-nothing implementation (empty trace / reject-everything /
@@ -164,7 +60,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   catalog misses. Each distinguishable trigger of a channel needs its own
   reachability witness (or one quantifying over all).
 
-### B — Unpinned surface: it holds, but binds nothing
+## B — Unpinned surface: it holds, but binds nothing
 
 - **B1 The `_iff` pin family** (★12/★14/★17 — the highest-yield family in the
   catalog) — three FIRE-ONs:
@@ -238,7 +134,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   witnesses use non-degenerate field values. Self-question: "could all three
   be wrong the SAME way?"
 
-### C — Overclaim: statement weaker than name/prose (the mutation-blind class)
+## C — Overclaim: statement weaker than name/prose (the mutation-blind class)
 
 - **C1 Object-referent audit** (★16, Fable's first out-find) — FIRE on every
   theorem whose NAME references a concrete object (`…Trace`, `…authority`,
@@ -294,7 +190,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   never "provenance" (graduated); tag export twins; boundary-based over
   event-based capstone names.
 
-### D — Mis-scoped: right claim, wrong boundary or rank
+## D — Mis-scoped: right claim, wrong boundary or rank
 
 - **D1 Enforcement rank + bad-lowerer test** (graduated; keep) — every claim
   gets exactly one rank; run-output properties a bad lowerer can falsify are
@@ -334,7 +230,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   way trace facts do); a property may not hold of every prefix; a fixture
   witness never masquerades as a universal predicate.
 
-### E — Identity & causality
+## E — Identity & causality
 
 - **E1 Collision-kernel audit** [kernel of a map (NEW anchor)] — FIRE on
   every lossy projection at an identity boundary: never ask "is it
@@ -370,7 +266,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   retains every identity axis the NEXT theorem needs after proof witnesses
   are forgotten.
 
-### F — Resources & composition
+## F — Resources & composition
 
 - **F1 Conservation shape** — the law is an aggregate sum
   (`childL + childR ≤ parent`), never pointwise containment (each-child-≤
@@ -404,7 +300,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   REJECTED by the old exact pin, plus one interior-visiting schedule (the two
   boundary walls do not evidence universality).
 
-### G — Basis curation (headline vs corollary)
+## G — Basis curation (headline vs corollary)
 
 - **G1 Declared-universe irredundancy** (★1) — irredundancy is undefined
   until the mutation universe is declared (fixed background vs mutable
@@ -428,7 +324,7 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   an assumption-free algebraic core from the invariant-concluding semantic
   theorem and headline the semantic one (Codex).
 
-### H — Evidence mechanics (how to actually decide)
+## H — Evidence mechanics (how to actually decide)
 
 - **H1 Mutation discipline** — operators in BOTH directions: the existing
   weakening catalog plus premise-STRENGTHENING / behavior-drop (A7) and
@@ -473,13 +369,11 @@ Pro-rubric item n; (NEW) = not in catalog or current skill.
   failure honesty (request divergence fail-closed vs local miss
   advance-and-continue, each pinned).
 
-### I — Confidentiality & information flow (the oracle-hunt's leak lenses)
+## I — Confidentiality & information flow (the oracle-hunt's leak lenses)
 
-This class is the original skill's information-flow spine, preserved intact —
-the catalog is theorem-adequacy-oriented and barely touched it, so nothing
-here is shed. It is the confidentiality half of the hunt: what can the role
-observe or distinguish? `references/lean-robustness.md` is its Lean-specific
-attack drill.
+The confidentiality half of the hunt: what can the role observe or
+distinguish? `references/lean-robustness.md` is its Lean-specific attack
+drill.
 
 - **I1 Public-result partition / decision oracle** — FIRE on every public
   result type: its constructors induce a partition of hidden states; derive
@@ -511,201 +405,3 @@ attack drill.
   release: name what/who/where/when is released and prove the attacker cannot
   influence it (robustness) and attacker data cannot launder into trusted
   evidence (the integrity dual).
-
-### Adjudication additions (SKILL.md)
-
-Keep v2's four rules; add: (5) verify a CLEAN verdict was produced against
-HEAD (check cited line numbers); (6) reviews name what to KEEP (positive
-confirmation calibrates trust and prevents over-correction); (7)
-challenge→authority loop: refute inner-reviewer calibrations you disagree
-with (compile the refutation), route genuine splits to the design authority —
-never defer, never majority-vote; (8) blind-reproduction validation for any
-newly harvested lens before graduating it (filter-safe puzzle at the pre-fix
-state, attempt-1 match required); (9) tiering: mechanical floor and builds on
-the cheap model, adversarial review on the advanced model — the advanced
-reviewer reliably catches the C-class (reception) defects the gate cannot.
-
----
-
-## 4 `formal-design` blueprint (build-time sibling)
-
-Purpose: run BEFORE authoring a slice/rung of a formal system. Structure:
-a small SKILL.md dispatcher ("what kind of slice is this?") + one reference
-per slice kind, each a keyed question set with the failure mode each question
-pre-empts. Content (all from the catalog):
-
-- **Increment scoping** — one degree of freedom per rung ("is my smallest
-  increment a concrete instance of the new freedom, or the freedom itself?");
-  split a bundled rung by its hardest dependency; defer the TRANSFORM never
-  the DATA (the persistent fact carries the raw datum so the next rung is
-  additive); "additive later" requires the extension point NOW (a headline
-  can only reject mutants its types can express); add-and-coexist, retire
-  only after proven out; the retirement-is-a-mirage 3-part test;
-  first-consumer boundary test (which rule first READS the new fact — a
-  producer-only rung is storage, name it so); false-dependency-direction
-  (is A-before-B logic or an artifact of planning order?).
-- **New primitive** — expressiveness-forcing proof (two states agreeing on
-  everything the current primitive reads but requiring different outputs —
-  the two-state distinguisher as a NECESSITY proof); a forced primitive
-  generalizes an existing seam at higher arity, never adds a capability or
-  changes what existing structure means; fixture/layout stays out of the
-  primitive; first-order closedness (closed data tokens, never a function
-  field — defunctionalize).
-- **Identity design** — distinct constructors per event kind from day one;
-  structured sum-type ids before codecs; the full E-class rubric run at
-  design time; route identity through concrete addresses when the abstract
-  type lacks structure; stable schedule-independent freshness (origin + site
-  + iteration ordinals; static ids break under loops, counters reintroduce
-  schedule-dependence).
-- **Carrier/representation** — route-vs-encode 8-question procedure (opaque
-  carry vs typed branch vs replay-key vs adapter); representation boundary
-  vs synonym (semantic boundaries get nominal carriers, never `abbrev`);
-  shared-source-with-two-projections (use the source-shaped side with an
-  identity projection; invented defaults are worse); dependent-index
-  encoding pointer → SSM; carrier-swap bridge 15-question set (inverse-pair
-  mutants: round-trip laws tolerate compensating error pairs — pin the
-  projection's exact content in the FUTURE carrier's vocabulary).
-- **Seam/interface extraction** — Pro's 12-question set (delete-the-
-  abstraction reddens a downstream consumer; interface exactly as strong as
-  downstream needs; don't-over-generalize: extract the SMALLEST theorem that
-  pins the abstraction; concrete instance re-derives the laws; a pointwise
-  model must not satisfy the weakened interface while breaking the
-  multi-object claim).
-- **Effect channels & invariants** — the two 8-question pre-flight sets
-  (fate of every returned value / "ignored" is never an allowed answer;
-  single-seam theorems over the call site, not the callee's error tag;
-  advance-only-on-success; smallest fixture; which mutant dies) — these are
-  ★4/★5 operationalized at design time.
-- **Recon discipline** — API-recon before build (a mechanism named in a spec
-  is a CLAIM; verify it exists; recon-finds-the-machinery-already-exists
-  reshapes the agenda); design-round-skip criterion (skip only when every
-  DOF is determined by already-reviewed pieces; recon that refutes a roadmap
-  hypothesis reinstates the round); one design round adjudicates a fork
-  (present both candidates grounded in recons).
-- **Proof-engineering forward hygiene** — pre-prove the induction-shape
-  lemmas (`_cons`, `.mono`, append) the next rung's fold needs; export the
-  transport lemma a planned swap will need; named law over defeq `rfl` at
-  module boundaries (representation-fragility); ∃-hidden fields made public
-  one consumer ahead, preferring the single witness-pinning equation
-  (`cfgF = <concrete>`) once multiple fields are load-bearing.
-
----
-
-## 5 Routed to other skills (do NOT fold into this suite)
-
-| Technique | Destination |
-|---|---|
-| split-by-hardest-dependency, one-DOF rungs, cross-cutting fix as own increment, add-and-coexist sequencing | `atomic-changes` / `story-change` (formal-design cross-references) |
-| dependent-index encoding, one-determinant-per-fact, per-position cell, nominal-carrier-vs-abbrev encoding half | `state-space-minimization` (+ `-formal`) |
-| subagent checkpoint-commit recovery, connector-fetch verification, filter-safe puzzle construction mechanics | `subagent` / `claude-coordination` / `codex-coordination` |
-| PR-body/head-SHA sync | `pr-create` |
-| reproduce-before-graduating meta-process (as skill-maintenance policy) | `skill-writing` / `self-improvement` (find-and-prove keeps the reviewer-facing form in Adjudication #8) |
-| CI ratchets as a general pattern | `surface-hardening` (find-and-prove's H3 names the Lean instances) |
-
-## 6 Catalog reconciliation (for the symbiote instance)
-
-**Ownership rule.** The symbiote catalog
-(`~/.claude/projects/-Users-dkubb-workspace-dkubb-symbiote/memory/reference_pro_reasoning_principles.md`)
-is owned by the symbiote-substrate agent, which appends to it continuously.
-An executor of THIS goal never edits that file: Phase 5 produces the
-shed/trim list below as a REPORT (committed under
-`docs/plans/formal-review-suite-validation/`) for the operator to hand over.
-The reverse-drift fix (A∪B wording) is in THIS repo and is ours to make.
-
-- Shed outright (fully graduated after this build): the inc-4b trio,
-  annotation vacuity, word-class sweep, A∪B (after the algebra-now fix),
-  resource-or-fact, mint-collision, obligation-transfer, bad-lowerer,
-  temporal inversion, existential coupling, plus every entry absorbed above.
-- Trim to the delta until built: any entry marked PARTIAL in the 2026-07-06
-  audit.
-- Reverse-drift fix (skill lags catalog): the A∪B bullet's "prove it with the
-  comparison fixture, not before" → "prove the pure algebra now; defer only
-  the semantic implication discharging its hypotheses."
-- Soundness caveats to carry into graduation: canonical-tags CLAMP only when
-  the envelope declares off-contract input in scope (else it violates
-  fail-closed); =-only proof-term style graduates ONLY together with the
-  false-kill rule (they correct each other); physical-execution coupling
-  carries Pro's ∃/∀ scope rule.
-
-## 7 Build plan (atomic, per repo discipline)
-
-### Execution protocol (read this first on every goal run)
-
-- **State lives in the repo, not in memory.** Each phase's DONE condition is
-  checkable from the working tree. On every run: check the DONE conditions in
-  order and resume at the first unmet one. Never trust a summary or memory
-  over the tree.
-- **Step 0 every run:** `just ci` on clean `main` must be green before any
-  change (repair or surface first, per `atomic-changes`).
-- **Commit discipline:** the `atomic-changes` canonical form — one technique
-  per commit, closed-verb subjects, each commit passes `just validate-skills`
-  (fast md gate) and each phase ends with a full `just ci` at head; branch
-  `dkubb/change/<slug>` + PR + merge per phase (a phase is a natural PR).
-- **No scope drift:** a technique not in this plan's allocation (§3/§4/§5)
-  requires a plan-amendment commit to THIS file first, naming its class,
-  trigger, and witness — then it may land.
-- **Definition of done per item:** FIRE-ON trigger stated + the deciding
-  mutant/witness named + lineage row where a published anchor exists + listed
-  in both `references/rubric.md` and its defect-class module + soundness
-  caveat attached where §6 requires one.
-- **Blocked on operator only for:** renames of either skill, deletion of
-  existing skill content (restructure moves, never deletes), or edits outside
-  this repo. Everything else proceeds.
-
-### Phases
-
-- **Phase 0 — foundation.** DONE when: this file is merged to `main` and
-  `just ci` exits 0. Verify: `git log --oneline main --
-  docs/plans/formal-review-suite.md` non-empty; `just ci`.
-- **Phase 1 — restructure (Move/Refactor only, no new content).** Split
-  current SKILL.md + lean-robustness mutation material into the eight
-  defect-class reference modules; SKILL.md becomes the dispatch layer with
-  the rubric skeleton (one line per item + FIRE-ON + pointer). DONE when:
-  all files in the §2 tree exist; a content audit shows zero dropped
-  techniques vs pre-restructure `git show` (diff the technique inventory,
-  not the bytes); `just ci` green; skill-audit pass.
-- **Phase 2 — graduate tier-1.** One Add commit per item: B1, B2, B3, B5b,
-  B7, B8, B13, C1, C2, C4(shadow-difference), C5, A2, A4, A7, D2, E1, E2,
-  F1, F4(run-not-store), G1, H1(false-kill + both directions + detector +
-  differential isolation). Plus the one reverse-drift Fix commit (A∪B
-  algebra-now wording). DONE when: every listed item meets the per-item
-  definition of done; `grep` for each item's house name hits its class
-  module; `just ci` green.
-- **Phase 3 — graduate tier-2 + mechanics.** Remaining §3 items, H3
-  mechanical floor, H4 skeletons, adjudication additions 5–9, and
-  `references/prompts.md` including the four reproduced winning prompts from
-  the catalog (sum-type injectivity, mint-collision, existential-subject,
-  annotation-constant — copy them verbatim from the catalog BEFORE §6
-  reconciliation sheds them). DONE when: every §3 item not in Phase 2 meets
-  the definition of done; prompts.md contains all four prompts; `just ci`
-  green.
-- **Phase 4 — create `formal-design`.** New skill per §4: SKILL.md
-  dispatcher + one reference per slice kind; cross-references both ways
-  (find-and-prove "Relationship" section names it and vice versa). DONE
-  when: `skills/formal-design/SKILL.md` exists, `just validate-skills`
-  passes, every §4 bullet is present with its question set, both skills
-  reference each other.
-- **Phase 5 — validation + handover.** (a) Blind-reproduction runs for six
-  tier-1 lenses (protocol: adjudication #8 — filter-safe puzzle, pre-fix
-  state or synthetic equivalent, fresh subagent armed only with the lens,
-  attempt-1 match); reports committed under
-  `docs/plans/formal-review-suite-validation/`. (b) The cold-LLM test
-  (acceptance #5). (c) english-comprehension + skill-audit passes on both
-  skills. (d) The §6 reconciliation REPORT (shed/trim lists) committed to
-  the same directory for the operator to hand to the symbiote instance —
-  never applied to the catalog by this goal's executor. DONE when: all four
-  artifacts exist in the validation directory and `just ci` is green.
-
-## 8 Acceptance criteria
-
-1. Every technique in the 2026-07-06 audit is either present in a skill
-   (with FIRE-ON trigger + witness/mutant + lineage row where an anchor
-   exists) or listed in §5/§6 with its destination — zero silently dropped.
-2. Every rubric item names the mutant/witness that decides it; no
-   judgment-only items.
-3. The three soundness caveats (§6) appear next to their techniques.
-4. Blind-reproduction passes for the tier-1 lenses (attempt-1, filter-safe,
-   pre-fix state).
-5. A cold LLM given only SKILL.md + one reference module can run a review of
-   a Lean module it has never seen and produce findings in the calibrated
-   format (this is the placeholder-no-more test).
