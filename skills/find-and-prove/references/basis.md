@@ -34,3 +34,15 @@ basis keeps one. Caveat: theorem-SET redundancy is a *prune / minimal-basis*
 finding, NOT vacuity or a soundness defect, and does not weaken
 *definition*-mutation resistance (a definition mutant is still caught, by one
 or both); flag it as such, don't overstate severity.
+
+## G2 Keep-side calibration
+
+"The witness depends on it" proves USED, not basis-worthy — the test is
+whether the STATEMENT pins a public surface no other headline states. A
+cheap proof is not evidence of redundancy (one-step derivability is a
+demotion argument only inside the declared universe, G1). An unconsumed
+bridge kept as a visible vocabulary-agreement pin is legitimate basis.
+Reception may beat bare minimality: keep `= 1` over `≤ 1` when the
+stronger form is the contract readers need — document the tiebreak
+("semantic headline, honestly labeled") rather than silently keeping the
+derivable form.
