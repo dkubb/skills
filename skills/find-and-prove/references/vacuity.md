@@ -107,6 +107,30 @@ the claim. `partial def` (and any `termination_by` / `decreasing_by` hole)
 opts the definition out of the theorem story entirely — flag every headline
 whose subject is `partial` while the prose still claims total coverage.
 
+## A7 Behavior-drop mutants (premise strengthening)
+
+FIRE on every classification / exact-cases master theorem
+(`step_exact_cases` and kin): it classifies the steps that EXIST and
+structurally CANNOT catch a mutant that DROPS a behavior by adding a hidden
+premise NARROWING when a constructor fires. The deciding mutant: give a rule
+a hidden extra premise excluding one of its trigger conditions (a halt rule
+with `why ≠ .recordExhausted` fires on mismatch, refuses on exhaustion) —
+every headline and the classifier stay green while the dropped behavior's
+witness fails. Premise-STRENGTHENING / behavior-drop is a mutation direction
+the weakening-only operator catalog misses (`references/evidence.md`, H1).
+
+The check: whenever a channel has DISTINGUISHABLE trigger conditions
+(different payload / `why` / tag), ask "does a mutant handling only SOME of
+them survive all my headlines?" If yes, each semantically required trigger
+needs its own reachability witness — or one witness quantifying over all of
+them (a disjunctive-hypothesis broadening keeps the basis minimal).
+Reachability of a boundary is NOT handledness of every refusal trigger at
+that boundary: a run prefix that reaches the boundary proves nothing about a
+narrowed rule that then refuses to fire. Any demotion justified by "shares a
+channel / code path" must first check whether a mutant can distinguish the
+two triggers — if it can, they share only the constructor, not the
+guarantee.
+
 ## Adequacy of encodings
 
 Is the model the *real* object, or one with extra inhabitants / collapsed
