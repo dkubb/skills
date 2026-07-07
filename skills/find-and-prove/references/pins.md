@@ -3,7 +3,44 @@
 Load when a theorem proves true but may not bind the surface it advertises:
 hidden wrappers, existential conclusions decoupled from their witnesses,
 headlines that pin a caller instead of the helper. The class's core is the
-`_iff` pin family (graduating per the formal-review-suite plan).
+`_iff` pin family.
+
+## B1 The `_iff` pin family
+
+The highest-yield family in the harvest. Three FIRE-ONs:
+
+- **Every new erasure/refinement RELATION on the mutable surface** — prove
+  `R ↔ <explicit intended content>` as a headline, every field/conjunct
+  spelled out. A forward-simulation theorem
+  (`relates pre → step → ∃ post, relates post`) survives BOTH a too-WEAK
+  relation (the post-state omits a field — a preservation claim silently
+  lost) AND a too-RESTRICTIVE one (the pre-state over-narrowed — the bridge
+  silently stops being general), because the theorem is conditional on the
+  relation it is defined over. Projection lemmas kill too-weak but not
+  too-restrictive; the iff kills both. Distinguish forward refinement from
+  behaviour-EQUIVALENCE (the latter needs a converse theorem); never let the
+  docs say "same behaviour" when only forward simulation is proved.
+- **Every new wrapper `def P … : Prop` or `structure … : Prop` consumed
+  downstream** — prove `P_iff : P ↔ <its definition body>` (often
+  `Iff.rfl`). Witnesses plus projections leave four mutants alive:
+  hidden-extra-condition (`P := <real conjunct> ∧ <unrelated
+  true-on-the-witness thing>`), drop-a-field (downstream theorems that don't
+  project that field stay green), hidden-`False` field (every consumer goes
+  vacuous while a sibling non-vacuity witness still passes), and
+  field-type weakening (drops a sequential-consumption step; passes whenever
+  keys don't collide). Only the iff kills all four; DEMOTE the witnesses and
+  projections to exported corollaries. A "theorem proving P holds" is never
+  enough when `P`'s definition is mutable surface.
+- **Every laws-carrying record FIELD (instance honesty)** — a dishonest
+  instance (`spec := the decoder's own graph`) makes the generic contract
+  law a tautology while every named-predicate theorem stays green: those
+  theorems re-derive from the carried laws independently of the field, so
+  per-definition mutation STRUCTURALLY cannot catch instance wiring. Require
+  the defeq lock `C.field ≡ named-predicate`, proved by `Iff.rfl`, as a
+  headline — and verify it reddens under the graph-swap mutant. A derived
+  public statement through the lock stays a headline as consumer-facing
+  surface but is TAGGED an "export twin", never cited later as independent
+  basis.
 
 ## B5 Existential coupling / witness-hiding
 
