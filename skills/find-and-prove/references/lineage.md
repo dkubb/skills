@@ -90,6 +90,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   (separation logic locality)* — a rule's specification speaks only about
   the state it touches; a whole-bag "no X" claim needs an explicit
   frame-absence hypothesis.
+- **freshness / nominal logic** — *Gabbay–Pitts* — fresh names and their
+  swapping/apartness laws; sibling-vs-sibling distinctness and
+  new-vs-pre-existing freshness are distinct obligations.
 - **kernel of a map** — *(algebra, classical)* — the equivalence
   `f a = f b` classifies exactly what a projection forgets; compute it per
   constructor instead of asking injectivity yes/no.

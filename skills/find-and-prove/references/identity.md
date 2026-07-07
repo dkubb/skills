@@ -28,6 +28,22 @@ deciding witness is the run pair whose recorded causal structures differ
 only by the scheduling of independent events. [Anchors: Mazurkiewicz traces;
 happens-before — Lamport.]
 
+## E3 Identity coverage
+
+FIRE on every identity type consumed by matching rules: cross-kind
+disjointness is NECESSARY, not SUFFICIENT — prove full-identity
+injectivity per KIND. Enumerate every constructor the identity ranges over
+and every collision AXIS the consuming redex matches on (occurrence,
+owner, branch, position), and compile the "same request, different
+occurrence" witness for each axis the invariant does not mention — the
+surviving counterexample usually hides in the kind you didn't quantify
+over, and each kind can hide several collision SOURCES (a cross-key
+same-occurrence aliasing masked by the more obvious same-key duplicate).
+Namespace tiers: sibling-vs-sibling distinctness is a DIFFERENT obligation
+from new-vs-any-pre-existing (freshness); never write "cannot collide"
+unqualified — say which tier. [Anchor: freshness / nominal logic —
+Gabbay–Pitts.]
+
 ## Multi-field coherence / evidence binding
 
 Every payload with id+args+result+proof+version+authority+parents must prove
