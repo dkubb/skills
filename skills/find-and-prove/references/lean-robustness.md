@@ -119,6 +119,9 @@ eliminates by giving a branch that receives those parameters. So:
   capabilities unchanged), `validity` (nothing goes invalid), `disjointness`
   (distinct keys ↦ distinct physical resources, or a *named* minting boundary
   obligation).
+- **Search before proving.** `plausible` (né `slim_check`) is the
+  in-ecosystem QuickChick: run it on every headline before attempting the
+  proof; a counterexample now is cheaper than a failed induction later.
 - **Don't trust `simp` as a spec.** `[simp]` only for canonical API facts; at
   seams use `simp only [public_def, theorem_name, h]`. A proof that survives only
   because `simp [Internal.secretRep]` ran is not an API proof.
