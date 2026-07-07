@@ -79,6 +79,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
   mutates between check and use; a schedule race, not a mediation gap.
 - **membranes / attenuation** — *Miller; ocap* — recursive seal + revoke.
 - **affine / linear types** — *(Wadler; Rust ownership)* — single-use.
+- **potential method (amortized analysis)** — *Sleator–Tarjan* — a
+  measure that strictly decreases across control-creating steps; a free
+  fork shows as non-decreasing potential.
 - **linear logic exponentials** — *Girard 1987* — `!A` marks the
   duplicable; consumable authority is linear, copyable facts are
   exponential — the split-vs-copy line.

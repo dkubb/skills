@@ -28,6 +28,17 @@ the summed resource; the aggregate conservation law (F1) reddens while
 every per-child law stays green. [Anchor: linear logic exponentials — `!A`
 marks what may be duplicated; everything unmarked is linear.]
 
+## F3 Control multiplication costs budget
+
+FIRE on every rule that creates control (fork/spawn/loop-back): it consumes
+a budget unit and is FORBIDDEN at zero — else a zero-budget actor
+multiplies unboundedly and every per-actor bound survives (each child is
+individually within bounds; the population is not). Verify with a
+potential-function measure: potential strictly decreases across every
+control-creating step; a fork that pays nothing shows up as
+non-decreasing potential. [Anchor: the potential method of amortized
+analysis.]
+
 ## Authority & resources — *does ownership/budget add up?*
 
 - **Separation logic / resource algebra / ownership** — identify the algebra;
