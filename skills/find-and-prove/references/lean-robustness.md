@@ -65,7 +65,10 @@ eliminates by giving a branch that receives those parameters. So:
     `macro_rules` / `infix` can shadow core symbols so a headline *reads* as
     one claim and *elaborates* as another — an attack on the review itself,
     not on downstream code (the canonical name: Pollack-inconsistency,
-    Wiedijk). Re-elaborate headlines under
+    Wiedijk). The sibling channel `pp.all` cannot catch: **Trojan Source /
+    homoglyphs** (Boucher–Anderson) — bidi controls and confusable code
+    points make source render as a different statement than elaborates.
+    Scan headline statements and exported names for non-ASCII/confusables. Re-elaborate headlines under
     `set_option pp.all true` / `#print` before trusting what they say.
 
 ## The adversary-import drill (write it BEFORE the implementation is finished)

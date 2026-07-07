@@ -41,6 +41,9 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 - **Pollack-inconsistency** — *Wiedijk 2012* — the printer/parser as attack
   surface: the system prints a statement that reads as a different claim
   than it elaborates to.
+- **Trojan Source / homoglyph attacks** — *Boucher–Anderson 2021
+  (CVE-2021-42574)* — bidi controls and confusable code points make source
+  render as a different program or statement than compiles.
 
 ## Group 2 — representation & API surface
 

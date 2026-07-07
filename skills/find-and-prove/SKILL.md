@@ -470,7 +470,11 @@ triggers — use them *after* you have a target and witness. Full lineage:
   `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
   When the artifact author is untrusted (LLM-generated proofs included), add
   an external kernel pass (`lean4checker`) — elaborator exploits are outside
-  the reach of `#print axioms`.
+  the reach of `#print axioms`. Re-elaboration does NOT catch homoglyphic
+  identifiers or bidi-reordered rendering (Trojan Source): a lookalike code
+  point makes two names render identically while naming different
+  declarations. Add a confusables / non-ASCII scan over headline statements
+  and exported names.
 - **Adequacy of encodings** — is the model the *real* object, or one with extra
   inhabitants / collapsed distinctions? Don't leave this as judgment: build the
   **bidirectional coverage table** — every real-world event / behavior /
