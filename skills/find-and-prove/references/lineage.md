@@ -23,7 +23,10 @@ into a reviewer's context. Use the term, not a paraphrase. Format:
 - **mutation analysis** — *mCoq; "Proof Process Evaluation with Mutation
   Analysis"* — spec/proof too weak (kill the mutant).
 - **adequacy of encodings** — *Harper–Honsell–Plotkin (LF)* — model faithful
-  to the real object.
+  to the real object; the two failure directions are **"no junk, no
+  confusion"** — *Burstall–Goguen (algebraic specification)* — junk = model
+  inhabitant with no real counterpart, confusion = collapsed real
+  distinction.
 - **conservative extension** — *Kunčar–Popescu* — a new def didn't enlarge
   the kernel.
 - **proof engineering / TCB** — *Ringer et al., QED at Large* — TCB / axiom

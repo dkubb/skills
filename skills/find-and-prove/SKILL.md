@@ -454,7 +454,10 @@ triggers — use them *after* you have a target and witness. Full lineage:
   **bidirectional coverage table** — every real-world event / behavior /
   failure mode ↔ the model constructor or rule representing it. An unmatched
   row on EITHER side is a finding (unmodeled behavior, or a model inhabitant
-  with no real counterpart — the extra inhabitant IS the adequacy gap). Where
+  with no real counterpart — the extra inhabitant IS the adequacy gap). The
+  algebraic-specification names for the two directions: **junk** — a model
+  inhabitant with no real counterpart; **confusion** — two real things the
+  model identifies ("no junk, no confusion"). Where
   both a model interpreter and an implementation run, add differential
   execution on shared inputs. This is the adequacy analogue of the mutation
   sweep: executable, not argued.
