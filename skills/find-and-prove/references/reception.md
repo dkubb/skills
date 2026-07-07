@@ -50,6 +50,16 @@ rule sources only what it actually mints; the reply is exogenous start-bag
 input). Calibrate the claim to what the rule produces, and name the exogenous
 tokens as environment input.
 
+**The shadow-difference probe (the C4 sibling).** FIRE on every certified
+distinguisher: NEUTRALIZE it (make the producer constant so the certified
+difference disappears) and check whether another already-varying field still
+proves the conclusion. If the theorem still goes through, the intended
+premise is DEAD — the conclusion was riding a shadow difference in a field
+the claim never mentions, and the certificate certifies nothing about the
+named distinguisher. The deciding mutant is the constant-producer
+neutralization; the fix pins the conclusion to the named difference
+(equalize every other field in the witness pair).
+
 ## C7 Word-class closed-world doc sweep
 
 Fire on every constructor/rule/arm addition: after adding a constructor /
