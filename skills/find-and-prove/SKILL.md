@@ -293,6 +293,9 @@ the class module named per class.
   plumbing-vs-laundering, lossy-projection scoping.
 - **C8 Naming vocabulary** — slogan names only for the final conjunction; name
   the DANGEROUS half; "consume" only for linear removal.
+- **C9 Deferral honesty** — FIRE on every deferred helper property and every
+  accept-a-survivor proposal: re-derive headlines with the helper
+  parametrized; compiles ⇒ honest, else secretly load-bearing.
 
 ### D — Mis-scoped: right claim, wrong boundary or rank (`references/scope.md`)
 

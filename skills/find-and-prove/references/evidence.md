@@ -49,6 +49,11 @@ moves the detector with the mutant and the test falsely passes.
 sites, weaken each site INDIVIDUALLY and compile — never reason about which
 site is load-bearing.
 
+**Survivor-by-deferral adjudication.** A survivor may be accepted as
+by-design ONLY via the deferral-honesty generic re-derivation
+(`references/reception.md`, C9) — never on the strength of a "deferred to
+a later rung" comment alone.
+
 ## Mutation operators — derive by least-power simplification
 
 Don't memorize a list; *generate* it. Every operator replaces an operation with

@@ -53,6 +53,7 @@ its copy.
 | Recon discipline, design-round-skip, retirement-is-a-mirage | formal-design `references/recon.md`, `references/increment-scoping.md` |
 | Split-by-hardest-dependency, defer-the-transform, extension-point-now, first-consumer, false-dependency | formal-design `references/increment-scoping.md` |
 | Proof forward hygiene (induction-shape lemmas, transport export, named-law-over-rfl, witness-pinning cfgF) | formal-design `references/proof-hygiene.md` |
+| Pro rubric #18 (deferral-honesty / `genPreserves`, post-audit delta) | `references/reception.md` C9 (graduated 2026-07-07 after suite completion; blind-repro report `blind-reproduction-c9.md`) |
 
 ## Trim to the delta
 

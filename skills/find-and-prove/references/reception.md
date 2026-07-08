@@ -175,6 +175,34 @@ re-commits the narrow-grep miss it was meant to fix.
   `…effect_boundaries_keyed` is honest where `all_emit_events_match` is
   false of prefixes.
 
+## C9 Deferral honesty (parametrize the deferred value)
+
+FIRE on every deferral of a global property of a helper map/value
+(injectivity, canonicalization, ordering — "X is deferred to a later
+rung") and BEFORE accepting any mutation survivor as by-design: a
+deletion/collapse mutant of the deferred helper SURVIVES the sweep, and
+that survivor is CORRECT only if no headline actually reads the deferred
+property. Distinguish honest from dishonest MECHANICALLY: re-derive EVERY
+headline with the deferred helper replaced by a fully
+universally-quantified variable, supplying ONLY the facts the real proof
+extracts from the premises (freshness gives `child ∉ owners`,
+`child ≠ creator`; nothing more). If the generic version COMPILES, the
+deferred property is provably UNUSED by any headline — the deferral is
+honest by construction, not by inspection. If the generic proof needs a
+fact only the concrete map supplies, the "deferred" property is secretly
+load-bearing: name it as a real premise or split the theorem. This is the
+ONLY sound way to accept a mutation survivor as by-design (the
+survivor-adjudication rule in `references/evidence.md`, H1). Two
+sharpenings from reproduction: (1) check the GENERIC versions into the
+suite (a parameterized section/module), so honesty is compile-time
+enforced rather than a one-off audit; (2) the verdict is scoped to the
+STATED headlines — a collapse mutant can survive by making a freshness
+premise unsatisfiable (vacuous truth), so add a non-vacuity witness for
+the concrete helper and record the deferred debt precisely (injectivity
+is often load-bearing for PROGRESS/enabledness even when no safety
+headline reads it). [Anchor: parametricity — the generic re-derivation
+proves no headline inspects the deferred structure.]
+
 ## Obligation transfer to a durable successor
 
 When an invariant protects a LIVE token later consumed into a DURABLE one

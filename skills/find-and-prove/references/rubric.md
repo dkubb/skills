@@ -190,6 +190,13 @@ they exist; the entry here is the binding one-screen form.
   never "provenance" (graduated); tag export twins; boundary-based over
   event-based capstone names.
 
+- **C9 Deferral honesty** [parametricity] (Fable's `genPreserves`; blind-
+  reproduced) — FIRE on every deferred global property of a helper and
+  before accepting any mutation survivor as by-design: re-derive every
+  headline with the deferred helper replaced by a universally-quantified
+  variable, premises-only; compiles ⇒ honest deferral; needs a
+  concrete-map fact ⇒ secretly load-bearing — name the premise or split.
+
 ## D — Mis-scoped: right claim, wrong boundary or rank
 
 - **D1 Enforcement rank + bad-lowerer test** (graduated; keep) — every claim
