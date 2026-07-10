@@ -32,16 +32,20 @@ loosening is local, explicit, and reviewable.
 Require the hermetic shebang. It strips environment state that changes
 bash behavior before bash starts:
 
-<!-- rumdl-disable-next-line MD013 -- a shebang is a single line -->
+<!-- a shebang is a single line and cannot wrap -->
+<!-- rumdl-disable MD013 -->
+
 ```bash
-#!/usr/bin/env -S -u BASH_ENV -u SHELLOPTS -u BASHOPTS -u CDPATH -u GLOBIGNORE bash --noprofile --norc
+#!/usr/bin/env -S -u BASHOPTS -u BASH_ENV -u CDPATH -u GLOBIGNORE -u SHELLOPTS bash --noprofile --norc
 ```
 
-- `-u BASH_ENV`: bash sources `$BASH_ENV` in non-interactive shells even
-  under `--norc` (verified). Unset it or a caller can inject code.
-- `-u SHELLOPTS -u BASHOPTS`: bash imports option lists from these
+<!-- rumdl-enable MD013 -->
+
+- `-u BASHOPTS -u SHELLOPTS`: bash imports option lists from these
   environment variables at startup (verified: `SHELLOPTS=xtrace` in the
   environment enables xtrace). Unset them or a caller can toggle options.
+- `-u BASH_ENV`: bash sources `$BASH_ENV` in non-interactive shells even
+  under `--norc` (verified). Unset it or a caller can inject code.
 - `-u CDPATH -u GLOBIGNORE`: both silently change `cd` and glob behavior.
 - `--noprofile --norc`: no user rc contamination.
 - The shebang carries no `set`/`shopt` options. A shebang applies only on
