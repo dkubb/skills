@@ -70,6 +70,12 @@ derivable form.
   landed concept, keep the specific one (its pins and mutation tests stay
   green) and add `old ≡ new instance` as a bridge theorem, rather than
   collapsing old into new.
+- **Sibling-mirror basis convention**: when a rung builds a module symmetric
+  to a landed sibling (admission ↔ response, read ↔ write), adopt the
+  sibling's public-basis convention — demote derived twins and adversary
+  guards to exports, headline the agreement law plus a non-vacuity witness.
+  The convention curated on the first module is the basis oracle for its
+  mirror; diverging from it without cause is the finding.
 - A non-vacuity reachability witness EARNS basis status (it kills the
   "nothing happens, so all safety holds" mutant — that is a unique kill).
 - Split an assumption-free algebraic core from the invariant-concluding
