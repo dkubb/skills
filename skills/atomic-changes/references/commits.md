@@ -161,6 +161,13 @@ private until C introduces the tested public contract.
   exempt.
 - `--amend` or rebase of commits already shared — rewrites a state
   others may depend on.
+- `reset --soft <base>` + recommit (or a file-splitting amend) without
+  staging first — Edit/Write changes land in the working tree *unstaged*;
+  `reset --soft` moves HEAD but leaves the index at the pre-edit tree, so the
+  recommit captures the old content and silently drops the edits. It hides
+  because gates run on the working tree: `check`/lint/test all pass while the
+  commits omit the change. Stage (`git add -A`) before the reset; after
+  recommitting verify `git diff HEAD` is empty.
 - Mixing a refactor with a behavior change in one commit — the
   behavior-preservation guarantee no longer holds.
 - A refactor commit that edits code and tests together — with neither
