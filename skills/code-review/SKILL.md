@@ -5,8 +5,8 @@ description: >-
   report findings ordered by severity. Enforces primitive-obsession and
   smart-constructor blockers, property-test and boundary-test requirements,
   complexity thresholds, commit structure against the canonical form, and
-  per-language rules (Rust, SQL, bash, Ruby, Markdown, regex). Also the home
-  for changing review rules or codifying review feedback.
+  per-language rules (Rust, Lean, SQL, bash, Ruby, Markdown, regex). Also
+  the home for changing review rules or codifying review feedback.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -137,6 +137,7 @@ triggers:
 ### Language List
 
 - Bash files: `references/languages/bash.md`.
+- Lean files: `references/languages/lean.md`.
 - Rust files: `references/languages/rust.md`.
 - SQL files: `references/languages/sql.md`.
 - Ruby files: `references/languages/ruby.md`.
