@@ -265,6 +265,11 @@ Emit in this order:
     Put the correction in a `fixup!` commit aimed at the right commit so it
     stays visible for audit; autosquash folds it in only on request.
     Gate-trailer amends on unshared commits are metadata-only and exempt.
+    When a history rewrite restages through the index (`reset --soft` +
+    recommit, or a file-splitting amend), `git add` the working-tree edits
+    FIRST and verify `git diff HEAD` is empty after — an unstaged edit is
+    otherwise silently dropped while working-tree gates still pass
+    (`references/commits.md`).
 
 ## Validation Checklist
 
