@@ -314,6 +314,13 @@ deltas.
   `length::empty_string_rejected`. Contract modules also let coverage and
   mutation runs scope to one public function's own tests, so incidental
   coverage cannot inflate the numbers.
+- Apply the same contract grouping inside `mod proptests`
+  (`proptests::try_new::accepts_every_valid_year`), with shared generators
+  in the outer module as fixtures. This scopes the property coverage gate
+  per method and makes per-function property-mutation kill rates
+  measurable (`proptests::try_new::` as the test filter) — a measurement
+  of which properties are load-bearing, not a gate; the mutation gate
+  stays unit-tests-only.
 - Mutation scope is two-tier. Public-function mutants run against only that
   function's contract module; incidental coverage is not permitted, so a
   mutant killed only by another function's tests is a miss. Private-function
