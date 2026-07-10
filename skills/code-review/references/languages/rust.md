@@ -314,6 +314,14 @@ deltas.
   `length::empty_string_rejected`. Contract modules also let coverage and
   mutation runs scope to one public function's own tests, so incidental
   coverage cannot inflate the numbers.
+- Mutation scope is two-tier. Public-function mutants run against only that
+  function's contract module; incidental coverage is not permitted, so a
+  mutant killed only by another function's tests is a miss. Private-function
+  mutants run against all of the file's contract modules; incidental
+  coverage is allowed by design, and the gate is reachability from at least
+  one public function plus a kill by at least one of those public functions'
+  tests. Do not test private functions directly; an unreachable or
+  unkillable private function is dead code to delete, not a gap to cover.
 - When a test chains two or more fallible steps whose success is plumbing
   rather than the subject, return `Result` from the test and use `?` (with a
   module-level `#[expect(clippy::panic_in_result_fn)]`); stacked `.expect`
