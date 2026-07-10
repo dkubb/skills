@@ -1,3 +1,6 @@
+# Finder metadata.
+.DS_Store
+
 # Coverage profiling data (llvm-cov normally writes these under target/).
 *.profraw
 
