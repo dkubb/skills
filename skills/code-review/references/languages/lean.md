@@ -21,6 +21,11 @@
 - `just recheck` re-validates every theorem module through an external
   kernel (lean4checker) against the pinned toolchain. Meta-audit and
   claim-pin modules are excluded by design; nothing else is.
+- Single-file `just compile <file>` (or `lake build <Module>`) is a fast
+  inner-loop check, NOT the gate. Some linters — unused hypothesis, unused
+  `variable`/typeclass binder — and the module-roll completeness fire only
+  on the whole-library `just check`/`just lint`. Never conclude lint-clean
+  from a per-file compile.
 - The toolchain is pinned (`lean-toolchain`), and dependencies pin the same
   release tag. Flag any dependency or toolchain drift.
 
@@ -69,6 +74,13 @@ diff as a blocker:
 - `theorem` exclusively; never the `lemma` keyword.
 - Names are `snake_case`, dot-namespaced on the type
   (`Grant.sub_trans`, `Intent.no_self_escalation`); iff-lemmas end `_iff`.
+- Every new `Prop`-valued `def` or relation gets a companion shape pin
+  `Foo_iff : Foo … ↔ <body> := Iff.rfl`. It locks the definitional surface,
+  so a later hidden extra conjunct is a compile break, not a silent
+  widening. A relation with no shape pin is a finding.
+- Name to exactly what is proved: a fixture theorem is not `_universal`, a
+  forward refinement is not `_equiv`, and "consume" is for linear removal
+  only. A name that overclaims the statement is a reception finding.
 - Every declaration carries a `/-- ... -/` docstring; `/-! ## ... -/`
   section markers organize modules.
 - Load-bearing theorems carry a `/-- HEADLINE ... -/` docstring and an
@@ -78,6 +90,12 @@ diff as a blocker:
 - Prose claims about types and signatures (README, design docs) get an
   anonymous `example`/`#check` pin in the claims module, citing the doc
   source. New load-bearing prose claims without a pin are findings.
+- An EVIDENCE claim in a docstring or comment ("compiled fact", "proven
+  below", "see witness X") must resolve to a declaration in the SHIPPED
+  module (or a tracked build file), never a review-only or scratch witness.
+  A reviewer who authored or ran the witness sees it compile and blesses
+  the claim, but a scratch file deleted in cleanup leaves the claim
+  dangling. Grep the shipped tree for the referent.
 
 ## Proof style
 
@@ -98,6 +116,14 @@ diff as a blocker:
   types — same goal as the Rust rule: no instance without the constructor.
 - Shared binders live in section `variable` blocks
   (`variable {κ : Type} [DecidableEq κ]`), not repeated per declaration.
+- Every binder a declaration names must be used by its statement or its
+  proof. An unused hypothesis or `[Inst]`/`variable` binder is a linter
+  finding — and one that surfaces only on the full gate, so a per-file
+  compile will not catch it.
+- A hypothesis the proof reads only through one projection (`h.1`), or that
+  still proves when weakened to that projection, is stronger than used.
+  Weaken it, or keep the richer antecedent deliberately as consumer-facing
+  vocabulary and say so in the docstring (see find-and-prove H1).
 
 ## Lint gate and baselines
 
@@ -110,6 +136,9 @@ diff as a blocker:
 - The statement-surface rubric (find-and-prove's syntactically decidable
   subset) runs via ast-grep with a pinned grammar hash and a ratcheted
   baseline.
+- Line length is capped at 100 CODEPOINTS, not bytes. Unicode math (`∈`,
+  `≤`, `⟨⟩`, subscripts like `₀`) is multi-byte; measure with `wc -m` or
+  Python `len()`, never `awk`/byte counts, or wrapping decisions are wrong.
 
 ## Mutation testing
 
@@ -122,15 +151,23 @@ diff as a blocker:
   survivors mean a redundant theorem — prune it.
 - Run mutation on the modules a diff touches and record the numbers, the
   same per-change discipline as cargo-mutants in Rust.
+- Co-locate each definition's separating-witness theorem and each
+  headline's non-vacuity witness (a concrete `∃`-witness or `example`) in
+  the SAME module. Then `--scope local` reports 0 divergence and
+  modified-files-only mutation is complete — a witness that lives one module
+  away leaves a local survivor that only a downstream module kills.
 
 ## Review checklist (per diff)
 
 - New `.lean` file: module list entry in dependency position, audit-module
   import with justification, module header + `set_option` pair, namespace.
 - New theorem: docstring; HEADLINE marker and list entry if load-bearing;
-  axiom audit still green.
+  axiom audit still green; every binder used; name matches the statement.
+- New `Prop` def/relation: companion `_iff := Iff.rfl` shape pin.
 - New proof: no banned tokens, no naked `simp`, `simp only` preferred,
-  term-mode where structural.
+  term-mode where structural; no hypothesis consumed only at a projection
+  without a reason.
+- Formatting: every line ≤100 codepoints (measured as codepoints).
 - New type: docstring, standard deriving clause, private fields with a
   smart constructor where an invariant exists.
 - Prose changed: claims module pins still match; update pins with the
