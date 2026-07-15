@@ -20,6 +20,16 @@ intuition. The delete-a-headline mutant below is the mechanical half; the
 witness model decides what deletion alone cannot — whether the survivor
 uniquely pins mutable surface.
 
+Headline status is a CURATION decision, not a mutation-audit coverage bucket.
+A survived mutant proves a separating witness is needed SOMEWHERE; it does not
+dictate that the witness be a HEADLINE. The resolution ladder for a survivor is
+{ headline · exported corollary · in-file `example` · simplify the code ·
+delete } — only the last two change coverage; the first three kill the mutant
+equally, so choosing among them is basis curation, not a verdict the gate
+forces. Never promote a witness to headline merely because a mutant survived
+"at" it — pin it at the LOWEST rank that kills the mutant and reserve headlines
+for the load-bearing invariant (G2/G3).
+
 ### The delete-a-headline mutant (theorem-set minimality)
 
 Extend mutation from *definitions* to the *theorem set itself*: delete each
@@ -60,6 +70,12 @@ derivable form.
   landed concept, keep the specific one (its pins and mutation tests stay
   green) and add `old ≡ new instance` as a bridge theorem, rather than
   collapsing old into new.
+- **Sibling-mirror basis convention**: when a rung builds a module symmetric
+  to a landed sibling (admission ↔ response, read ↔ write), adopt the
+  sibling's public-basis convention — demote derived twins and adversary
+  guards to exports, headline the agreement law plus a non-vacuity witness.
+  The convention curated on the first module is the basis oracle for its
+  mirror; diverging from it without cause is the finding.
 - A non-vacuity reachability witness EARNS basis status (it kills the
   "nothing happens, so all safety holds" mutant — that is a unique kill).
 - Split an assumption-free algebraic core from the invariant-concluding

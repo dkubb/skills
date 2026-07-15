@@ -12,7 +12,7 @@ plausible intents the diff could have realized. The message's job is
 to narrow that codomain to the *range* — the specific transformation
 the author actually intended. Codomain ≈ range is the goal.
 
-The canonical commit form — the type and verb sets, transformation
+The canonical commit form — the action-verb set, transformation
 priority, subject / body / action-line rules, size bounds, and
 anti-patterns — is `atomic-changes` `references/commits.md`. This
 module is determinant for the state-space reading of that form and
@@ -32,14 +32,10 @@ same fact, the `atomic-changes` file is the determinant.
 
 ## Closed sets, read as narrowings
 
-The canonical sets — eleven commit types and nine action verbs —
-are in `atomic-changes` `references/commits.md`. Each is
-exhaustive: every real transformation maps to exactly one type and
-one action verb. The type is the outermost narrowing of the
-codomain; picking the wrong type widens the codomain to
-"unspecified transformation." The verbs partition the
-transformation space into disjoint regions; a commit whose action
-cannot be expressed with one verb is trying to do more than one
+The canonical closed set of nine action verbs is in `atomic-changes`
+`references/commits.md`. Every real transformation maps to exactly one verb.
+The verbs partition the transformation space into disjoint regions; a commit
+whose action cannot be expressed with one verb is trying to do more than one
 transformation — split it.
 
 ## Transformation priority
@@ -106,10 +102,10 @@ The concrete rules — subject format and length, imperative voice,
 body wrap, action-line form — are canonical in `atomic-changes`
 `references/commits.md`. Their state-space reading:
 
-- The subject's `type` is the outermost narrowing; the verb in the
-  description is the innermost. Together they pin the
-  transformation precisely enough that a reader who never opens
-  the diff knows what kind of state transition happened.
+- The subject's action verb is the outermost narrowing. Its imperative summary
+  narrows the object and effect. Together they pin the transformation precisely
+  enough that a reader who never opens the diff knows what kind of state
+  transition happened.
 - "and" / "or" in a subject is a Cartesian product of two
   transformations — the codomain just doubled. Split.
 - Past tense and gerund forms admit ambiguity about whether the
@@ -127,16 +123,18 @@ body wrap, action-line form — are canonical in `atomic-changes`
 
 Example (action lines narrowing a two-observation body):
 
-```text
-fix: handle null user references during registration
+````text
+Fix null user references during registration
 
 - Fix null pointer when downstream lookup returns no row.
   ```rust
   let user = lookup(id).ok_or(LookupError::NotFound)?;
   ```
+
 - Remove the legacy fallback path that masked the null with a
   default user record.
-```
+
+````
 
 ## Atomicity
 
@@ -204,7 +202,7 @@ validity state.
 Encode gate results as commit-message trailers, one per named gate:
 
 ```text
-fix: handle null user references during registration
+Fix null user references during registration
 
 - Fix null pointer when downstream lookup returns no row.
 
@@ -215,31 +213,31 @@ Gate-test: pass
 Gate-mutation: pass
 ```
 
-Each trailer is a typed proof that a specific named gate has been
-run and produced a specific result. The set of trailers on a commit
+Each trailer is a typed proof that a specific named gate has been run and
+passed. The set of trailers on a commit
 narrows the validity state space from "unknown" to "exactly these
-gates, with exactly these outcomes." A commit with all expected
-trailers in `pass` state is a fully-validated state transition; a
-commit missing a trailer is partially validated; a commit with any
-`fail` trailer is not a valid state transition and the work is not
-yet done.
+gates passed." A commit with all expected trailers in `pass` state is a
+fully validated state transition. A commit missing an applicable trailer has
+incomplete evidence. A `fail` result belongs in the candidate's verification
+log, not in a commit message, because the failed candidate must not be
+committed.
 
 Trailer rules:
 
-- One trailer per named gate. The name is the gate identifier; the
-  value is `pass` or `fail`.
+- One trailer per named gate. The name is the gate identifier and the value is
+  `pass`.
 - Trailers go in the footer block (one blank line after the body),
   one per line, in `Token: value` form.
 - The set of expected gate names is project-defined and stable
   across a branch.
-- A commit must be created with at least one gate-pass trailer. The
-  initial trailer represents the fastest gate that establishes the
-  commit is worth running the remaining gates against (typically
-  fmt or lint).
-- Each subsequent gate run amends the commit, adding its trailer.
-- On gate failure, the failing trailer is recorded and no further
-  gates are attempted on that commit. The work returns to the
-  author.
+- Create the commit only after every applicable gate whose result was unknown
+  for the exact candidate tree has passed. Reuse reliable evidence for gates
+  already known to have passed that exact tree.
+- Create the commit with the complete set of applicable `pass` trailers. A
+  failed candidate is not a valid commit and **MUST NOT** be created merely to
+  record `Gate-*: fail` evidence.
+- If a gate fails, stop the candidate, return to the author, fix the tree, and
+  invalidate only the evidence affected by that change.
 
 The downstream invariant: any consumer of a commit (CI, review,
 merge automation) can read its trailers and determine its validity
@@ -248,50 +246,30 @@ trailers, not by re-executing already-proven gates.
 
 ## Incremental gate execution
 
-The trailer model enables incremental execution of expensive gates
-without blocking the author.
+The trailer model makes expensive verification incremental without admitting
+an invalid commit.
 
 Workflow:
 
-1. Author stages hunks.
-2. Commit handler runs the fastest gate (fmt). On pass, creates
-   the commit with `Gate-fmt: pass` as the initial trailer. On
-   fail, no commit is created and the failure is surfaced.
-3. The commit's tree (from `git write-tree`) is mounted on a
-   throwaway worktree. Build caches (`./target` for Rust, `node_modules`
-   for Node, etc.) are copied from the main worktree.
-4. Each remaining gate runs in the worktree in the project-defined
-   order. On each pass, the commit is amended to add the
-   corresponding trailer. On failure, the failure is recorded as a
-   trailer and the remaining gates are skipped.
-5. While the worktree runs gates, the author continues editing the
-   main worktree. Successful gate passes accrue on the prior commit
-   in the background.
+1. Freeze the candidate tree and identify its complete applicable gate set.
+2. Reuse reliable `pass` evidence only when it proves the exact candidate tree,
+   gate configuration, dependencies, and toolchain under review.
+3. Run the cheapest unknown decisive checks first. Run independent unknown
+   gates in parallel when their resource use permits it.
+4. On failure, stop dependent or more expensive work, fix the candidate, and
+   rerun only gates whose prior evidence the fix invalidated.
+5. Once every applicable gate is known to pass, create the commit with the
+   complete `Gate-*: pass` footer block.
 
-The advantage: agents and humans both keep working "as if" the
-previous commit is going to pass, with recovery via stash and
-rebase only when a gate failure forces it. Wall-clock time for the
-total branch is bounded by the slowest gate of the slowest commit,
-not by the sum across the whole branch.
+A gate runner resuming after interruption can inspect retained exact-tree
+evidence and execute only missing gates. After commit creation, do not rerun a
+gate merely because the tree received a commit identity; the content did not
+change. Re-run only when relevant content, configuration, dependencies,
+toolchain, or the completeness of the earlier evidence changed.
 
-A gate runner that re-runs after an interruption can read each
-commit's trailers and skip every gate that already shows `pass`.
-The state space of "work to do" is bounded by the set of missing or
-failed trailers, not by the size of the branch.
-
-When a gate fails, the recovery sequence is:
-
-1. The author/agent fixes the issue against the main worktree.
-2. The fix is either added to the failing commit (via `--fixup`
-   targeting that commit, applied later with autosquash) or, if
-   the commit has already been shared, applied as a new commit on
-   top.
-3. The gate runner re-runs the failed gate against the corrected
-   commit. On pass, the trailer is updated.
-
-Trailers are not a substitute for the gates themselves. They are
-the evidence layer that lets the gates be run lazily, in parallel,
-and in any order without losing the proof of validity.
+Trailers are not substitutes for gates. They are the evidence layer that lets
+gates run lazily, in parallel, and in any order while preserving the rule that
+only a fully passing candidate becomes a commit.
 
 ## Cross-references
 

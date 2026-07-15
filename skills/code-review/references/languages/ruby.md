@@ -2,12 +2,20 @@
 
 - Use simple English.
 - Use short bullets.
+- Apply `../core-principles.md` first.
 - Do not repeat core principles.
 
 ## Tooling
 
 - Use RuboCop when reviewing Ruby changes.
-- Enable most cops. Disable only the few that are agreed exceptions.
+- Configure RuboCop according to the lint configuration policy in
+  `../core-principles.md`. Record project-specific cop selection, tuning, and
+  reasoned exceptions in `.rubocop.yml`.
+- Configure every mechanically enforceable rule below as a RuboCop cop. Review
+  a rule manually only when RuboCop cannot decide its semantic applicability.
+- Run the repository RuboCop wrapper and require zero findings. If the
+  repository has no wrapper, use its locked bundle to run RuboCop against all
+  configured paths; do not use an unpinned global executable.
 
 ## Formatting
 
@@ -39,7 +47,8 @@
 - Use `do...end` for multiline blocks.
 - Avoid `return` when not required.
 - Avoid `\\` line continuation.
-- Use `||=` freely.
+- Use `||=` only when `nil` and `false` have the same domain meaning. Do not use
+  it when `false` is a value that must be preserved.
 - Prefer `Regexp` objects.
 - Avoid `=~`, `$0-9`, `$~`, `$PREMATCH`, and `$POSTMATCH` when possible.
 
@@ -55,7 +64,10 @@
 - Prefix unused variables with `_`.
 - Use `each_with_object` instead of `inject` when the memo does not change.
 - Use `other` for predicate comparisons with same-type arguments.
-- Prefer `map` over `collect`, `detect` over `find`, `select` over `find_all`.
+- Prefer `map` over `collect` and `select` over `find_all`.
+- Prefer `detect` over `find` so collection predicate
+  search is visually distinct from object lookup. Configure RuboCop's
+  collection-method mapping explicitly; this differs from its default.
 
 ## Comments
 
@@ -69,9 +81,12 @@
 - Avoid long methods and long parameter lists.
 - Use `def self.method` for singleton methods.
 - Add global methods to `Kernel` only if needed, and make them private.
-- Use `alias_method` over `alias`.
+- Use `alias_method` over `alias` so aliasing remains an
+  explicit method call and can use computed names. Configure `Style/Alias`
+  explicitly; this differs from RuboCop's default.
 - Freeze objects assigned to constants.
-- Use `OptionParser` for complex CLI options and `ruby -s` for trivial ones.
+- Use `OptionParser` for CLI options. Do not expose options as global variables
+  through `ruby -s`.
 - Avoid needless metaprogramming.
 - One method = one purpose. Split boolean-driven branches.
 - If a method needs “AND” or “OR” in its description, split it.
@@ -81,21 +96,25 @@
 ## General
 
 - Prefer functional style when it makes sense. Avoid mutation.
-- Use CQS: query returns state, command returns self and has side effects.
+- Use CQS: a query returns state without changing it; a command changes state
+  without returning domain data. A fluent command that returns `self` is a
+  deliberate API exception and needs a reason.
 - Do not mutate arguments unless that is the method’s purpose.
 - Do not monkey patch core classes in libraries.
-- Do not program defensively by default.
+- Validate untrusted input at boundaries. Inside validated domain code, do not
+  add redundant defensive checks that obscure a violated invariant.
 - Keep code simple and consistent.
 - Avoid overdesign and underdesign.
-- Treat Axiom-level Ruby as a high bar for clarity, rigor, and tests; see the
-  Axiom project on GitHub for an exemplar.
 - Prefer explicit coercion helpers (like `coerce` methods) at boundaries.
-- Use immutable/value objects when possible (freeze, memoize, or use
-  immutability helpers).
+- Use immutable value objects when possible by freezing them or using an
+  immutability helper. Memoization alone does not make an object immutable.
 - Favor small, composable objects and methods that encode domain rules.
 - Preserve existing semantics; add targeted tests before changing behavior.
 
 ## Review focus
 
 - Focus on Ruby-specific design, API clarity, and style conventions.
-- Expect thorough test coverage; mutation testing is used to validate intent.
+- Expect thorough test coverage. When the repository configures mutation
+  testing, run its wrapper against the changed contracts and require no
+  surviving non-equivalent mutants. Record the reason for every equivalent or
+  excluded mutant.

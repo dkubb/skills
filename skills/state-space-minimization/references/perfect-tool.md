@@ -222,7 +222,7 @@ smallest rule set that captures the invariant, no more.
    specific failure mode the imagined tool would have caught.
    The test does not duplicate the imagined tool's coverage; it
    covers exactly the gap between imagined and real.
-5. **Ratchet.** As the real tool improves, raise the floor (see
+5. **Ratchet.** As the real tool improves, tighten the enforced bound (see
    `ratchet.md`). Gap-targeting tests retire as the underlying
    tool subsumes them. The codebase tightens monotonically.
 

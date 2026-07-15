@@ -52,7 +52,7 @@ Spot-checking one field of a returned record means every other field is
 unconstrained. If the function later adds a field, drops a field, or
 silently changes one, the spot-check still passes.
 
-```
+```text
 weaker: checks one projection only
   assert user.id == expected_id
 
@@ -76,7 +76,7 @@ A test that says "the result contains key X" leaves the rest of the
 container's keys unconstrained. If a key was supposed to be removed
 and was not, the test passes.
 
-```
+```text
 weaker: only checks one key projection
   assert value.get("description") == None
 
@@ -92,7 +92,7 @@ stronger still: asserts the whole keyset
 `is_some` / `is_ok` / `is_present` are the testing equivalent of
 boolean-blind APIs: they check the tag and discard the payload.
 
-```
+```text
 weaker: only proves the tag
   assert result.is_some()
 
@@ -110,7 +110,7 @@ Mocks and spies that assert "was called with X" do not constrain how
 many times, in what order, or with what other arguments. Hyrum's-Law
 behavior accumulates in the unconstrained dimensions.
 
-```
+```text
 weaker: was-called-with style; count, order, other args unconstrained
   mock.assert_called_with(user_id, "admin")
 
@@ -221,10 +221,10 @@ Property tests are state-space tools by construction: the generator
 defines the input space and the property defines the accepted-output
 shape. Apply the same precision to both.
 
-The canonical recipe (four building-block generators + 80/20 weighting
-+ before/at/after boundary model) lives in the `code-review` skill at
-`references/property-based-testing.md`. The state-space framing of
-*why* it works lives here.
+The canonical recipe (four building-block generators, 80/20 weighting, and the
+before/at/after boundary model) lives in the `code-review` skill at
+`references/property-based-testing.md`. The state-space framing of *why* it
+works lives here.
 
 ### Bug density across the input state space is non-uniform
 
@@ -489,7 +489,7 @@ The destination is to ergonomically fix the production constructor
 and have tests use it directly, with **named factory functions** for
 canonical states living on the production type:
 
-```
+```text
 User::factory().verified_admin()
 User::factory().banned_for_abuse()
 Order::factory().shipped_domestic()
@@ -561,7 +561,7 @@ without the principle produces failures the reader cannot interpret.
   same forcing-function discipline applies.
 - `ratchet.md` — 100% target-function coverage is the
   aspirational target at the project level; the project's current
-  coverage is the floor that the ratchet only ever tightens.
+  coverage is the enforced bound that the ratchet only ever tightens.
 - `perfect-tool.md` — mutation testing is the canonical instance
   of the imagined-perfect-tool design move; the operator set is
   the imagined tool, surviving mutants are the gap between

@@ -23,8 +23,8 @@ the gains.
 
 | Term | Meaning when the codomain is the project's tooling configuration |
 |---|---|
-| Domain | Configurations the ratchet accepts as input — codebases passing the current floors |
-| Codomain | Configurations the ratchet permits as output — codebases passing tightened floors |
+| Domain | Configurations the ratchet accepts as input — codebases passing the current enforced bounds |
+| Codomain | Configurations the ratchet permits as output — codebases passing tightened bounds |
 | Range | The configurations the project actually occupies over its trajectory |
 | Preimage of failure | The set of changes that could have caused a regression when CI trips |
 | Type signature | The threshold set; the project's declared invariants |
@@ -32,12 +32,12 @@ the gains.
 ## The bilateral goal applied here
 
 1. **Shrink the domain.** Only narrowing changes pass through the
-   ratchet. CI rejects anything that would regress a current floor.
-2. **Close the codomain-range gap.** The floor sits at the exact
+   ratchet. CI rejects anything that would weaken a current bound.
+2. **Close the codomain-range gap.** The enforced bound sits at the exact
    edge of current state — what the project actually achieves
    today. The aspirational target names where the codomain is
    heading; new code aims for that target so the range can tighten
-   and the floor follows.
+   and the bound follows.
 
 ## The other operations applied here
 
@@ -54,24 +54,34 @@ the gains.
   passes every gate; no half-ratcheted state is representable in
   the history.
 
-## The dual threshold
+## Direction and the dual threshold
 
-Every metric carries two values, both required:
+First identify the metric's enforcement direction. Never infer strictness from
+the word "threshold" alone:
 
-- **Floor** — the maximum value currently tolerated. Lint or CI
-  enforces it. Set at the *exact edge of current state* so any
-  regression trips the check immediately. The floor is never
-  loose; "100 lines max when current worst is 70" is wrong because
-  it permits 30 lines of slack to backslide into.
-- **Aspirational** — a target tighter than the floor. New code
+- A **ceiling** admits `actual <= ceiling`; lowering it is tighter. Examples
+  include uncovered items, complexity, function length, and dependency count.
+- A **floor** admits `actual >= floor`; raising it is tighter. Examples include
+  mutation score and assertion density.
+- A non-numeric setting still has an explicit strength order. For example,
+  enabling another compatible lint is tighter than leaving it disabled.
+
+Every metric then carries two values, both required:
+
+- **Enforced bound** — the value CI currently enforces. Set it at the *exact
+  edge of current state* so any regression trips the check immediately. The
+  bound is never loose; a 100-line ceiling when the current worst is 70 is
+  wrong because it permits 30 lines of backsliding.
+- **Aspirational bound** — a target tighter than the enforced bound. New code
   aims here; existing code burns down toward it over time.
-  Aspirational becomes the new floor once the codebase reaches it.
+  Aspirational becomes the new enforced bound once the codebase reaches it.
 
-The floor is `max(current_project_state, community_baseline)` —
-whichever is stronger. We never relax to a community baseline that
-is looser than the project's current state. If the project already
-exceeds the community baseline, the floor stays at the stronger
-value; the community baseline becomes irrelevant for that metric.
+For an existing project, the enforced bound starts at the exact current value.
+A stricter community baseline is an aspirational bound until the code reaches
+it; it cannot be enforced while current code violates it. A looser community
+baseline is irrelevant because adopting it would weaken the project. For a new
+project, enforce the strongest applicable community baseline or deliberate
+project target from the first change.
 
 ## The ratchet
 
@@ -80,20 +90,22 @@ audit into a continuous process. Without it, drift is the default —
 the same lesson `documentation.md` draws about prose claims,
 applied to project configuration.
 
-- Capture the current value of each metric. That is the floor.
-- The floor only ever tightens. Improvements update it; regressions
+- Capture the current value and enforcement direction of each metric. The
+  current value is its enforced bound.
+- The enforced bound only ever tightens. Improvements update it; regressions
   cannot pass CI.
-- Keep the floor at the exact edge of current state — not loose,
+- Keep the bound at the exact edge of current state — not loose,
   not arbitrary — so any backslide trips the check immediately.
 - As individual hotspots are addressed and the range narrows, the
-  floor ratchets down in lockstep. A PR that brings the worst
-  function from 70 lines to 50 lines updates the floor to 50.
-- Aspirational targets are promoted to floors over time as the
+  bound tightens in lockstep. A PR that brings the worst function from 70
+  lines to 50 lowers its ceiling to 50. A PR that raises mutation score from
+  70 to 80 raises its floor to 80.
+- Aspirational targets are promoted to enforced bounds over time as the
   codebase reaches them.
 
-The mental model: the floor is a vise. Each turn tightens it; no
-mechanism loosens it. Hotspots get burned down then locked in by
-the next turn of the vise.
+The mental model: the bound is a vise. Each turn tightens it in the metric's
+declared direction; no mechanism loosens it. Hotspots get burned down then
+locked in by the next turn of the vise.
 
 ## What to threshold
 
@@ -191,19 +203,17 @@ is enforced.
 
 ## New project vs existing project
 
-- **New project.** Set the floor at the strongest available value
+- **New project.** Set the enforced bound at the strongest available value
   from day one — community baseline, or stronger. Set the
   aspirational target tighter still. Write all code to the
   aspirational target. There is no legacy to migrate; the ratchet
   starts at the destination.
-- **Existing project.** Measure current state per metric. Floor =
-  `max(current_state, community_baseline)`. Aspirational = a
-  chosen stronger target (often the community baseline when the
-  current state is below it; a deliberate tighter target when the
-  current state already exceeds the community baseline). Ratchet
-  from current toward aspirational over time.
+- **Existing project.** Measure the current state and direction per metric.
+  Enforce the exact current value so there is no regression slack. Choose a
+  stricter aspirational target, often the community baseline when it is
+  stricter than current state, and ratchet from current toward it over time.
 
-In both cases the floor sits at the edge of what the codebase
+In both cases the enforced bound sits at the edge of what the codebase
 already achieves; the aspirational target names the next narrowing
 the project is committed to reaching.
 
@@ -218,7 +228,7 @@ the project is committed to reaching.
 - `testing.md` § "Coverage is structural; biasing is the draw
   distribution" — the 100% target-function coverage rule is the
   aspirational target at this level; the project's current
-  coverage is the floor.
+  coverage is the enforced bound.
 - `documentation.md` § "The dominant failure mode is drift" — the
   same forcing-function thread, applied to prose claims rather
   than tooling configuration.

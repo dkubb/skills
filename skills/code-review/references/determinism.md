@@ -1,9 +1,8 @@
 # Deterministic Testing Review Notes
 
 Purpose: Provide review prompts for deterministic behavior and deterministic
-simulation testing (DST). Treat determinism as a goal in general. Do not assume
-DST is a required project goal unless explicitly stated in project rules or by
-the user.
+simulation testing (DST). DST is **OPTIONAL** unless project rules or the user
+make it a requirement.
 
 Definition: Deterministic simulation testing (DST) means running the system in
 a controlled, repeatable environment where time, randomness, IO, and external
@@ -12,6 +11,9 @@ produce the same results.
 
 ## Review Prompts
 
+**Advice:** The prompts in this section are non-normative unless the project or
+user adopts a specific prompt as a requirement.
+
 ### External Dependencies (DI Considerations)
 
 - Identify calls to external resources (filesystem, network, clock, random,
@@ -19,15 +21,13 @@ produce the same results.
   UUID generation, system entropy).
 - If these are hard-coded or created internally, consider suggesting dependency
   injection (DI) to make deterministic testing possible.
-- Phrase as a suggestion, not a requirement, unless the project rules say DST
-  is mandatory.
 - Example review prompt: "This hard-codes access to `<resource>`. Would you
   consider injecting it so tests can control it deterministically?"
 
 ### Time and Randomness
 
 - Any use of current time or timeouts can cause nondeterminism.
-- RNG should be seeded and controlled in tests when outcomes affect logic.
+- Seed and control RNGs in tests when outcomes affect logic.
 - Use deterministic clocks in simulation tests where possible.
 
 ### Concurrency and Scheduling
@@ -39,7 +39,10 @@ produce the same results.
 ### Data Ordering and Iteration
 
 - Unordered collections (hash maps/sets) can produce unstable iteration order.
-- Sorting results before comparison can remove flakiness.
+- Compare the exact observed order by default. Sort or use an order-insensitive
+  comparison only when the domain contract explicitly says order is
+  unobservable; preserve every remaining distinction, including cardinality
+  and duplicates.
 
 ### SQL Query Ordering
 
@@ -68,8 +71,8 @@ produce the same results.
 
 ## When DST is the project goal
 
-When project rules or the user state DST as a goal, treat it as a hard
-constraint rather than a suggestion:
+When project rules or the user state DST as a requirement, the following are
+**MUST** requirements:
 
 - All dependencies must be injectable (Env traits, executors, deterministic
   seeds). Prefer deterministic simulation testing across the codebase
@@ -81,7 +84,7 @@ constraint rather than a suggestion:
 
 ## Review Guidance
 
-- Determinism is a quality goal; DST is optional unless specified.
-- Raise determinism risks during review but do not block unless required by
-  project rules.
-- Encourage reproducible tests with controlled inputs, seeds, and clocks.
+- DST is **OPTIONAL** unless specified by project rules or the user.
+- **Advice:** When DST is not required, reviewers can identify determinism
+  risks or encourage reproducible inputs, seeds, and clocks, but those
+  observations are not findings.
