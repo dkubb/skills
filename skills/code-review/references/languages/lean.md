@@ -2,11 +2,23 @@
 
 - Use simple English.
 - Use short bullets.
+- Apply `../core-principles.md` first.
 - Do not repeat core principles.
 - For adversarial review of the proof surface (oracle hunt, enforcement
   ranks, witnesses), use the `find-and-prove` skill. For pre-flight design
   of a new slice, use `formal-design`. This file is the mechanical per-diff
   checklist.
+
+## Applicability
+
+This file defines the user's strict formal-review profile, based on the proven
+`symbiote-substrate` gate and deliberately stronger than ordinary Lean
+practice. Enforce commands, module rolls, axiom allowlists, headline lists,
+claims modules, baselines, and mutation infrastructure only when the repository
+provides or explicitly adopts that profile. All remaining rules in this file
+belong to that profile unless a rule explicitly says it is portable. In other
+Lean repositories, use the pinned toolchain and documented gates; do not impose
+this profile or report its absence as a language defect.
 
 ## Gate architecture
 
@@ -81,8 +93,8 @@ diff as a blocker:
 - Name to exactly what is proved: a fixture theorem is not `_universal`, a
   forward refinement is not `_equiv`, and "consume" is for linear removal
   only. A name that overclaims the statement is a reception finding.
-- Every declaration carries a `/-- ... -/` docstring; `/-! ## ... -/`
-  section markers organize modules.
+- Every named declaration carries a `/-- ... -/` docstring; `/-! ## ... -/`
+  section markers organize modules and groups of anonymous evidence.
 - Load-bearing theorems carry a `/-- HEADLINE ... -/` docstring and an
   entry in the headline list. Keep the two in sync — a marker without an
   entry (or entry without marker) is drift between two determinants of the
@@ -107,8 +119,18 @@ diff as a blocker:
   tactic blocks where case work needs them.
 - `@[simp]` only on rewrite lemmas that earn it; the mathlib standard
   linter set (simpNF among them) runs in the lint gate.
-- `example`, `#check`, and `#print` belong only in the claims and audit
-  modules. No `#eval` or `#guard` in proof modules.
+- Use `example` for intentionally anonymous executable evidence: claims pins,
+  audit or test checks, and co-located separating, non-vacuity, or mutation
+  witnesses. Keep proof-module examples beside the definition or theorem they
+  protect and explain the evidence with a local doc comment or section marker.
+- Use a named `theorem`, private when appropriate, when a fact is reusable,
+  load-bearing, referenced elsewhere, or required to participate in the
+  environment-wide axiom audit or external kernel recheck. Lean kernel-checks
+  an `example` while compiling it and then discards it, so do not claim that
+  environment linters, axiom audits, or external recheckers covered that
+  anonymous evidence.
+- `#check` and `#print` belong only in claims and audit modules. No `#eval` or
+  `#guard` in proof modules.
 - `deriving DecidableEq, Repr` is the standard clause. When the deriving
   handler cannot reach through recursion, use a standalone
   `deriving instance Repr for X` with a docstring saying why.
@@ -151,9 +173,9 @@ diff as a blocker:
   survivors mean a redundant theorem — prune it.
 - Run mutation on the modules a diff touches and record the numbers, the
   same per-change discipline as cargo-mutants in Rust.
-- Co-locate each definition's separating-witness theorem and each
-  headline's non-vacuity witness (a concrete `∃`-witness or `example`) in
-  the SAME module. Then `--scope local` reports 0 divergence and
+- Co-locate each definition's separating witness and each headline's
+  non-vacuity witness as a concrete `theorem` or intentionally anonymous
+  `example` in the SAME module. Then `--scope local` reports 0 divergence and
   modified-files-only mutation is complete — a witness that lives one module
   away leaves a local survivor that only a downstream module kills.
 
