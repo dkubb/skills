@@ -1,7 +1,8 @@
-# SQL Code Review Guidelines (Language-Specific)
+# PostgreSQL Code Review Guidelines (Language-Specific)
 
 - Use simple English.
 - Use short bullets.
+- Apply `../core-principles.md` first.
 - Do not repeat core principles.
 
 ## Data modeling and sync
@@ -21,21 +22,22 @@
   unlikely to change often. Avoid text-plus-CHECK when the enum can be modeled
   directly.
 - If a constraint (not uniqueness) fails, tighten upstream validation.
-- Use CHAR for fixed-length hashes and IDs.
+- Prefer a semantic native type or domain for hashes and IDs. Use `char(n)`
+  only when its padding and comparison semantics are intentional.
 - Prefer constrained UUID or identifier column types over unconstrained text
   when the stored value has a fixed format.
-- Add format checks for hashes (e.g., hex length).
-  Use \\A and \\Z for anchors and \\d for digits.
+- Add format checks for hashes (e.g., hex length). Apply the regex guidance for
+  the active PostgreSQL regex engine; do not assume `\\d` means ASCII digits.
 - For nullable strings that must be non-empty when present, add a CHECK.
 - For optional reason or note fields, prefer printable-character checks when
   control characters are not needed.
 - For arrays that must be non-empty, use cardinality(...) > 0.
-- Prefer name[] for lists of identifiers.
+- Use `name[]` for identifier lists only when PostgreSQL identifier semantics
+  and its implementation-defined length bound are the intended domain.
 - Prefer role-based grants over trigger-based write blocks.
 - Prefer domain types (including *_not_null variants) over raw primitives.
-- Use db_move.identifier and db_move.created_at domains for primary keys and
-  created_at columns.
-- Use db_move.sha256_hash for SHA-256 hash columns.
+- When the repository provides `db_move` domains, prefer its applicable
+  `identifier`, `created_at`, and `sha256_hash` domains over raw primitives.
 - Add foreign keys for local identifier references when the row must exist.
   Do not rely on length or format checks alone when referential integrity is
   required.
@@ -43,7 +45,7 @@
   action is required.
 - When related timestamps imply an order, encode it with a CHECK.
   For stateful rows, review whether fields such as updated_at, started_at, and
-  completed_at should be monotonic or derived from the state machine.
+  completed_at **MUST** be monotonic or derived from the state machine.
 - Move inline SQL into standalone .sql files and format them to match these
   rules.
 
@@ -64,7 +66,34 @@
 
 - Focus on data modeling, correctness, safety, and change impact.
 - Do not re-check what SQL tooling can catch. Require running those tools.
-- Ignore generated schema dumps such as `db/structure.sql`.
+- Do not manually style-review generated schema dumps such as
+  `db/structure.sql`. Verify that the source migration regenerates them and
+  that their semantic changes are expected.
+- Use the repository's adopted SQL parser, formatter, and linter. Use its
+  wrapper when one is provided or required; otherwise use the native tools.
+  If the formatting rules below are not deterministic, record an automation
+  task and use AST-based candidate checks for the mechanically recognizable
+  subset.
+
+## Migration safety
+
+- Review lock level, table-rewrite risk, transaction boundaries, and expected
+  duration against production table size and traffic.
+- Preserve compatibility across deployed versions. Prefer
+  expand-migrate-contract ordering; do not remove or reinterpret a schema
+  surface while older application versions may still use it.
+- For large tables, prefer concurrent index creation and staged constraint
+  validation when PostgreSQL supports them. State why a blocking operation is
+  safe when one is required.
+- Treat `NULL` and SQL three-valued logic explicitly in constraints,
+  predicates, uniqueness, and rollback queries.
+- Parameterize runtime values. Treat string-built SQL, dynamic identifiers,
+  `SECURITY DEFINER`, `search_path`, ownership, and grants as security
+  boundaries.
+- Require representative `EXPLAIN` evidence for a performance-motivated query
+  or index change. Verify the plan uses realistic cardinality and predicates.
+- State the roll-forward or rollback strategy and whether it preserves data.
+  A syntactically reversible migration is not reversible if it discards data.
 
 ## Formatting
 
@@ -122,7 +151,9 @@
 - Align column types and constraint keywords (including PRIMARY KEY, NOT NULL)
   in CREATE TABLE blocks.
 - Name table-level CHECK constraints (e.g., CONSTRAINT check_key_cardinality).
-- Sort enum values in declaration order.
+- Keep enum values in intentional domain order because PostgreSQL comparisons
+  use declaration order. Sort alphabetically only when alphabetical order is
+  the domain order.
 
 ### CREATE statements
 
