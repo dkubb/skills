@@ -1,30 +1,34 @@
 # Property-Based Testing Strategy
 
-When backfilling tests, prefer boundary unit tests first, then property-based
-tests in exploratory mode.
+Every smart constructor, serializer, emitter, output generator, deserializer,
+and parser requires focused boundary unit tests and property-based tests. Write
+the boundary unit tests first, then add property tests in exploratory mode.
 
 ## Core invariants
 
-Every property test suite must continuously verify these properties:
+Every property test suite must specify these properties over the complete
+support of its generators:
 
-- **100% of valid inputs are accepted.** The valid range is well-defined and
-  bounded. Every value in that range must pass the constructor or parser.
-- **100% of invalid inputs are rejected.** The invalid range is effectively
-  unbounded — within computer constraints it is vast compared to the valid
-  range. Every value outside the valid range must be rejected.
+- **Every valid input is accepted.** The valid generator's support **MUST** span
+  every representable state in the declared valid domain, including both
+  boundaries and all interior states.
+- **Every invalid input is rejected.** The invalid generator's support
+  **MUST** span every representable state outside the valid domain within the
+  operation's declared representation and operational bounds.
 - **Application and database rules stay aligned.** If the database encodes the
-  same invariant, property tests at the application boundary should prove that
+  same invariant, property tests at the application boundary **MUST** prove that
   accepted values fit the DB model and rejected values fail before they reach
   the database.
-- **Invariants are reinforced on every run.** Each test suite execution
-  re-verifies acceptance and rejection across fresh random samples, so
-  regressions surface immediately.
+- **Invariants are exercised on every run.** Each randomized execution samples
+  fresh values from the complete generator support. Sampling does not execute
+  every supported value in one run unless the finite domain is exhaustively
+  enumerated.
 - **When in doubt, bias toward rejection.** Constraints that are "too strong"
   are self-correcting — real inputs will eventually expose blocked valid
   cases, and the fix is to loosen. Constraints that are "too weak" are
   silent — invalid data propagates downstream and interacts with other
-  components in unexpected ways, far from the entry point where it should
-  have been rejected.
+  components in unexpected ways, far from the entry point that was responsible
+  for rejecting them.
 
 ## Allowlist model
 
@@ -97,22 +101,35 @@ Every property test suite must continuously verify these properties:
   `*_invalid_biased` recipe); a rejection filter essentially never finds
   them.
 
-## Serialization and deserialization properties
+## Producer and consumer properties
 
-Always property-test serialization and deserialization. Three cases are
-required:
+Always property-test paired serializers, emitters, and output generators with
+their deserializers or parsers. Three cases are required:
 
-1. **Valid string roundtrip**: `valid_string -> parse -> serialize -> string`.
-   The output string must be equivalent to the input after normalization.
-2. **Data roundtrip**: `data -> serialize -> parse -> data`. The output data
-   must be equivalent to the input.
-3. **Invalid string rejection**: `invalid_string -> parse -> error`. Every
-   invalid string must produce an error.
+1. **Valid representation round trip**:
+   `representation -> consume -> produce -> representation`. Require exact
+   output unless the domain contract defines normalization; then require the
+   declared equivalence and exact canonical output. This is a narrow exception:
+   the property must name the normalization rule and must not perform ad hoc
+   cleanup merely to make the comparison pass.
+2. **Structured-data round trip**:
+   `data -> produce -> consume -> data`. The output data must equal the input.
+3. **Invalid representation rejection**:
+   `invalid_representation -> consume -> error`. Every sampled invalid
+   representation must produce an error.
 
-These apply to every type that has both a string representation and a
-structured representation (serde, `FromStr`/`Display`, database rows, API
-payloads). Use the valid and invalid generators from the generator section
-above.
+These apply to every type that has both a produced representation and a
+consumer (serde, `FromStr`/`Display`, parsers/emitters, code or configuration
+generators, database rows, and API payloads). Use the valid and invalid
+generators from the generator section above.
+
+- **JSON example:** For `string -> data -> string`, parse the input and output
+  strings and compare the JSON data values when the contract follows JSON
+  semantics. Object-member order is insignificant; array order remains
+  significant. Do not use this normalization when duplicate-member behavior,
+  number spelling, whitespace, or another textual distinction is part of the
+  contract. When the emitter promises canonical JSON, also assert the exact
+  canonical output string.
 
 ## Roles: exploration vs validation
 
