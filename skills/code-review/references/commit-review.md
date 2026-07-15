@@ -2,7 +2,7 @@
 
 Review commits as artifacts, not only the aggregate diff.
 
-The canonical commit form — type and verb sets, subject / body /
+The canonical commit form — action-verb set, subject / body /
 action-line rules, size bounds, transformation priority, and
 anti-patterns — is `atomic-changes` `references/commits.md`. This file
 is the review lens on that form: what to check and how to report it.
@@ -37,9 +37,11 @@ blocker.
 ## Commit message quality
 
 - Review subjects and bodies against the canonical rules in
-  `atomic-changes` `references/commits.md`: conventional-commit form,
-  imperative subject naming the transformation, no "and" / "or", the
+  `atomic-changes` `references/commits.md`: the closed semantic verb set,
+  imperative subject naming the transformation, no "and" / "or", and the
   subject verb matching the diff's actual effect.
+- Require Conventional Commit syntax for pull request titles, not git commit
+  subjects.
 - Messages must make the series reviewable:
   - stable ordering in dependency order
   - later commits rely on earlier commits in obvious ways
