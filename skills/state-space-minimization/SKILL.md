@@ -469,9 +469,9 @@ apply, compose their outputs without adding unrelated checklist items.
 - **Normalization profile** — atoms, functional dependencies,
   duplicated facts, passthrough nodes, determinant-based grouping, and
   topological presentation order.
-- **Tooling / ratchet profile** — floor and aspirational thresholds,
-  forcing functions, gap between imagined and real enforcer, weakening
-  notes only when explicitly requested.
+- **Tooling / ratchet profile** — enforcement direction, current and
+  aspirational bounds, forcing functions, gap between imagined and real
+  enforcer, and weakening notes only when explicitly requested.
 - **Language profile** — concrete idioms for the language files in
   scope, loaded after the relevant technique modules.
 - **Skill-refinement profile** — material findings in the format in
