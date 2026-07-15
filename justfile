@@ -32,7 +32,7 @@ clean:
 
 # Security + license audit
 deny:
-    cargo deny check --config .cargo/deny.toml
+    cargo deny --config .cargo/deny.toml check
 
 # Format code (fix in place)
 fmt *args:
