@@ -2,9 +2,23 @@
 
 - Use simple English.
 - Use short bullets.
+- Apply `../core-principles.md` first.
 - Do not repeat core principles.
 - Many rules below have automated-lint candidates documented in
   `../LINT-TODO.md`. Configure stock clippy lints where they cover a rule.
+
+## Tooling
+
+- Run the repository wrapper for `cargo fmt --all -- --check` and Clippy. In a
+  conventional workspace, the Clippy gate is
+  `cargo clippy --workspace --all-targets --all-features -- -D warnings` when
+  the all-features combination is valid; otherwise run the documented feature
+  matrix.
+- Encode the retained rustc and Clippy lint set in workspace lint tables and
+  `clippy.toml`. Inventory every available lint when revising the policy; do
+  not mistake `clippy::all` for every Clippy lint.
+- Pin the Rust toolchain or MSRV used by CI. Run formatting and linting with
+  that toolchain so local success and the review gate have one meaning.
 
 ## Primitive obsession (review blockers)
 
@@ -21,8 +35,9 @@ These patterns are state-space leaks. The `state-space-minimization` skill
 covers the rationale; the bullets here are Rust-specific checklist items.
 
 - **Single-variant `pub enum`.** An `enum X { OnlyVariant }` is a struct in
-  disguise. Either mark `#[non_exhaustive]` with a doc comment naming the
-  reserved future variant, or convert to `pub struct`.
+  disguise. Convert it to `pub struct` unless the enum has a concrete current
+  semantic purpose. A hypothetical future variant and `#[non_exhaustive]` are
+  not sufficient reasons to retain the enum.
 - **Identity-passthrough methods.** Methods like `fn x(self) -> Self { self }`,
   `fn x(self) -> Self { *self }`, or `fn from_x(x: Self) -> Self { x }` are
   shims. They survive past their compatibility purpose. Delete and inline at
@@ -31,15 +46,18 @@ covers the rationale; the bullets here are Rust-specific checklist items.
   `self`/`&self` but returns a literal or constant is documentation in
   function form. Either rewrite as an exhaustive match over `self` (so new
   variants force the question) or delete and rely on the type-level proof.
-- **Bit-identical type bodies under different names.** Two `enum`s or
-  `struct`s with the same fields/variants encode the same state space. The
-  distinguishing tag belongs on the success type, not on a parallel error
-  or wrapper. Collapse via type alias, generic over the payload, or phantom
-  tag.
+- **Bit-identical domain types.** Runtime representation does not determine
+  domain identity. Keep separate newtypes when values are not interchangeable;
+  their nominal distinction prevents accidental mixing even when their fields
+  are identical. When the domain treats values as interchangeable, use one
+  domain type directly rather than introducing parallel names.
 - **Single-field newtype wrappers with delegated accessors.** A `struct X(Y)`
-  or `struct X { f: Y }` whose `impl` only forwards to the inner type is
-  documentation. Either carry a real invariant (smart constructor, phantom
-  tag, ownership boundary) or replace with a type alias.
+  or `struct X { f: Y }` can earn its existence through nominal domain
+  identity, a smart-constructor invariant, a phantom tag, an ownership or API
+  boundary, or a distinct trait contract. Prefer the newtype whenever callers
+  must not substitute `Y` or another representation-identical domain value.
+  Do not replace a domain newtype with a type alias: an alias does not preserve
+  distinct type identity, and an LLM is fully capable of writing the newtype.
 
 ## API and ownership
 
@@ -48,9 +66,16 @@ covers the rationale; the bullets here are Rust-specific checklist items.
   trait implementations rather than converting to a different type first
   (e.g., `self.inner.cmp(&other.inner)` over `self.inner.as_u128().cmp(…)`).
 - Prefer `pub(crate)` shorthand over `pub(in crate)` for crate visibility.
-- Prefer `use module::*` when importing multiple items from a module; prefer
-  explicit imports when only one item is used.
+- Prefer grouped explicit imports. Use glob imports only for an intentional
+  prelude or an established repository convention where hidden provenance and
+  future name collisions are controlled.
 - Keep public APIs minimal. Use the narrowest visibility that works.
+- Prefer exhaustive public types so adding a variant forces every dependent
+  match site to be reviewed and updated. Applications and workspace-internal
+  crates **MUST NOT** use `#[non_exhaustive]` merely to avoid coordinated
+  updates. A publicly published library crate, such as a crates.io package,
+  **MAY** use it when a documented compatibility commitment makes downstream
+  source compatibility more important than exhaustive compiler enforcement.
 - Keep method ordering consistent and easy to scan.
 - Do not add `#[inline]` unless data shows it helps or a repo lint requires it.
 - Off hot paths, prefer a `.clone()` over clever borrowing when the borrow
@@ -91,8 +116,9 @@ covers the rationale; the bullets here are Rust-specific checklist items.
 - Bind deserialization to the validator: `#[serde(try_from = "String")]` for
   validated types, `#[serde(transparent)]` only for constructive ones.
   Derived serde that skips validation is a bug.
-- For JSON parsing or generation, use `garde` with strong constraints that
-  mirror the smart constructor.
+- Decode external JSON with Serde into an untrusted boundary shape, then use a
+  smart constructor or `garde` validation with constraints that mirror the
+  domain type. Do not treat `garde` as a JSON parser or schema generator.
 - Deserialization must call the smart constructor.
 - Goal: no instance exists without the smart constructor.
 - Prefer private fields and smart constructors for domain types with
@@ -101,7 +127,9 @@ covers the rationale; the bullets here are Rust-specific checklist items.
   valid and invalid ranges.
 - For SQLx row mapping, implement `FromRow` and delegate to the smart
   constructor.
-- Use `garde` constraints for schema generation when possible.
+- When schemas must be generated, use a schema tool whose output is derived
+  from the same constraints and verify it stays aligned with runtime
+  validation.
 - Use enums for restricted string fields so Rust and DB constraints overlap
   exactly. Treat mismatches as review blockers.
 - For unstructured free-form text, enforce printable characters in both Rust
@@ -212,21 +240,29 @@ deltas.
 
 - Focus on correctness, safety, API design, tests, docs, and style.
 - Do not re-check what Clippy can catch. Require running Clippy instead.
-- Lint suppression policy: do not use `#![allow(...)]`. Use
-  `#![expect(..., reason = "...")]` instead, with a clear reason — `expect`
+- Lint suppression policy: do not use `allow` attributes at any scope. Use the
+  smallest-scoped `expect(..., reason = "...")` instead, with a clear reason —
+  `expect`
   forces suppressions to be removed once they are no longer needed, so
   improvements cannot silently backslide. Treat this as a cargo restriction
-  for lint configuration.
+  for lint configuration. Use `expect` only when the repository's pinned Rust
+  toolchain supports it. An older toolchain is not permission to substitute
+  `allow`: refactor the code to satisfy the lint, or upgrade the pinned
+  toolchain in a separate atomic change. If neither is currently valid, report
+  the conflict rather than suppressing the warning.
 - Arithmetic policy (Rust):
   Prefer `checked_*` math. Treat overflow/underflow as an error signal.
-  If a clamp-to-zero behavior is required (for example, scanning a substring that may start mid-context), do it explicitly and document why.
+  If a clamp-to-zero behavior is required (for example, scanning a substring
+  that may start mid-context), do it explicitly and document why.
 - Panic policy: avoid `unwrap`, `expect`, and panic-driven control flow on
   request, worker, or network paths. Crashing must be the explicit design.
 - Where a failure is genuinely impossible, use `.expect("explain why failure
   is impossible")`, never `.unwrap()`. The message documents the invariant,
   not the operation.
-- Enforce coverage requirements and the coverage ratchet. Record the exact
-  coverage number and do not allow drops unless the user approves.
+- Enforce the shared coverage ratchet. Record every absolute uncovered item
+  count, keep each configured maximum at the exact current count, and treat any
+  threshold increase as a regression requiring user approval. Do not use
+  percentages.
 - Prefer exact `line.eq("...")` checks over trimming or fuzzy matching when
   matching fixed line literals.
 
@@ -236,12 +272,15 @@ deltas.
   strings or booleans.
 - One error enum named `Error` per module, co-located with the type it
   serves. No crate-wide error sum, no `Box<dyn Error>` in APIs.
-- Mark error enums `#[non_exhaustive]` so new variants can land across
-  stacked PRs without breaking downstream matches; callers matching on one
-  include a wildcard arm.
-- Wrap external errors with `.map_err` and carry them as `#[source]`, never
-  `#[from]` (it synthesizes global conversions that mis-route `?`). Display
-  XOR source: never print an inner error that is also carried as
+- Keep error enums exhaustive by default so new failure modes force dependent
+  matches to be updated. Apply the API-level `#[non_exhaustive]` exception only
+  to publicly published library crates, such as crates.io packages, with a
+  documented compatibility requirement; stacked PR convenience is not a
+  sufficient reason.
+- Use `.map_err` when a boundary needs context or when one source error can map
+  to different domain variants. Permit `#[from]` only when the source-to-variant
+  conversion is unique, lossless, and correct everywhere `?` can invoke it.
+  Display XOR source: never print an inner error that is also carried as
   `#[source]`, or reporters render it twice.
 - Keep retry, timeout, and backoff behavior explicit where the code touches
   external systems.
@@ -262,26 +301,28 @@ deltas.
 
 ## Concurrency and OS interaction
 
-- **Prefer `Child::kill()` over PID-based signaling.** `child.id()` followed
-  by `nix::sys::signal::kill(Pid::from_raw(...), ...)` has a PID-reuse race:
-  the child can exit and the OS can reuse the PID between the two calls.
-  `tokio::process::Child::kill()` uses the OS handle and is race-free. On
-  Linux, `pidfd_*` is the race-free path for explicit signaling.
+- **Prefer operations on an owned `Child` over reconstructing a target from a
+  numeric PID.** `child.id()` followed by PID-based signaling can race with
+  process exit and PID reuse. Do not claim `Child::kill()` is identity-safe on
+  every platform; when PID-reuse safety is a correctness requirement, use a
+  platform API with that guarantee, such as Linux `pidfd_*` or an owned process
+  handle.
 - Check async code for accidental blocking work, long-held locks, and
   cancellation blind spots.
-- Make resource cleanup explicit for streams, channels, spawned tasks, and
-  shutdown paths. `Drop` is synchronous memory management only; never run
-  teardown logic through RAII.
-- Panics must terminate the process: `panic = "abort"` plus a panic handler.
-  Tokio's default swallowing of task panics is banned; a supervised task
-  that dies silently is an outage you cannot see.
+- Use RAII and `Drop` for infallible synchronous resource release. Make
+  asynchronous, fallible, or protocol-level shutdown explicit for streams,
+  channels, spawned tasks, and services; `Drop` cannot await or report failure.
+- Choose panic strategy for the deployment context. Long-running supervised
+  services **SHOULD** abort or propagate task panics to a supervisor rather than
+  silently losing a Tokio task; libraries must not impose a process-wide panic
+  strategy on their callers.
 
 ## Configuration and secrets
 
-- Every environment value parses into a `FromStr` newtype at boot. Match
-  `VarError::NotPresent` explicitly; never `unwrap_or` a default over a
-  malformed value (absence and corruption are different states). Wire data
-  never defaults absence; operator config may.
+- Every environment value parses at boot into an existing standard type or a
+  `FromStr` domain newtype. Match `VarError::NotPresent` explicitly; never
+  `unwrap_or` a default over a malformed value (absence and corruption are
+  different states). Wire data never defaults absence; operator config may.
 - Secrets and PII get a hand-rolled redacting `Debug` with a comment saying
   why, pinned by an exact full-string `Debug` assertion test. Do not
   over-redact non-secrets: an opaque surrogate identifier is not a secret,
@@ -289,7 +330,7 @@ deltas.
 
 ## Test strictness (Rust-specific)
 
-- Tests should fail on missing data; avoid fallback accessors in tests and test
+- Tests **MUST** fail on missing data; avoid fallback accessors in tests and test
   helpers.
 - Avoid defaulting helpers in tests. Common offenders in std/lib APIs:
   - `Option`/`Result`: `unwrap_or`, `unwrap_or_default`, `unwrap_or_else`,
@@ -330,9 +371,10 @@ deltas.
   tests. Do not test private functions directly; an unreachable or
   unkillable private function is dead code to delete, not a gap to cover.
 - When a test chains two or more fallible steps whose success is plumbing
-  rather than the subject, return `Result` from the test and use `?` (with a
-  module-level `#[expect(clippy::panic_in_result_fn)]`); stacked `.expect`
-  messages on setup are noise.
+  rather than the subject, return `Result` from the test and use `?`. If this
+  requires suppressing `clippy::panic_in_result_fn`, place
+  `#[expect(clippy::panic_in_result_fn, reason = "...")]` on each affected test,
+  never on the module; stacked `.expect` messages on setup are noise.
 - Each test earns its place by failing for a reason no other test catches.
   Flag a test whose every failure mode is already pinned elsewhere. Pin a
   delegating path once, with the one input that discriminates the routing —
