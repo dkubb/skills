@@ -2,6 +2,7 @@
 
 - Use simple English.
 - Use short bullets.
+- Apply `../core-principles.md` first.
 - Do not repeat core principles.
 
 ## Principle: strict globally, exceptions scoped
@@ -62,9 +63,16 @@ Require this prologue at the top of every script body:
 
 ```bash
 set -o errexit -o errtrace -o nounset -o pipefail -o noclobber
-(( BASH_VERSINFO[0] >= 5 )) || { echo 'bash >= 5 required' >&2; exit 1; }
+if ! (( BASH_VERSINFO[0] > 5 ||
+  (BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] >= 2) )); then
+  echo 'bash >= 5.2 required' >&2
+  exit 1
+fi
 shopt -s inherit_errexit failglob shift_verbose varredir_close
 shopt -u sourcepath patsub_replacement
+if (( BASH_VERSINFO[0] == 5 && BASH_VERSINFO[1] == 2 )); then
+  shopt -s assoc_expand_once
+fi
 IFS=$'\n\t'
 umask 077
 export LC_ALL=C
@@ -74,7 +82,9 @@ Why each line, beyond the classic four `-o` flags:
 
 - `noclobber`: `>` refuses to overwrite an existing file. Intentional
   clobbering uses `>|`, which marks the exception at the redirect.
-- Version guard: assert the interpreter version instead of writing
+- Version guard: require 5.2 because `varredir_close` and
+  `patsub_replacement` are configured below. Assert the interpreter version
+  instead of writing
   version-tolerant code. It runs before the `shopt` lines so an old bash
   fails with one clear message, not an unknown-option error.
 - `inherit_errexit` (bash 4.4+): command substitutions inherit `errexit`.
@@ -99,16 +109,18 @@ Why each line, beyond the classic four `-o` flags:
   with an explicit `chmod`, never by loosening the global umask.
 - `LC_ALL=C`: deterministic collation, sorting, and character classes.
 - Bash 5.3 evaluates array subscripts once by default (verified), closing
-  the `a[$key]` injection hole. On bash 5.0–5.2 add
-  `shopt -s assoc_expand_once`.
+  the `a[$key]` injection hole. The prologue enables `assoc_expand_once` on
+  Bash 5.2 for the same guarantee.
 
 ## Scoped exceptions
 
-The only approved forms of loosening. Each marks the exception at the use
-site and leaves the global settings intact:
+Use these scoped forms when applicable. Each marks the exception at the use
+site and leaves the global settings intact. Any other loosening requires a
+recorded reason and the smallest feasible scope:
 
-- Tolerated failure: `cmd || true`, or `rc=0; cmd || rc=$?` when the code
-  branches on the result. Never `set +o errexit` around a region.
+- Tolerated failure: `cmd || true` with a comment explaining why the result is
+  intentionally discarded, or `rc=0; cmd || rc=$?` when the code branches on
+  the result. Never `set +o errexit` around a region.
 - Intentional overwrite: `>|` on that redirect only.
 - Legal empty glob: toggle in a subshell — `( shopt -u failglob; shopt -s
   nullglob; ... )` — with a comment saying why empty is a valid state.
@@ -124,10 +136,10 @@ site and leaves the global settings intact:
 - Use arrays for lists instead of word-splitting.
 - Send errors to stderr.
 - Use long-form options when available and order options alphabetically when
-  multiple options are present.
+  option order does not affect behavior.
 - Prefer single quotes for strings that do not use variable interpolation.
-- Prefer compound conditions with `&&`/`||` instead of nested `if` blocks for
-  simple checks.
+- Prefer compound conditions with `&&`/`||` instead of nested `if` blocks only
+  when the exit-status behavior remains obvious under `errexit`.
 - Sort `apt-get install` package lists alphabetically.
 - Format scripts for human audit: add section headers, use blank lines, and
   break long pipelines or commands across lines.
