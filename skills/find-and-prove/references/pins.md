@@ -73,7 +73,7 @@ witness is the two-copy state: it satisfies every uniqueness-as-`∀` reading
 and fails only the count / not-in-rest form. [Anchors: exactly-once
 semantics; multiplicity.]
 
-## B4 Read-back at full strength
+## B4 Read-back & retention at full strength
 
 FIRE on every certificate/wrapper field and every label: some theorem must
 CONSUME the field at the strength the docs claim. "Ready for X and Y" needs
@@ -84,6 +84,30 @@ derives trivially, but deleting it removes the only theorem that reads the
 field, so keep it as the guard it is. Deciding mutant: weaken the field to
 the consumed-strength-only form; if everything stays green, the advertised
 extra strength was never read back.
+
+**The retention half (B4b, record-field retention).** The converse audit on
+the same surface — FIRE on every packaged record/bundle whose instances
+circulate downstream of an earning theorem: classify every hypothesis the
+earning theorem consumes as (a) STORED — a field or index of the record;
+(b) DERIVABLE — one projection or one landed iff away from stored fields;
+or (c) explicitly OUTSIDE what the record's NAME promises. Anything else is
+a defect. "The earning theorem consumed it" is never enough: the record is
+what consumers hold, and a load-bearing condition consumed to EARN the
+record and then dropped silently degrades the guarantee from the name's
+reading to whatever the stored fields alone carry. A disclaimer covers only
+case (c), and only when the name survives the disclaimer — when the
+disclaimed axis purchases the very word the name is built around (a
+uniqueness hypothesis purchasing "provenance"), (c) is not honestly
+available: store the fact as a field (it is exactly what the earning
+theorem already demanded, so it is cheap) or descend the name to what the
+standalone bundle carries. Deciding witness: inhabit the record in the
+adversarial state the dropped hypothesis would have excluded, then exhibit
+two states — the name's reading TRUE in one, FALSE in the other — both
+carrying an instance the stored fields cannot distinguish (the harvest
+witness: two same-key replies, one sealed and one caller-forged, with the
+record's public constructor admitting both). Auditing each disclaimer for
+honesty is NOT this check: reviewers who confirmed every disclaimer honest
+still missed that the disclaimed axis was the name's load-bearer.
 
 ## B5 Existential coupling / witness-hiding
 

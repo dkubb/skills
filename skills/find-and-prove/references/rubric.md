@@ -87,10 +87,16 @@ they exist; the entry here is the binding one-screen form.
   is forged by TWO copies of the right thing; `count = 1` is first-class,
   never derived; the `∃ rest` form needs an explicit not-in-rest clause. The
   most-recurring forgery class in the harvest.
-- **B4 Read-back at full strength** — FIRE on every certificate/wrapper field
-  and every label: some theorem must consume the field AT the strength the
-  docs claim ("ready for X and Y" needs a consumer per half — a one-line
-  corollary is "redundant as a lemma, NOT redundant as a spec guard").
+- **B4 Read-back & retention at full strength** (read-back half + Pro's
+  blind-reproduced retention half) — FIRE on every certificate/wrapper field
+  and every label: (a) some theorem must consume the field AT the strength
+  the docs claim ("ready for X and Y" needs a consumer per half — a one-line
+  corollary is "redundant as a lemma, NOT redundant as a spec guard");
+  (b) the converse on every record earned by a theorem: every consumed
+  hypothesis is STORED, DERIVABLE from stored fields, or honestly OUTSIDE
+  the record's name — a disclaimer covers only the third case, and only
+  when the name survives it; decide by inhabiting the record in the state
+  the dropped hypothesis excluded.
 - **B5 Existential subject & coupling** (graduated half + Pro's
   blind-reproduced half) — FIRE on every `∃`-headline: (a) conclusion TYPE
   couples returned witnesses to the hidden ones (indexed relation or
