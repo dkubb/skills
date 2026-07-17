@@ -238,6 +238,10 @@ the class module named per class.
 - **A7 Behavior-drop mutants** — FIRE on every classification/exact-cases
   master theorem: premise-STRENGTHENING is a mutation direction; each trigger
   needs its own reachability witness.
+- **A8 New-kind activation test** — FIRE on every theorem advertised as
+  new-kind support: one canonical positive value of the new kind must
+  positively inhabit the FULL statement (activation matrix for
+  conjunctions); never an equivalence of two false props.
 
 ### B — Unpinned surface: it holds, but binds nothing (`references/pins.md`)
 

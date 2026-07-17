@@ -59,6 +59,19 @@ they exist; the entry here is the binding one-screen form.
   premise-STRENGTHENING is a mutation direction the weakening-only operator
   catalog misses. Each distinguishable trigger of a channel needs its own
   reachability witness (or one quantifying over all).
+- **A8 New-kind activation test** (Pro's own design-rubric addition, W3.6a) —
+  FIRE on every theorem advertised as introducing support for a new
+  constructor/kind: instantiate at a canonical POSITIVE value of the new
+  kind; evaluate every premise and every conjunct on both sides; require a
+  positively-inhabited witness (never an equivalence of two false props) and
+  name the conclusion a new-kind wiring mutant reddens. Conjunction headlines
+  get the activation matrix (component × old/new kind: premise inhabitable?
+  each side can be true? wiring mutant reddens?); a new-kind column with "no"
+  on either side being true forbids the new-kind-reception description —
+  demote to transport corollary. Self-question: "show me one canonical value
+  of the new constructor for which the FULL advertised theorem is positively
+  inhabited." Design-time-first: run it on the sketch (formal-design
+  `references/recon.md`).
 
 ## B — Unpinned surface: it holds, but binds nothing
 

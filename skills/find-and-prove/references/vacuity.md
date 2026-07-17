@@ -141,6 +141,58 @@ channel / code path" must first check whether a mutant can distinguish the
 two triggers — if it can, they share only the constructor, not the
 guarantee.
 
+## A8 New-kind activation test
+
+FIRE on every theorem advertised as introducing support for a NEW
+constructor/kind (a join arm, a new tag, a new node shape): instantiate it
+with a canonical POSITIVE value of the new kind and evaluate EVERY premise and
+every conjunct on both sides. Require a witness where the theorem's new-kind
+path is inhabited and positive — never an equivalence between two false
+propositions — and identify which conclusion fails under a wiring mutant
+specific to the new kind. A universally quantified statement can be logically
+correct, faithful to its design sketch under every reviewer's check, and still
+say nothing about the kind it advertises: at the new-kind instantiation both
+sides go false and the iff holds for free.
+
+For conjunction headlines, build the explicit **activation matrix**
+(component × old kind / new kind):
+
+| Component | Old kind | New kind |
+|---|---|---|
+| Producer/decoder premise inhabitable | yes/no | yes/no |
+| New adapter premise inhabitable | yes/no | yes/no |
+| Left side can be true | yes/no | yes/no |
+| Right side can be true | yes/no | yes/no |
+| New-kind wiring mutant reddens theorem | yes/no | yes/no |
+
+A theorem cannot be described as new-kind reception when the new-kind column
+has "no" for either side being true. The compact self-question: *"show me one
+canonical value of the new constructor for which the FULL advertised theorem
+is positively inhabited."* If no such witness exists, the theorem may still be
+a valid transport corollary — demote it, docstring exactly what it does NOT
+claim, and move the new-kind headline to the statement whose new-kind path the
+wiring mutant actually reddens.
+
+The worked origin (W3.6a): a conjunction `decode req raw = some (.node n) ∧
+unwrap n = some items ↔ Spec req raw (.node n) ∧ n.flatten? = some items` was
+advertised as join-kind boundary reception — but the landed decoder was
+leaf-only, so for every joined `n` both decoder-side conjuncts are FALSE: the
+join column is all-no and the "reception" holds as an equivalence of two false
+props. The sketch was the design authority's OWN, and all three inner-loop
+review tiers verified sketch-FIDELITY instead of activation — fidelity to a
+vacuous sketch propagates the vacuity. Fix: rename and demote the conjunction
+to a non-headline transport corollary whose docstring states the decoder does
+not accept joins; the join-positive reception headline waits for the rung
+whose run actually routes a joined node.
+
+Run it design-time-first, on the SKETCH's proposed headline before any code
+exists (formal-design `references/recon.md`). At review time it is the
+per-new-kind sibling of A1: A1 asks once per suite whether the do-nothing
+model satisfies everything; A8 asks per advertised new-kind theorem whether
+the new kind can ACTIVATE it. A6 is the neighboring premise-level check (is a
+hypothesis schema inhabitable at all); A8 demands the full advertised
+statement positively inhabited on the advertised path.
+
 ## Adequacy of encodings
 
 Is the model the *real* object, or one with extra inhabitants / collapsed
