@@ -20,3 +20,14 @@
 4. **One design round adjudicates a fork.** When two candidates are live,
    present BOTH grounded in recons (what each requires, what each breaks) —
    never present the preferred one alone.
+5. **New-kind activation at sketch time.** For every sketched headline
+   advertised as introducing support for a new constructor/kind, run the
+   activation test BEFORE any code exists: one canonical positive value of
+   the new kind, every premise and conjunct evaluated on both sides, the
+   activation matrix for conjunction headlines (find-and-prove
+   `references/vacuity.md` A8). A sketch can carry the vacuity — reviewers
+   checking sketch-FIDELITY then propagate it (W3.6a: the design authority's
+   own sketch shipped a join-arm conjunction where both new-kind sides were
+   false; three fidelity reviews passed it). No positively-inhabited
+   new-kind witness ⇒ the sketched statement is a transport corollary, not
+   the new-kind headline.
