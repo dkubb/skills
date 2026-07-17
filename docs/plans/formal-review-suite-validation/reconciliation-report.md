@@ -54,6 +54,7 @@ its copy.
 | Split-by-hardest-dependency, defer-the-transform, extension-point-now, first-consumer, false-dependency | formal-design `references/increment-scoping.md` |
 | Proof forward hygiene (induction-shape lemmas, transport export, named-law-over-rfl, witness-pinning cfgF) | formal-design `references/proof-hygiene.md` |
 | Pro rubric #18 (deferral-honesty / `genPreserves`, post-audit delta) | `references/reception.md` C9 (graduated 2026-07-07 after suite completion; blind-repro report `blind-reproduction-c9.md`) |
+| Record-field retention rule (provenance-capstone delta, PR #85) | `references/pins.md` B4 retention half / B4b (graduated 2026-07-16 after suite completion; blind-repro report `blind-reproduction-retention-rule.md`) |
 
 ## Trim to the delta
 
