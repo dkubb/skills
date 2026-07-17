@@ -55,6 +55,7 @@ its copy.
 | Proof forward hygiene (induction-shape lemmas, transport export, named-law-over-rfl, witness-pinning cfgF) | formal-design `references/proof-hygiene.md` |
 | Pro rubric #18 (deferral-honesty / `genPreserves`, post-audit delta) | `references/reception.md` C9 (graduated 2026-07-07 after suite completion; blind-repro report `blind-reproduction-c9.md`) |
 | Record-field retention rule (provenance-capstone delta, PR #85) | `references/pins.md` B4 retention half / B4b (graduated 2026-07-16 after suite completion; blind-repro report `blind-reproduction-retention-rule.md`) |
+| New-kind activation test (W3.6a delta, Pro's own design-rubric addition) | `references/vacuity.md` A8 + formal-design `references/recon.md` item 5 (graduated 2026-07-16 after suite completion; blind-repro report `graduation-activation-test.md`) |
 
 ## Trim to the delta
 
