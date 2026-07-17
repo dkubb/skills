@@ -248,8 +248,10 @@ the class module named per class.
   headline: make it producer-grounded (`token ∈ ruleOutput`, then distinct).
 - **B3 Cardinality conjunct** — FIRE on every universal value claim over a
   linear/unique resource: `count = 1` is first-class, never derived.
-- **B4 Read-back at full strength** — FIRE on every certificate/wrapper field
-  and label: some theorem consumes it at the strength the docs claim.
+- **B4 Read-back & retention at full strength** — FIRE on every
+  certificate/wrapper field and label: some theorem consumes it at the
+  strength the docs claim; and every hypothesis the earning theorem consumed
+  is stored, derivable from stored fields, or honestly outside the name.
 - **B5 Existential subject & coupling** — FIRE on every `∃`-headline: the
   conclusion TYPE couples returned witnesses to hidden ones (decoy-witness
   state decides); every conjunct's subject is the bound variable.
