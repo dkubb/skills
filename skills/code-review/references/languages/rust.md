@@ -355,6 +355,10 @@ deltas.
   `length::empty_string_rejected`. Contract modules also let coverage and
   mutation runs scope to one public function's own tests, so incidental
   coverage cannot inflate the numbers.
+- The contract module owns its contract prefix. A leaf test name must state
+  only the behavior and must not repeat that prefix: use
+  `proptests::discover::rejects_unknown_keys`, not
+  `proptests::discover::discover_rejects_unknown_keys`.
 - Apply the same contract grouping inside `mod proptests`
   (`proptests::try_new::accepts_every_valid_year`), with shared generators
   in the outer module as fixtures. This scopes the property coverage gate
