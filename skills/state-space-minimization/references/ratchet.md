@@ -46,13 +46,13 @@ the gains.
   narrowing a function parameter to forbid invalid inputs.
 - **Bound cardinality.** Each change is atomic and from the closed
   transformation set (see `commits.md`). One narrowing per commit.
-  Each commit passes every gate.
+  Each commit passes every relevant gate.
 - **Shrink the codomain.** Each threshold defines exactly what the
   project permits at that metric. As the codebase narrows, the
   threshold's codomain follows.
 - **Remove invalid intermediate representations.** Every commit
-  passes every gate; no half-ratcheted state is representable in
-  the history.
+  passes every relevant gate; no half-ratcheted state is
+  representable in the history.
 
 ## Direction and the dual threshold
 
@@ -122,7 +122,6 @@ Common metrics worth tracking:
 - Test coverage (statement, line, region, branch, MCDC)
 - Mutation score
 - Assertion density
-- Diff size per commit (see `commits.md`)
 - Dependency count and depth
 - Type-system strictness flags (e.g., `noImplicitAny`,
   `strictNullChecks`, `clippy::pedantic`)
@@ -132,6 +131,12 @@ This module does not name specific numeric defaults. The right
 number depends on language ecosystem and project domain. When
 numeric anchors are useful, they belong in `languages/*.md` files
 where the ecosystem context is explicit.
+
+Commit diff size is deliberately excluded from ratcheted thresholds.
+Line count is a superlinear review signal, but it cannot determine
+whether a transformation is semantically indivisible. Use the signal
+bands in `commits.md` to intensify the search for coherent splits;
+do not reject a genuinely indivisible commit at a numeric cutoff.
 
 ## Tooling as the forcing function
 
@@ -222,9 +227,8 @@ the project is committed to reaching.
 - `principles.md` § "Burndown priority: infinities first" — the
   burndown-priority sieve is the type-tier instance of the ratchet
   this module describes at the project level.
-- `commits.md` § "Atomicity" — the per-commit diff-size thresholds
-  are one instance of this module's pattern, applied to the
-  size-of-a-state-transition metric.
+- `commits.md` § "Atomicity" — explains why commit diff size is a
+  superlinear review signal rather than a ratcheted threshold.
 - `testing.md` § "Coverage is structural; biasing is the draw
   distribution" — the 100% target-function coverage rule is the
   aspirational target at this level; the project's current

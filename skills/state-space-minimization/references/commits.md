@@ -13,7 +13,7 @@ to narrow that codomain to the *range* — the specific transformation
 the author actually intended. Codomain ≈ range is the goal.
 
 The canonical commit form — the action-verb set, transformation
-priority, subject / body / action-line rules, size bounds, and
+priority, subject / body / action-line rules, size signals, and
 anti-patterns — is `atomic-changes` `references/commits.md`. This
 module is determinant for the state-space reading of that form and
 for the gate-trailer machinery built on it; where the two state the
@@ -139,9 +139,12 @@ Fix null user references during registration
 ## Atomicity
 
 An atomic commit is a single bounded state transition: one
-transformation, one observable behavior, one applicable parent
-state, and a child state that passes every gate. The whole branch
-is then a composition of atomic transitions.
+indivisible semantic transformation, one applicable parent state,
+and a child state that passes every gate relevant to its affected
+surfaces and transitive consumers. The transformation may be a
+behavior, schema object, configuration surface, documentation
+claim, or executable test contract. The whole branch is then a
+composition of atomic transitions.
 
 A monolithic commit is the opposite: many entangled transformations
 in one diff. The preimage of failure when CI breaks on a monolithic
@@ -152,17 +155,19 @@ preimage of failure (this specific transformation), which is *why*
 
 Atomicity rules:
 
-- One behavior change per commit. Two behaviors per commit is a
-  Cartesian product; preimage of failure is the union.
-- Each commit independently passes the full gate. Intermediate
-  invalid states (broken tests, broken lint) in the history are
-  representable-but-invalid — eliminate them at write time, not by
-  rewriting after the fact.
-- Diff size is a hard upper bound on preimage cardinality. The
-  canonical size bounds are in `atomic-changes`
-  `references/commits.md`; they include both source and test
-  changes. If source and tests for one behavior do not fit the
-  bounds, the behavior probably isn't atomic.
+- One indivisible semantic transformation per commit. Two
+  independently coherent transformations per commit form a
+  Cartesian product; the preimage of failure is their union.
+- Each commit independently passes its relevant gates.
+  Intermediate invalid states (broken applicable tests or lint) in
+  the history are representable-but-invalid — eliminate them at
+  write time, not by rewriting after the fact.
+- Diff size is a superlinear signal about preimage cardinality, not
+  a hard atom boundary. The canonical signal bands are in
+  `atomic-changes` `references/commits.md`. A larger diff demands a
+  more aggressive search for coherent gated splits, but a
+  mechanical, generated, or genuinely indivisible transformation
+  remains one commit.
 
 ## Anti-patterns, read as state-space failures
 
@@ -286,7 +291,7 @@ only a fully passing candidate becomes a commit.
   drift is the symmetric failure when claims and code diverge over
   time; commits are the state-transition record those claims
   describe.
-- `ratchet.md` — per-commit diff-size thresholds are one
-  instance of the ratchet pattern applied to the
-  size-of-a-state-transition metric; gate trailers are the
-  commit-level forcing function.
+- `ratchet.md` — gate trailers are the commit-level forcing
+  function. Diff size is deliberately a review signal rather than a
+  ratcheted threshold because line count cannot define semantic
+  indivisibility.
