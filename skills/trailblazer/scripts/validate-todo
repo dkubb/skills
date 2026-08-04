@@ -1,0 +1,101 @@
+#!/bin/sh
+# validate-todo — fold-routing witness for autosquash rebases.
+#
+# Usage (as the sequence editor of a fold):
+#   GIT_SEQUENCE_EDITOR="<skill>/scripts/validate-todo <mapping-file>" \
+#     git rebase -i --autosquash \
+#       --no-update-refs --no-autostash --no-rebase-merges <base>
+#
+# <mapping-file> holds one "<fixup-oid> <target-oid>" pair per line,
+# full current OIDs, built from the lane reports and refreshed after
+# every rewrite of the range. Git invokes this script with the todo
+# path appended; the todo is validated in place and left unedited.
+#
+# Every fixup/squash line must fold into exactly its recorded target
+# (the nearest preceding pick). Any unmapped fixup, misroute, or
+# unrecognized line exits nonzero, which aborts the rebase before a
+# single commit is rewritten. A bare `git rebase --autosquash`
+# without `-i` never runs the sequence editor — folds MUST use the
+# `-i` form above.
+set -eu
+
+mapping=$1
+todo=$2
+
+# The mapping grammar is strict: exactly two full hex OIDs per line,
+# nothing else — extra fields could smuggle an unvalidated obligation
+# into a line's tail, and a partial record could drop one.
+if ! awk 'NF != 2 || $1 !~ /^([0-9a-f]{40}|[0-9a-f]{64})$/ ||
+          $2 !~ /^([0-9a-f]{40}|[0-9a-f]{64})$/ { exit 1 }' "$mapping"
+then
+  echo "validate-todo: malformed mapping record — want exactly one" \
+    "'<full-fixup-oid> <full-target-oid>' pair per line" >&2
+  exit 1
+fi
+
+last_pick=
+status=0
+consumed=
+
+while IFS= read -r line || [ -n "$line" ]; do
+  case $line in
+    pick\ *|p\ *)
+      set -- $line
+      last_pick=$(git rev-parse --verify --quiet "$2^{commit}") || {
+        echo "validate-todo: unresolvable pick: $line" >&2
+        exit 1
+      }
+      if awk -v o="$last_pick" '$1 == o { found = 1 } END { exit !found }' \
+        "$mapping"; then
+        echo "validate-todo: mapped fixup $last_pick appears as pick —" \
+          "autosquash could not route it (target outside the range?)" >&2
+        status=1
+      fi
+      ;;
+    fixup\ *|f\ *|squash\ *|s\ *)
+      set -- $line
+      shift
+      case $1 in
+        -C|-c) shift ;;
+      esac
+      oid=$(git rev-parse --verify --quiet "$1^{commit}") || {
+        echo "validate-todo: unresolvable fixup: $line" >&2
+        exit 1
+      }
+      target=$(awk -v o="$oid" '$1 == o { print $2 }' "$mapping")
+      if [ -z "$target" ]; then
+        echo "validate-todo: fixup $oid has no recorded target" >&2
+        status=1
+      elif [ "$target" != "$last_pick" ]; then
+        echo "validate-todo: fixup $oid would fold into" \
+          "${last_pick:-<none>} but its recorded target is $target" >&2
+        status=1
+      fi
+      consumed="$consumed$oid
+"
+      ;;
+    exec\ *|x\ *|break|b|label\ *|reset\ *|update-ref\ *|\#*|'')
+      ;;
+    *)
+      echo "validate-todo: unexpected todo line: $line" >&2
+      exit 1
+      ;;
+  esac
+done < "$todo"
+
+# Completeness: every mapping entry must have been consumed as a
+# fixup/squash line — a mapped fixup missing from the todo entirely
+# (dropped, or out of range) is a routing failure, not a no-op.
+while read -r fixup_oid _ || [ -n "${fixup_oid:-}" ]; do
+  [ -n "$fixup_oid" ] || continue
+  case $consumed in
+    *"$fixup_oid"*) ;;
+    *)
+      echo "validate-todo: mapped fixup $fixup_oid never appeared as" \
+        "a fixup/squash line in the todo" >&2
+      status=1
+      ;;
+  esac
+done < "$mapping"
+
+exit "$status"
