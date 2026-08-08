@@ -20,7 +20,7 @@ set -o nounset
 set -o pipefail
 
 readonly DYLINT_REPO='https://github.com/trailofbits/dylint.git'
-readonly DYLINT_REV='2c20d164e06c446de2cecadff0c55e16a877c006'
+readonly DYLINT_REV='9adfa398661273ca7dc99df9bf2c26ae6f61b1c5'
 # The lint toolchain — the nightly the dylint cdylibs and the rustc_private
 # driver are built with. It must be one that DYLINT_REV's dylint_linting still
 # compiles against; nightly-2026-05-31 is verified to work and is kept in sync
