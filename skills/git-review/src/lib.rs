@@ -2,7 +2,9 @@
 //!
 //! This crate implements deterministic evidence commands for `git-review`.
 
+mod git;
 mod message;
+mod messages;
 
 use clap::{CommandFactory as _, Parser, Subcommand};
 use skill_core::SkillError;
@@ -25,6 +27,8 @@ pub struct Args {
 /// supported `git-review` evidence and repair subcommands.
 #[derive(Clone, Debug, Subcommand)]
 enum Command {
+    /// check for invalid commit messages.
+    CheckMessages(messages::CheckMessagesArgs),
     /// compose a canonical Atomic Changes commit message.
     Message(message::MessageArgs),
 }
@@ -37,6 +41,7 @@ enum Command {
 #[inline]
 pub fn run(args: &Args) -> Result<(), SkillError> {
     match args.command.clone() {
+        Some(Command::CheckMessages(check_messages_args)) => messages::run(&check_messages_args),
         Some(Command::Message(message_args)) => message::run(&message_args),
         None => {
             Args::command().print_help()?;
@@ -47,3 +52,6 @@ pub fn run(args: &Args) -> Result<(), SkillError> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod test_repo;

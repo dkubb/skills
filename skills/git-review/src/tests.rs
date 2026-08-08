@@ -21,3 +21,20 @@ fn run_message_returns_unit_success() {
 
     assert_eq!(run(&args).expect("compose message"), ());
 }
+
+#[test]
+fn run_check_messages_returns_unit_success() {
+    let repo = super::test_repo::TestRepo::new();
+    let base = repo.commit("Add foundation");
+    let _valid = repo.commit("Add message checker");
+    let args = Args::parse_from([
+        "git-review",
+        "check-messages",
+        &base,
+        "HEAD",
+        "--repo",
+        repo.path(),
+    ]);
+
+    assert_eq!(run(&args).expect("check valid messages"), ());
+}

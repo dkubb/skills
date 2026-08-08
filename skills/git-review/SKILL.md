@@ -68,6 +68,9 @@ Emit results in this order:
 
 - `skill git-review message VERB --summary TEXT` composes a canonical commit
   message.
+- `skill git-review check-messages BASE_REF [BRANCH_REF]` rejects messages
+  that violate the canonical form. Use `--root [REF]` to inspect a full
+  reachable history.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer

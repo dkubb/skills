@@ -61,7 +61,7 @@ impl Verb {
 }
 
 /// Determine whether a subject uses one canonical verb and simple summary.
-fn has_atomic_subject(subject: &str) -> bool {
+pub(crate) fn has_atomic_subject(subject: &str) -> bool {
     let Some((verb, summary)) = subject.split_once(' ') else {
         return false;
     };
@@ -76,7 +76,7 @@ fn has_atomic_subject(subject: &str) -> bool {
 }
 
 /// Check that every body bullet is a canonical action line.
-fn has_valid_action_lines(message: &str) -> bool {
+pub(crate) fn has_valid_action_lines(message: &str) -> bool {
     message.lines().skip(2).all(|line| {
         let trimmed = line.trim_start();
         if ["What:", "Why:", "How:"]
@@ -105,7 +105,7 @@ fn has_valid_action_lines(message: &str) -> bool {
 }
 
 /// Check wrapping, separators, and trailing whitespace.
-fn has_valid_format(message: &str) -> bool {
+pub(crate) fn has_valid_format(message: &str) -> bool {
     let lines: Vec<&str> = message.lines().collect();
     let Some(subject) = lines.first() else {
         return false;
