@@ -61,6 +61,10 @@ impl TestRepo {
         path
     }
 
+    pub(crate) fn tree(&self, commit: &str) -> String {
+        self.output(&["show", "-s", "--format=%T", commit])
+    }
+
     fn git(&self, args: &[&str]) {
         let status = Command::new("git")
             .env_remove("GIT_DIR")

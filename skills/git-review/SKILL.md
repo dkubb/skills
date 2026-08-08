@@ -73,6 +73,8 @@ Emit results in this order:
   reachable history.
 - `skill git-review check-dates BASE_REF [BRANCH_REF]` rejects author or
   committer timestamps that do not strictly follow every parent.
+- `skill git-review tree-hashes BASE_REF [BRANCH_REF]` records commit and tree
+  identities before a rewrite. Use `--commits-file PATH` to restrict output.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer

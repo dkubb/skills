@@ -55,3 +55,20 @@ fn run_check_dates_returns_unit_success() {
 
     assert_eq!(run(&args).expect("check valid dates"), ());
 }
+
+#[test]
+fn run_tree_hashes_returns_unit_success() {
+    let repo = super::test_repo::TestRepo::new();
+    let base = repo.commit("Add foundation");
+    let _commit = repo.commit("Add tree hash reporter");
+    let args = Args::parse_from([
+        "git-review",
+        "tree-hashes",
+        &base,
+        "HEAD",
+        "--repo",
+        repo.path(),
+    ]);
+
+    assert_eq!(run(&args).expect("emit tree hashes"), ());
+}
