@@ -71,6 +71,8 @@ Emit results in this order:
 - `skill git-review check-messages BASE_REF [BRANCH_REF]` rejects messages
   that violate the canonical form. Use `--root [REF]` to inspect a full
   reachable history.
+- `skill git-review check-dates BASE_REF [BRANCH_REF]` rejects author or
+  committer timestamps that do not strictly follow every parent.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer

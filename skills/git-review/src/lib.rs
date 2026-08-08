@@ -2,6 +2,7 @@
 //!
 //! This crate implements deterministic evidence commands for `git-review`.
 
+mod dates;
 mod git;
 mod message;
 mod messages;
@@ -27,6 +28,8 @@ pub struct Args {
 /// supported `git-review` evidence and repair subcommands.
 #[derive(Clone, Debug, Subcommand)]
 enum Command {
+    /// check for date ordering violations.
+    CheckDates(dates::CheckDatesArgs),
     /// check for invalid commit messages.
     CheckMessages(messages::CheckMessagesArgs),
     /// compose a canonical Atomic Changes commit message.
@@ -41,6 +44,7 @@ enum Command {
 #[inline]
 pub fn run(args: &Args) -> Result<(), SkillError> {
     match args.command.clone() {
+        Some(Command::CheckDates(check_dates_args)) => dates::run(&check_dates_args),
         Some(Command::CheckMessages(check_messages_args)) => messages::run(&check_messages_args),
         Some(Command::Message(message_args)) => message::run(&message_args),
         None => {

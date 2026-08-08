@@ -38,3 +38,20 @@ fn run_check_messages_returns_unit_success() {
 
     assert_eq!(run(&args).expect("check valid messages"), ());
 }
+
+#[test]
+fn run_check_dates_returns_unit_success() {
+    let repo = super::test_repo::TestRepo::new();
+    let base = repo.commit_at("Add foundation", 1_700_000_000, 1_700_000_000);
+    let _valid = repo.commit_at("Add date checker", 1_700_000_001, 1_700_000_001);
+    let args = Args::parse_from([
+        "git-review",
+        "check-dates",
+        &base,
+        "HEAD",
+        "--repo",
+        repo.path(),
+    ]);
+
+    assert_eq!(run(&args).expect("check valid dates"), ());
+}

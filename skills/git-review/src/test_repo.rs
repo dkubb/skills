@@ -38,6 +38,23 @@ impl TestRepo {
         self.output(&["rev-parse", "HEAD"])
     }
 
+    pub(crate) fn commit_at(&self, message: &str, author: i64, committer: i64) -> String {
+        let author_date = format!("@{author} +0000");
+        let committer_date = format!("@{committer} +0000");
+        let status = Command::new("git")
+            .env_remove("GIT_DIR")
+            .env_remove("GIT_WORK_TREE")
+            .arg("-C")
+            .arg(&self.path)
+            .args(["commit", "--allow-empty", "--quiet", "--message", message])
+            .env("GIT_AUTHOR_DATE", author_date)
+            .env("GIT_COMMITTER_DATE", committer_date)
+            .status()
+            .expect("run dated test Git commit");
+        assert!(status.success(), "dated test Git commit failed");
+        self.output(&["rev-parse", "HEAD"])
+    }
+
     pub(crate) fn write(&self, name: &str, contents: &str) -> PathBuf {
         let path = self.path.join(name);
         fs::write(&path, contents).expect("write test repository file");
