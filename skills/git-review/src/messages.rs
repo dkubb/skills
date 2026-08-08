@@ -1,9 +1,8 @@
 //! Find commits whose messages violate the Atomic Changes form.
 
 use std::collections::HashSet;
-use std::fs;
 use std::io::{self, Write};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use clap::Parser;
 use skill_core::SkillError;
@@ -11,6 +10,7 @@ use skill_core::SkillError;
 use crate::git::run as run_git;
 use crate::invalid;
 use crate::message::{has_atomic_subject, has_valid_action_lines, has_valid_format};
+use crate::target_file::load as load_targets;
 
 /// check commits for messages that violate the Atomic Changes form.
 #[derive(Clone, Debug, Parser)]
@@ -34,16 +34,6 @@ pub(crate) struct CheckMessagesArgs {
     /// path to the Git repository.
     #[arg(long, default_value = ".")]
     repo: String,
-}
-
-/// Load newline-delimited commit SHAs from `path`.
-fn load_targets(path: &Path) -> Result<HashSet<String>, SkillError> {
-    let contents = fs::read_to_string(path)?;
-    Ok(contents
-        .lines()
-        .filter(|line| !line.chars().all(char::is_whitespace))
-        .map(ToOwned::to_owned)
-        .collect())
 }
 
 /// Resolve the ordered commits selected by `args`.

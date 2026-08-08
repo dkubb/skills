@@ -6,6 +6,7 @@ mod dates;
 mod git;
 mod message;
 mod messages;
+mod target_file;
 
 use clap::{CommandFactory as _, Parser, Subcommand};
 use skill_core::SkillError;
