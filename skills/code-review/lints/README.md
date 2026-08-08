@@ -38,13 +38,11 @@ concatenate) the parent's rustflags during the lint build, and
 
 ## Pinning
 
-- **Dylint upstream:** `2c20d164e06c446de2cecadff0c55e16a877c006`
-  (upstream `master` on 2026-05-07). Built from source because
-  `cargo-dylint 5.0.0` on crates.io predates rustc API changes after
-  2026-03-18.
-- **Toolchain:** `nightly-2026-05-07` with `llvm-tools-preview` and
-  `rustc-dev`. Matches `~/workspace/dkubb/symbiote/tools/lints` so
-  copying lints in is a file move plus a workspace-table tweak.
+- **Dylint upstream:** `9adfa398661273ca7dc99df9bf2c26ae6f61b1c5`
+  (upstream release `v6.0.3`). Built from source so the driver and lint
+  libraries use the same immutable upstream revision.
+- **Toolchain:** `nightly-2026-05-31` with `llvm-tools-preview` and
+  `rustc-dev`.
 
 ## First-run cost
 

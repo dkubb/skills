@@ -9,7 +9,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-dylint_linting = { git = "https://github.com/trailofbits/dylint.git", rev = "2c20d164e06c446de2cecadff0c55e16a877c006" }
+dylint_linting = { git = "https://github.com/trailofbits/dylint.git", rev = "9adfa398661273ca7dc99df9bf2c26ae6f61b1c5" }
 
 [package.metadata.rust-analyzer]
 rustc_private = true
