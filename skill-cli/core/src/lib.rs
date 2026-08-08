@@ -12,6 +12,13 @@ pub enum SkillError {
     #[error("IO error: {0}")]
     Io(#[from] io::Error),
 
+    /// User input or parsed repository data was invalid.
+    #[error("invalid input: {message}")]
+    InvalidInput {
+        /// Why the input could not be accepted.
+        message: String,
+    },
+
     /// A required bundled file was not present on disk.
     #[error("required file not found: {path}")]
     MissingFile {
@@ -38,6 +45,7 @@ impl SkillError {
             Self::Command { .. } => 1,
             Self::MissingFile { .. } => 2,
             Self::Io(_) => 3,
+            Self::InvalidInput { .. } => 4,
         }
     }
 }

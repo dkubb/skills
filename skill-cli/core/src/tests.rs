@@ -32,6 +32,17 @@ fn skill_error_io_displays_wrapped_error() {
 }
 
 #[test]
+fn skill_error_invalid_input_displays_reason() {
+    let error = SkillError::InvalidInput {
+        message: "BASE_REF is required".to_owned(),
+    };
+
+    let rendered = error.to_string();
+
+    assert_eq!(rendered, "invalid input: BASE_REF is required");
+}
+
+#[test]
 fn skill_error_missing_file_displays_path() {
     let error = SkillError::MissingFile {
         path: PathBuf::from("/tmp/run-dylint"),
@@ -64,8 +75,16 @@ fn exit_code_is_distinct_per_error_class() {
         command: "c".to_owned(),
         outcome: CommandOutcome::Exited(1),
     };
+    let invalid = SkillError::InvalidInput {
+        message: "x".to_owned(),
+    };
 
-    let codes = (io.exit_code(), missing.exit_code(), command.exit_code());
+    let codes = (
+        io.exit_code(),
+        missing.exit_code(),
+        command.exit_code(),
+        invalid.exit_code(),
+    );
 
-    assert_eq!(codes, (3, 2, 1));
+    assert_eq!(codes, (3, 2, 1, 4));
 }

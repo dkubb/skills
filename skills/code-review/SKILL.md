@@ -4,14 +4,14 @@ description: >-
   Review diffs, commit ranges, fixup chains, or PRs across languages and
   report findings ordered by severity. Enforces primitive-obsession and
   smart-constructor blockers, property-test and boundary-test requirements,
-  complexity thresholds, commit structure against the canonical form, and
-  per-language rules (Rust, TypeScript, Lean, SQL, bash, Ruby, Markdown,
-  regex). Also the home for changing review rules or codifying review
+  complexity thresholds and per-language rules (Rust, TypeScript, Lean, SQL,
+  bash, Ruby, Markdown, regex). Delegates commit-history structure and repair
+  to git-review. Also the home for changing review rules or codifying review
   feedback.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-06-v12"
+  version: "2026-08-v13"
 triggers:
   - "code review"
   - "review this diff"
@@ -154,8 +154,9 @@ triggers:
    property tests for every smart constructor, serializer, emitter, output
    generator, deserializer, and parser. Require round-trip tests for each
    paired producer and consumer.
-4. Load `references/commit-review.md` and review commits as artifacts:
-   commit message quality, granularity, ordering, and reviewability.
+4. When the target contains commits, load `git-review` and use it for commit
+   boundaries, messages, ordering, exact-state gates, tree identity, and
+   history repair. Keep code correctness and language-specific review here.
 5. When review feedback will be left on a GitHub pull request, load
    `references/github-pr-comments.md` and follow its label, structure, and
    inline-range rules.

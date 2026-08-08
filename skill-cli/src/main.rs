@@ -18,13 +18,13 @@ struct Cli {
 
 /// available skills.
 ///
-/// intentional growth point: this registry holds one variant per skill and
-/// is expected to gain more. it is a single-variant enum only because
-/// `code-review` is currently the sole skill wired into the binary.
+/// intentional growth point: this registry holds one variant per skill.
 #[derive(Debug, Subcommand)]
 enum SkillCommand {
     /// run a clear code review across languages and change review rules.
     CodeReview(skill_code_review::Args),
+    /// review Git commits against the canonical atomic changes contract.
+    GitReview(skill_git_review::Args),
 }
 
 fn main() -> ExitCode {
@@ -32,6 +32,7 @@ fn main() -> ExitCode {
 
     let result = match &cli.command {
         Some(SkillCommand::CodeReview(args)) => skill_code_review::run(args),
+        Some(SkillCommand::GitReview(args)) => skill_git_review::run(args),
         None => Cli::command().print_help().map_err(SkillError::from),
     };
 
