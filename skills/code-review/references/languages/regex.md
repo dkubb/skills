@@ -34,6 +34,16 @@
   without anchors in the pattern. Verify that it consumes the entire input;
   treat this as an exception rather than the default recommendation.
 
+## Groups
+
+- Use non-capturing groups (`(?:...)`) whenever the group exists only for
+  alternation or quantification and the match is never read, in every flavor
+  that supports them (JavaScript, Rust, Ruby, and PostgreSQL AREs all do).
+- Capture only when the code consumes the captured value. An unread capture
+  misstates intent and pays bookkeeping cost.
+- Prefer named groups over numbered ones when a capture is consumed and the
+  flavor supports naming.
+
 ## Character classes
 
 - Choose the digit class that matches the domain and engine. Use `[0-9]` for

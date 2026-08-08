@@ -1,7 +1,8 @@
 # Commit structure
 
 The canonical form for commits in this repo. A commit is one bounded change:
-one transformation, a message that names it, and a tree that passes every gate.
+one indivisible transformation, a message that names it, and a tree that
+passes every gate relevant to its affected surfaces and transitive consumers.
 Smaller commits give a smaller preimage of failure — when CI breaks, `git
 bisect` lands on a single transformation instead of a tangle.
 
@@ -9,23 +10,43 @@ bisect` lands on a single transformation instead of a tangle.
 
 - One transformation per commit — one semantic action verb. If you need "and"
   to describe it, it is two commits.
-- Each commit passes the full gate on its own. No broken intermediate states in
-  history; eliminate them at write time, not by rewriting after.
-- Smaller is better, bounded by functional integrity: the tree stays green and
-  deployable. Rough diff-size guide (source + tests): ≤30 lines ideal, 30–50
-  the max for confident review, 50–300 needs justification, >300 split.
+- Each commit passes its relevant gates on its own. Select gates from the
+  affected surfaces and their transitive consumers, not from unrelated file
+  types. No broken intermediate states in history; eliminate them at write
+  time, not by rewriting after.
+- Smaller is better, bounded by semantic and functional integrity: the commit
+  is one coherent transformation, and the tree stays green and deployable.
+  Line count never defines the atom, but it is a superlinear review-risk
+  signal:
+
+  | Changed lines | Review signal |
+  |---:|---|
+  | 0–50 | Normal |
+  | 51–100 | Noticeable |
+  | 101–250 | Strong |
+  | 251–500 | Very strong |
+  | 501–1,000 | Exceptional |
+  | More than 1,000 | Extreme |
+
+  At each higher band, search more aggressively for coherent gated splits and
+  require stronger evidence that the transformation is indivisible. Doubling
+  a diff more than doubles its review burden because interactions and context
+  grow with it. These are signals, never hard limits: a large mechanical,
+  generated, or genuinely indivisible commit remains valid when its reason
+  and verification are clear.
 - For new code, the default atom is one public symbol plus its tests; N
   independent public symbols are N commits, never one. (Other verbs keep
   their own grain: a `Refactor` splits code from tests so the untouched half
   is the oracle; `Move`/`Rename` keep a symbol with its mechanical reference
   updates.) Splitting never needs justification — combining does, and the
-  only justification that counts is that splitting would turn a gate red:
-  symbols that pass the gate only together (a trait and its only impl, a type
-  and its smart constructor, mutually recursive functions, a public contract
-  deployable only with its counterpart) are one atom. The grain is a floor on
-  splitting, not a ceiling: a symbol that crosses the >300-line bound still
-  splits by behavior or helper extraction. A commit that bundles two
-  stand-alone changes is as defective as one that breaks the build.
+  justification is that the candidate is one indivisible transformation or
+  splitting would turn a relevant gate red: symbols that pass the gate only
+  together (a trait and its only impl, a type and its smart constructor,
+  mutually recursive functions, a public contract deployable only with its
+  counterpart) are one atom. A large symbol still prompts another search for
+  coherent behavioral or helper seams, but size alone cannot create one. A
+  commit that bundles two coherent stand-alone changes is as defective as one
+  that breaks the build.
 - Operate as if full mutation testing were always on, whatever gates the repo
   configures: you cannot add functionality no test would kill a mutant of.
   Every behavior is exercised either directly by a public symbol's own tests,
@@ -34,6 +55,29 @@ bisect` lands on a single transformation instead of a tangle.
   incidental coverage (which rarely kills mutants), and a private function —
   uncoverable with no caller — is never a standalone atom; it ships inside the
   atom that introduces its first tested caller.
+
+### TDD contract/capability exception
+
+The default new-behavior atom contains one public symbol, its implementation,
+and its direct tests. A TDD workflow may split that atom into an adjacent,
+dependency-linked pair only when the first commit is independently valid:
+
+1. `Add <behavior> contract` — the final behavioral test executes under an
+   exact expected-failure contract, and any declaration required for static
+   compilation fails closed without providing the capability.
+2. `Add <behavior>` — the minimum implementation adds the capability and
+   removes only the expected-failure accommodation.
+
+Red means current behavior is not expected to satisfy the final test
+expectations. It does not mean the project test command fails. The Red commit
+must pass every relevant gate, and no existing production path may invoke its
+new failing declaration. The mechanism must reject a different failure, a
+skipped or unexecuted test, and an unexpected pass.
+
+This exception decomposes an executable contract from the capability it
+specifies. It does not permit a broken intermediate tree, a general-purpose
+stub commit, or a partially wired feature. Green depends on Red, so the pair
+stays adjacent unless another functional dependency requires otherwise.
 
 ## Subject — `<Verb> <imperative summary>`
 
@@ -124,7 +168,7 @@ A module exposes three public functions where `B` calls `A` and `C` calls `B`
 (dependencies: A ← B ← C). That is three commits, not one:
 
 1. `Add A` — the function and its tests. A leaf with no internal caller yet is
-   still whole: green and deployable on its own.
+   still whole: its relevant gates pass, and it is deployable on its own.
 2. `Add B` — depends on A existing, so it follows (dependencies before
    dependents).
 3. `Add C` — depends on B, so it comes last.

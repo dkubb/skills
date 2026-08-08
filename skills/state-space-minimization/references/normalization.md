@@ -227,10 +227,11 @@ The same strategy applies at every level:
   determinant.
 - **Documentation** atomizes to the zettel level, then groups
   by audience and dependency.
-- **Atomic commits** decompose changes into the smallest unit
-  that compiles and passes every gate; recompose into a branch
-  or PR; split the branch further into multiple branches when
-  its commits do not share a determinant (see `commits.md`).
+- **Atomic commits** decompose changes into the smallest coherent
+  transformation that compiles and passes every gate relevant to its affected
+  surfaces and transitive consumers; recompose into a branch or PR; split the
+  branch further into multiple branches when its commits do not share a
+  determinant (see `commits.md`).
 
 The strategy is recursive: the recomposition at one level
 becomes the decomposition at the next. Atoms compose into

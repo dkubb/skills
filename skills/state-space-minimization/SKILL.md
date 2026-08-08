@@ -70,7 +70,7 @@ triggers:
   - "equivalent mutation"
   - "commit state-space transition"
   - "commit message as type signature"
-  - "conventional commit as closed set"
+  - "atomic commit action verbs as closed set"
   - "gate trailer as typed proof"
   - "documentation drift"
   - "doc drift"

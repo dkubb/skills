@@ -44,13 +44,15 @@ triggers:
 # Atomic Changes
 
 Make the smallest change that keeps the system whole. Split as small as
-possible, but no smaller than stays functional: every step must pass all
-gates and be merge-ready and deployable on its own. That functional floor —
-not line count — bounds how small a step can be: it is permission to split
-down to, not a reason to stop above. Split until one more cut would turn a
-gate red, then stop. Start from a verified
-foundation, and order steps so that stopping or failing at any point leaves
-the system valid or better than the start.
+possible, but no smaller than one coherent transformation that stays
+functional: every step must pass the gates relevant to its affected surfaces
+and transitive consumers, and be merge-ready and deployable on its own. That
+functional and semantic floor — not line count — bounds how small a step can
+be. If a candidate can be divided into smaller coherent transformations that
+each pass their relevant gates and stand alone, split it. Do not create an
+arbitrary hunk merely because the resulting tree happens to stay green. Start
+from a verified foundation, and order steps so that stopping or failing at any
+point leaves the system valid or better than the start.
 
 This is the same discipline as programming itself: move the system from one
 valid state to the next through a pipeline of transformations, one at a
@@ -78,9 +80,12 @@ reliable pipeline; large ones hide where they went wrong.
 ## Inputs
 
 - The goal state.
-- The full gate set that defines merge-ready and deployable (build, lint,
-  test, format, coverage, run) and the single command that runs it. This is
-  the verify command referenced below.
+- The gate set relevant to the affected surfaces and their transitive
+  consumers (build, lint, test, format, coverage, run) and the command or
+  commands that run it. A Rust-only change does not require an unrelated
+  CSS/TypeScript lint, but a shared schema, generator, build configuration, or
+  cross-language boundary may make both surfaces relevant. These are the
+  verify commands referenced below.
 - The candidate changes and the dependencies between them. Deriving the
   atoms is part of the job, not a precondition: when the work arrives as
   one lump ("add this module"), decomposing it into the maximal set of
@@ -169,29 +174,39 @@ Emit in this order:
    public symbols is N commits, never one; a `Refactor` instead keeps code
    and tests in separate atoms (the untouched half is the oracle), and
    `Move`/`Rename` keep a symbol with its mechanical reference updates.
-   Independence is the test and the floor decides it: two symbols that each
-   pass the full gate alone are two atoms; two that pass only together are
-   one — a trait and its only impl, a type and its smart constructor,
-   mutually recursive functions, a public contract deployable only with its
-   counterpart (schema and its generated API, protocol version and adapter),
-   or a test that cannot exist without its sibling. Each atom changes one
-   thing AND leaves the system whole — it passes the full gate set and is
-   merge-ready and deployable on its own. Operate as if full mutation testing
-   were always on, whatever gates the repo configures: you cannot add
-   functionality no test would kill a mutant of. Every behavior is exercised
-   either directly by a public symbol's own tests, or through a private
-   helper reachable from a public tested symbol whose tests assert the
-   result — so each atom carries direct tests rather than incidental
-   coverage (which rarely kills mutants), and a private helper, uncoverable
-   with no caller, is never its own atom but folds into the atom that
-   introduces its first tested caller. A cut that leaves the tree red or
-   half-wires a feature is too small — fold it into the change that makes it
-   whole; that gate-red boundary is the *only* reason to stop splitting.
-   Within it the burden runs one way: splitting independent symbols never
+   Independence is the test and the floor decides it: two coherent changes
+   that each pass their relevant gates alone and stand alone are two atoms;
+   two that pass only together are one — a trait and its only impl, a type and
+   its smart constructor, mutually recursive functions, a public contract
+   deployable only with its counterpart (schema and its generated API,
+   protocol version and adapter), or a test that cannot exist without its
+   sibling. Each atom is one indivisible transformation AND leaves the system
+   whole — it passes its relevant gate set and is merge-ready and deployable
+   on its own without requiring a follow-up commit to avoid a regression.
+   Operate as if full mutation testing were always on for the affected scope,
+   whatever gates the repo configures: you cannot add functionality no test
+   would kill a mutant of. Every behavior is exercised either directly by a
+   public symbol's own tests, or through a private helper reachable from a
+   public tested symbol whose tests assert the result — so each atom carries
+   direct tests rather than incidental coverage (which rarely kills mutants),
+   and a private helper, uncoverable with no caller, is never its own atom but
+   folds into the atom that introduces its first tested caller. A cut that is
+   not a coherent transformation, leaves a relevant gate red, or half-wires a
+   feature is too small — fold it into the change that makes it whole. Within
+   that floor the burden runs one way: splitting independent changes never
    needs justification, combining always does. "It's all one feature",
    "they're related", and "it's cleaner together" are not that justification
    — relatedness orders atoms adjacent (the "related items together"
    criterion below), it does not merge them.
+   A TDD specialization may split one new behavior into two dependency-linked
+   atoms only when Red is itself a gate-passing, deployable executable
+   contract: the final test runs under an exact expected-failure mechanism,
+   any compilation-required declaration fails closed, a different failure or
+   unexpected pass fails the gate, no existing production path invokes the
+   new declaration, and no capability is claimed yet. Green then adds the
+   capability while removing only the Red accommodation. This is a
+   contract/capability decomposition, not permission to retain a failing,
+   skipped, regressive, or partially wired commit.
 4. Split by transformation type. One step does one kind of change, drawn
    from the closed verb set (see `references/commits.md`). A step that spans
    two verbs is doing too much — split it.
@@ -211,8 +226,13 @@ Emit in this order:
       their own steps).
    4. **Related items together** — group steps into a narrative that flows
       one into the next; do not jump between unrelated items.
-   5. **Tie-break** — make each item a distinct unit and sort
-      alphabetically, so the order is deterministic.
+   5. **Minimum churn** — among otherwise valid sequences, minimize the
+      aggregate patch a reviewer must retain across commits. Prefer
+      introducing code in its final branch-local form; fold later corrections
+      into the commit that owns them during an authorized rewrite. This is a
+      late tie-breaker, never a reason to merge independent transformations.
+   6. **Deterministic tie-break** — make each item a distinct unit and sort
+      alphabetically.
 
    Criterion 3 reduces *system* risk, not task risk. For one task in
    isolation, doing the hard part first can be fine; but a system has to
@@ -224,7 +244,7 @@ Emit in this order:
    suboptimal prep before the high-risk change is built on it.
 
    Mechanically this is one stable, lexicographic sort: criterion 1 is the
-   only hard constraint and sets what can run in parallel; criteria 2-5 are
+   only hard constraint and sets what can run in parallel; criteria 2-6 are
    sort keys applied left-to-right to produce one deterministic order. That
    order does two jobs — it decides which ready items to take first when
    capacity is limited, and it is the order finished work is *presented* to
@@ -235,6 +255,12 @@ Emit in this order:
    reorder them to match. Regenerate positional numbering to fit the new
    order; preserve a number only when it is an identifier referenced from
    outside the artifact.
+
+   Preserve the DAG's width. Relatedness and presentation order do not create
+   dependencies: keep independent chains independent so they can run in
+   parallel or be extracted into separate branches or PRs later. Do not turn
+   two three-commit chains into one six-commit chain merely to present them
+   linearly.
 6. Record the DAG in the harness's built-in todo, task, or plan tracker,
    one entry per atomic step. Use dependency edges when the tracker supports
    them so a step becomes runnable only after its dependencies complete. If
@@ -258,7 +284,8 @@ Emit in this order:
    entries stay. New sub-steps become new entries with their own
    dependencies.
 10. Record what each step verified. Commit atomically: each commit passes
-    the full gate set and is merge-ready and deployable on its own. Do not
+    every gate relevant to its affected surfaces and transitive consumers,
+    and is merge-ready and deployable on its own. Do not
     amend unless asked: an amend folds a change into history before it can
     be audited, can quietly make one commit carry two transformations, and
     can land on the wrong commit when an earlier one was the right target.
@@ -271,6 +298,18 @@ Emit in this order:
     otherwise silently dropped while working-tree gates still pass
     (`references/commits.md`).
 
+    Attribute a correction to the state that owns it:
+
+    - If the branch introduced the defect or churn, create an auditable
+      `fixup!` during review, then fold it into the introducing commit during
+      an authorized history rewrite.
+    - If the defect predates the branch, retain a standalone `Fix` at the
+      earliest dependency-valid position, normally before additions.
+    - If an `Add` genuinely enables a distinct `Fix`, retain `Add` then `Fix`
+      only when they have separate reasons to exist and both stand alone.
+    - Fix small in-scope Remove, Fix, Refactor, Move, or Rename findings when
+      they surface. Do not rely on memory to carry them to a later branch.
+
 ## Validation Checklist
 
 - Step 0 ran and the foundation passed before any change.
@@ -280,16 +319,28 @@ Emit in this order:
   order; statuses are kept current.
 - Independent branches are marked for parallel fan-out.
 - Each step changes one thing and has its own verify command.
-- Every step passes the full gate set and is merge-ready and deployable on
-  its own; functional integrity, not line count, bounds atom size.
-- No commit bundles two changes that could each have stood alone as a gated
-  commit; each independent public symbol is its own atom, and any
-  combination is justified only by a gate that splitting would turn red.
+- Every step passes the gates relevant to its affected surfaces and transitive
+  consumers, and is merge-ready and deployable on its own; functional and
+  semantic integrity, not line count, bounds atom size.
+- A retained TDD Red atom executes its test body under an exact
+  expected-failure contract; its final assertions remain present even when
+  the declared failure occurs before they are reached. It passes all relevant
+  gates and rejects different failures, skipped execution, and unexpected
+  success.
+- No commit bundles two coherent changes that could each have passed their
+  relevant gates and stood alone; each independent public symbol is its own
+  atom, and any combination is justified by indivisibility or a gate that
+  splitting would turn red.
 - When the right steps were unknown, exploration used a reversible spike;
   only the atomic steps extracted from it were kept and gated.
 - The order guarantees partial progress leaves the system valid or better.
 - Ordering applied the ranked criteria in order: dependencies, then learning
-  opportunity, then risk, then related-grouping, then alphabetical tie-break.
+  opportunity, then risk, related-grouping, minimum churn, and the
+  alphabetical tie-break.
+- Independent chains remained independent; presentation order did not create
+  dependencies or prevent later branch/PR extraction.
+- Branch-local corrections were folded into their owner during authorized
+  normalization; pre-existing defects remained standalone `Fix` commits.
 - Independent items ran in parallel; artifacts were presented in the
   canonical criteria order regardless of finish order.
 - The largest bottleneck was re-chosen each iteration; the constraint was
