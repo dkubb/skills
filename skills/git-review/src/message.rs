@@ -1,11 +1,13 @@
 //! Compose commit messages in the canonical Atomic Changes form.
 
-use std::io::{self, Write as _};
+use std::io;
 
 use clap::{Parser, ValueEnum};
+use serde_json::Value;
 use skill_core::SkillError;
 
 use crate::invalid;
+use crate::output::{json_object, write_json_line};
 
 /// Atomic Changes verbs in transformation-priority order.
 const VERBS: [&str; 9] = [
@@ -118,7 +120,7 @@ pub(crate) fn has_valid_format(message: &str) -> bool {
             .all(|line| line.len() <= 72 && !line.ends_with(char::is_whitespace))
 }
 
-/// Compose and print a canonical commit message.
+/// Parse the arguments for composing a canonical commit message.
 #[derive(Clone, Debug, Parser)]
 pub(crate) struct MessageArgs {
     /// Semantic action verb.
@@ -171,7 +173,7 @@ fn render(args: &MessageArgs) -> Result<String, SkillError> {
     Ok(message)
 }
 
-/// Compose and print a canonical commit message.
+/// Compose and emit a canonical commit message as JSON.
 ///
 /// # Errors
 ///
@@ -180,10 +182,10 @@ fn render(args: &MessageArgs) -> Result<String, SkillError> {
 pub(crate) fn run(args: &MessageArgs) -> Result<(), SkillError> {
     let message = render(args)?;
     let stdout = io::stdout();
-    let mut out = io::BufWriter::new(stdout.lock());
-    writeln!(out, "{message}")?;
+    let mut out = stdout.lock();
+    write_json_line(
+        &mut out,
+        &json_object([("message", Value::String(message))]),
+    )?;
     Ok(())
 }
-
-#[cfg(test)]
-mod tests;

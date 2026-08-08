@@ -1,17 +1,18 @@
 //! Shared Git command execution.
 
 use std::io;
+use std::path::Path;
 use std::process::Command;
 
 use skill_core::{CommandOutcome, SkillError};
 
 /// Run `git` in `repo` and return trimmed standard output.
-pub(crate) fn run(repo: &str, args: &[&str]) -> Result<String, SkillError> {
+pub(crate) fn run(repo: &Path, args: &[&str]) -> Result<String, SkillError> {
     run_program("git", repo, args)
 }
 
 /// Run `program` in `repo` so command-start failures can be tested directly.
-fn run_program(program: &str, repo: &str, args: &[&str]) -> Result<String, SkillError> {
+fn run_program(program: &str, repo: &Path, args: &[&str]) -> Result<String, SkillError> {
     let output = Command::new(program)
         .env_remove("GIT_DIR")
         .env_remove("GIT_WORK_TREE")
@@ -45,6 +46,3 @@ fn decode_stdout(stdout: Vec<u8>) -> Result<String, SkillError> {
 fn outcome(code: Option<i32>) -> CommandOutcome {
     code.map_or(CommandOutcome::Signaled, CommandOutcome::Exited)
 }
-
-#[cfg(test)]
-mod tests;

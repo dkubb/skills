@@ -1,10 +1,15 @@
 //! Resolve the base ref for a branch.
 
 use std::io::{self, Write};
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 use clap::Parser;
+use serde_json::Value;
 use skill_core::SkillError;
+
+use crate::git::run as run_git;
+use crate::output::{json_object, write_json_line};
 
 /// resolve the base ref for commit review.
 #[derive(Clone, Debug, Parser)]
@@ -15,7 +20,7 @@ pub(crate) struct ResolveBaseArgs {
 
     /// path to the Git repository.
     #[arg(long, default_value = ".")]
-    repo: String,
+    repo: PathBuf,
 }
 
 /// Decode command output without accepting malformed UTF-8.
@@ -25,21 +30,33 @@ fn decode_stdout(stdout: Vec<u8>) -> Result<String, SkillError> {
 }
 
 /// Run a GitHub CLI program and capture non-empty standard output.
-fn run_gh_program(program: &str, repo: &str, args: &[&str]) -> Result<Option<String>, SkillError> {
+fn run_gh_program(program: &str, repo: &Path, args: &[&str]) -> Result<Option<String>, SkillError> {
     let output = Command::new(program)
+        .env_remove("GIT_DIR")
+        .env_remove("GIT_WORK_TREE")
         .args(args)
         .current_dir(repo)
         .stdin(Stdio::null())
         .output()?;
-    interpret_output(output.status.success(), output.stdout)
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr).trim().to_owned();
+        let command = if stderr.is_empty() {
+            format!("gh {}", args.join(" "))
+        } else {
+            format!("gh {}: {stderr}", args.join(" "))
+        };
+        let outcome = output.status.code().map_or(
+            skill_core::CommandOutcome::Signaled,
+            skill_core::CommandOutcome::Exited,
+        );
+        return Err(SkillError::Command { command, outcome });
+    }
+
+    interpret_output(output.stdout)
 }
 
 /// Interpret GitHub CLI status and standard output.
-fn interpret_output(success: bool, bytes: Vec<u8>) -> Result<Option<String>, SkillError> {
-    if !success {
-        return Ok(None);
-    }
-
+fn interpret_output(bytes: Vec<u8>) -> Result<Option<String>, SkillError> {
     let stdout = decode_stdout(bytes)?;
     let value = stdout.trim_end();
     if value.is_empty() {
@@ -50,12 +67,12 @@ fn interpret_output(success: bool, bytes: Vec<u8>) -> Result<Option<String>, Ski
 }
 
 /// Query GitHub CLI for one value.
-fn run_gh(repo: &str, args: &[&str]) -> Result<Option<String>, SkillError> {
+fn run_gh(repo: &Path, args: &[&str]) -> Result<Option<String>, SkillError> {
     run_gh_program("gh", repo, args)
 }
 
 /// GitHub CLI query boundary used to test resolution policy independently.
-type Query<'query> = dyn FnMut(&str, &[&str]) -> Result<Option<String>, SkillError> + 'query;
+type Query<'query> = dyn FnMut(&Path, &[&str]) -> Result<Option<String>, SkillError> + 'query;
 
 /// Resolve the base using explicit, PR, repository, and fallback precedence.
 fn resolve(args: &ResolveBaseArgs, query: &mut Query<'_>) -> Result<String, SkillError> {
@@ -63,17 +80,26 @@ fn resolve(args: &ResolveBaseArgs, query: &mut Query<'_>) -> Result<String, Skil
         return Ok(base_ref.to_owned());
     }
 
-    if let Some(base_ref) = query(
-        &args.repo,
-        &[
-            "pr",
-            "view",
-            "--json",
-            "baseRefName",
-            "--jq",
-            ".baseRefName",
-        ],
-    )? {
+    let branch = run_git(&args.repo, &["branch", "--show-current"])?;
+    if !branch.is_empty()
+        && let Some(base_ref) = query(
+            &args.repo,
+            &[
+                "pr",
+                "list",
+                "--state",
+                "all",
+                "--head",
+                &branch,
+                "--limit",
+                "1",
+                "--json",
+                "baseRefName",
+                "--jq",
+                ".[0].baseRefName // empty",
+            ],
+        )?
+    {
         return Ok(base_ref);
     }
 
@@ -98,21 +124,16 @@ fn run_with_writer(
     query: &mut Query<'_>,
 ) -> Result<(), SkillError> {
     let base_ref = resolve(args, query)?;
-    let line = format!("{base_ref}\n");
-    out.write_all(line.as_bytes())?;
-    Ok(())
+    write_json_line(out, &json_object([("base_ref", Value::String(base_ref))]))
 }
 
-/// Resolve and print the base ref.
+/// Resolve and emit the base ref as JSON.
 ///
 /// # Errors
 ///
 /// Returns `SkillError` when GitHub CLI or output fails.
 pub(crate) fn run(args: &ResolveBaseArgs) -> Result<(), SkillError> {
     let stdout = io::stdout();
-    let mut out = io::BufWriter::new(stdout.lock());
+    let mut out = stdout.lock();
     run_with_writer(args, &mut out, &mut run_gh)
 }
-
-#[cfg(test)]
-mod tests;

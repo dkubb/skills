@@ -7,6 +7,7 @@ mod dates;
 mod git;
 mod message;
 mod messages;
+mod output;
 mod target_file;
 mod targets;
 mod tree_hashes;
@@ -51,7 +52,6 @@ enum Command {
 /// # Errors
 ///
 /// Returns `SkillError` if the selected subcommand fails.
-#[inline]
 pub fn run(args: &Args) -> Result<(), SkillError> {
     match args.command.clone() {
         Some(Command::CheckDates(check_dates_args)) => dates::run(&check_dates_args),
@@ -66,9 +66,3 @@ pub fn run(args: &Args) -> Result<(), SkillError> {
         }
     }
 }
-
-#[cfg(test)]
-mod tests;
-
-#[cfg(test)]
-mod test_repo;

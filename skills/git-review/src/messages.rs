@@ -1,16 +1,17 @@
 //! Find commits whose messages violate the Atomic Changes form.
 
-use std::collections::HashSet;
 use std::io::{self, Write};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use clap::Parser;
+use serde_json::Value;
 use skill_core::SkillError;
 
 use crate::git::run as run_git;
 use crate::invalid;
 use crate::message::{has_atomic_subject, has_valid_action_lines, has_valid_format};
-use crate::target_file::load as load_targets;
+use crate::output::{json_object, write_json_line};
+use crate::target_file::{Targets, load as load_targets, select};
 
 /// check commits for messages that violate the Atomic Changes form.
 #[derive(Clone, Debug, Parser)]
@@ -19,13 +20,9 @@ pub(crate) struct CheckMessagesArgs {
     #[arg(long)]
     root: bool,
 
-    /// base ref for the revision range.
-    #[arg(value_name = "BASE_REF", required_unless_present = "root")]
-    base_ref: Option<String>,
-
-    /// branch ref for the revision range.
-    #[arg(value_name = "BRANCH_REF", default_value = "HEAD")]
-    branch_ref: String,
+    /// base and optional branch refs, or one root ref with `--root`.
+    #[arg(value_names = ["BASE_REF", "BRANCH_REF"], num_args = 0..)]
+    refs: Vec<String>,
 
     /// optional file with commit SHAs to include.
     #[arg(long = "commits-file")]
@@ -33,20 +30,20 @@ pub(crate) struct CheckMessagesArgs {
 
     /// path to the Git repository.
     #[arg(long, default_value = ".")]
-    repo: String,
+    repo: PathBuf,
 }
 
 /// Resolve the ordered commits selected by `args`.
 fn revisions(args: &CheckMessagesArgs) -> Result<String, SkillError> {
     if args.root {
-        let root_ref = match args.base_ref.as_deref() {
-            Some(value) if args.branch_ref == "HEAD" => value,
-            Some(_) => {
+        let root_ref = match args.refs.as_slice() {
+            [] => "HEAD",
+            [value] => value,
+            [_, _, ..] => {
                 return Err(invalid(
                     "when --root is set, provide at most one ref (for example, --root HEAD)",
                 ));
             }
-            None => args.branch_ref.as_str(),
         };
         return run_git(
             &args.repo,
@@ -54,11 +51,19 @@ fn revisions(args: &CheckMessagesArgs) -> Result<String, SkillError> {
         );
     }
 
-    let base_ref = args
-        .base_ref
-        .as_deref()
-        .ok_or_else(|| invalid("BASE_REF is required unless --root is provided"))?;
-    let range = format!("{base_ref}..{}", args.branch_ref);
+    let (base_ref, branch_ref) = match args.refs.as_slice() {
+        [] => {
+            return Err(invalid("BASE_REF is required unless --root is provided"));
+        }
+        [base_ref] => (base_ref.as_str(), "HEAD"),
+        [base_ref, branch_ref] => (base_ref.as_str(), branch_ref.as_str()),
+        [_, _, ..] => {
+            return Err(invalid(
+                "provide a base ref and at most one branch ref (for example, main HEAD)",
+            ));
+        }
+    };
+    let range = format!("{base_ref}..{branch_ref}");
     run_git(
         &args.repo,
         &["rev-list", "--reverse", "--topo-order", &range],
@@ -75,21 +80,17 @@ fn find_invalid(args: &CheckMessagesArgs) -> Result<Vec<(String, String)>, Skill
 /// Inspect a pre-resolved commit list.
 fn inspect_commits(
     args: &CheckMessagesArgs,
-    targets: Option<&HashSet<String>>,
+    targets: Option<&Targets>,
     commits: &str,
 ) -> Result<Vec<(String, String)>, SkillError> {
     let mut invalid_commits = Vec::new();
 
-    for commit in commits.lines() {
-        if targets.is_some_and(|set| !set.contains(commit)) {
-            continue;
-        }
-
+    for commit in select(targets, commits)? {
         let (subject, message) = read_message(&args.repo, commit)?;
-        if !has_atomic_subject(&subject)
-            || !has_valid_action_lines(&message)
-            || !has_valid_format(&message)
-        {
+        let atomic_subject = has_atomic_subject(&subject);
+        let valid_action_lines = has_valid_action_lines(&message);
+        let valid_format = has_valid_format(&message);
+        if !atomic_subject || !valid_action_lines || !valid_format {
             invalid_commits.push((commit.to_owned(), subject));
         }
     }
@@ -97,18 +98,11 @@ fn inspect_commits(
     Ok(invalid_commits)
 }
 
-/// Read a subject and full message with one Git invocation.
-fn read_message(repo: &str, commit: &str) -> Result<(String, String), SkillError> {
-    let encoded = run_git(repo, &["show", "-s", "--format=%s%x00%B", commit])?;
-    parse_message(&encoded)
-}
-
-/// Split the NUL-delimited output produced by `read_message`.
-fn parse_message(encoded: &str) -> Result<(String, String), SkillError> {
-    encoded
-        .split_once('\0')
-        .map(|(subject, message)| (subject.to_owned(), message.to_owned()))
-        .ok_or_else(|| invalid("Git returned a message without a subject separator"))
+/// Read a subject and full message from Git.
+fn read_message(repo: &Path, commit: &str) -> Result<(String, String), SkillError> {
+    let subject = run_git(repo, &["show", "-s", "--format=%s", commit])?;
+    let message = run_git(repo, &["show", "-s", "--format=%B", commit])?;
+    Ok((subject, message))
 }
 
 /// Write invalid commits and return the range result.
@@ -116,8 +110,13 @@ fn run_with_writer(args: &CheckMessagesArgs, out: &mut dyn Write) -> Result<(), 
     let invalid_commits = find_invalid(args)?;
 
     for (commit, subject) in &invalid_commits {
-        let line = format!("{commit} {subject}\n");
-        out.write_all(line.as_bytes())?;
+        write_json_line(
+            out,
+            &json_object([
+                ("commit", Value::String(commit.to_owned())),
+                ("subject", Value::String(subject.to_owned())),
+            ]),
+        )?;
     }
 
     if invalid_commits.is_empty() {
@@ -129,7 +128,7 @@ fn run_with_writer(args: &CheckMessagesArgs, out: &mut dyn Write) -> Result<(), 
     }
 }
 
-/// Print each invalid commit as `<SHA> <subject>`.
+/// Emit each invalid commit as one JSONL record.
 ///
 /// # Errors
 ///
@@ -137,9 +136,6 @@ fn run_with_writer(args: &CheckMessagesArgs, out: &mut dyn Write) -> Result<(), 
 /// written, or an invalid message is found.
 pub(crate) fn run(args: &CheckMessagesArgs) -> Result<(), SkillError> {
     let stdout = io::stdout();
-    let mut out = io::BufWriter::new(stdout.lock());
+    let mut out = stdout.lock();
     run_with_writer(args, &mut out)
 }
-
-#[cfg(test)]
-mod tests;

@@ -66,19 +66,26 @@ Emit results in this order:
 
 ## Utilities
 
-- `skill git-review message VERB --summary TEXT` composes a canonical commit
-  message.
+- `skill git-review message VERB --summary TEXT` emits a canonical commit
+  message as one JSON object with a `message` field.
 - `skill git-review check-messages BASE_REF [BRANCH_REF]` rejects messages
-  that violate the canonical form. Use `--root [REF]` to inspect a full
-  reachable history.
+  that violate the canonical form and emits each invalid commit as JSONL. Use
+  `--root [REF]` to inspect a full reachable history.
 - `skill git-review check-dates BASE_REF [BRANCH_REF]` rejects author or
-  committer timestamps that do not strictly follow every parent.
-- `skill git-review tree-hashes BASE_REF [BRANCH_REF]` records commit and tree
-  identities before a rewrite. Use `--commits-file PATH` to restrict output.
+  committer timestamps that do not strictly follow every parent and emits one
+  JSON result object.
+- `skill git-review tree-hashes BASE_REF [BRANCH_REF]` emits commit and tree
+  identities as JSONL before a rewrite. Use `--commits-file PATH` to restrict
+  output.
 - `skill git-review resolve-targets BASE_REF [BRANCH_REF] [REF...]` selects
-  commits while preserving dependency-safe Git topological order.
-- `skill git-review resolve-base [BASE_REF]` prints an explicit base, the
-  current PR base, the repository default branch, or `main`, in that order.
+  commits while preserving dependency-safe Git topological order and emits
+  selections as JSONL.
+- `skill git-review resolve-base [BASE_REF]` emits an explicit base, the
+  current PR base, the repository default branch, or `main`, in that order as
+  one JSON object with a `base_ref` field.
+- `--commits-file PATH` accepts the JSONL emitted by `resolve-targets`. Each
+  line must be an object with exactly one string `commit` field; duplicate or
+  out-of-range selections are rejected.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer
