@@ -21,6 +21,7 @@ set -o pipefail
 
 readonly DYLINT_REPO='https://github.com/trailofbits/dylint.git'
 readonly DYLINT_REV='9adfa398661273ca7dc99df9bf2c26ae6f61b1c5'
+readonly DYLINT_REF='refs/tags/v6.0.3'
 # The lint toolchain — the nightly the dylint cdylibs and the rustc_private
 # driver are built with. It must be one that DYLINT_REV's dylint_linting still
 # compiles against; nightly-2026-05-31 is verified to work and is kept in sync
@@ -85,7 +86,7 @@ if [[ ! -d "${dylint_src}/.git" ]]; then
 fi
 
 if ! git -C "${dylint_src}" rev-parse --verify --quiet "${DYLINT_REV}^{commit}" >/dev/null; then
-  git -C "${dylint_src}" fetch --quiet origin "${DYLINT_REV}"
+  git -C "${dylint_src}" fetch --quiet origin "${DYLINT_REF}"
 fi
 
 git -C "${dylint_src}" checkout --detach --quiet "${DYLINT_REV}"
