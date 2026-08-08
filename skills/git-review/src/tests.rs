@@ -72,3 +72,20 @@ fn run_tree_hashes_returns_unit_success() {
 
     assert_eq!(run(&args).expect("emit tree hashes"), ());
 }
+
+#[test]
+fn run_resolve_targets_returns_unit_success() {
+    let repo = super::test_repo::TestRepo::new();
+    let base = repo.commit("Add foundation");
+    let _commit = repo.commit("Add target resolver");
+    let args = Args::parse_from([
+        "git-review",
+        "resolve-targets",
+        &base,
+        "HEAD",
+        "--repo",
+        repo.path(),
+    ]);
+
+    assert_eq!(run(&args).expect("resolve targets"), ());
+}

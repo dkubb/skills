@@ -7,6 +7,7 @@ mod git;
 mod message;
 mod messages;
 mod target_file;
+mod targets;
 mod tree_hashes;
 
 use clap::{CommandFactory as _, Parser, Subcommand};
@@ -36,6 +37,8 @@ enum Command {
     CheckMessages(messages::CheckMessagesArgs),
     /// compose a canonical Atomic Changes commit message.
     Message(message::MessageArgs),
+    /// resolve commit targets for review.
+    ResolveTargets(targets::ResolveTargetsArgs),
     /// emit tree hashes for idempotence verification.
     TreeHashes(tree_hashes::TreeHashesArgs),
 }
@@ -51,6 +54,7 @@ pub fn run(args: &Args) -> Result<(), SkillError> {
         Some(Command::CheckDates(check_dates_args)) => dates::run(&check_dates_args),
         Some(Command::CheckMessages(check_messages_args)) => messages::run(&check_messages_args),
         Some(Command::Message(message_args)) => message::run(&message_args),
+        Some(Command::ResolveTargets(resolve_targets_args)) => targets::run(&resolve_targets_args),
         Some(Command::TreeHashes(tree_hashes_args)) => tree_hashes::run(&tree_hashes_args),
         None => {
             Args::command().print_help()?;

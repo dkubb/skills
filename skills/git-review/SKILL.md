@@ -75,6 +75,8 @@ Emit results in this order:
   committer timestamps that do not strictly follow every parent.
 - `skill git-review tree-hashes BASE_REF [BRANCH_REF]` records commit and tree
   identities before a rewrite. Use `--commits-file PATH` to restrict output.
+- `skill git-review resolve-targets BASE_REF [BRANCH_REF] [REF...]` selects
+  commits while preserving dependency-safe Git topological order.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer
