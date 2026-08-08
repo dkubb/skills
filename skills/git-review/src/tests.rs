@@ -89,3 +89,10 @@ fn run_resolve_targets_returns_unit_success() {
 
     assert_eq!(run(&args).expect("resolve targets"), ());
 }
+
+#[test]
+fn run_resolve_base_returns_unit_success() {
+    let args = Args::parse_from(["git-review", "resolve-base", "stable"]);
+
+    assert_eq!(run(&args).expect("resolve base"), ());
+}

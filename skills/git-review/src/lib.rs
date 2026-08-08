@@ -2,6 +2,7 @@
 //!
 //! This crate implements deterministic evidence commands for `git-review`.
 
+mod base_ref;
 mod dates;
 mod git;
 mod message;
@@ -37,6 +38,8 @@ enum Command {
     CheckMessages(messages::CheckMessagesArgs),
     /// compose a canonical Atomic Changes commit message.
     Message(message::MessageArgs),
+    /// resolve the base ref for review.
+    ResolveBase(base_ref::ResolveBaseArgs),
     /// resolve commit targets for review.
     ResolveTargets(targets::ResolveTargetsArgs),
     /// emit tree hashes for idempotence verification.
@@ -54,6 +57,7 @@ pub fn run(args: &Args) -> Result<(), SkillError> {
         Some(Command::CheckDates(check_dates_args)) => dates::run(&check_dates_args),
         Some(Command::CheckMessages(check_messages_args)) => messages::run(&check_messages_args),
         Some(Command::Message(message_args)) => message::run(&message_args),
+        Some(Command::ResolveBase(resolve_base_args)) => base_ref::run(&resolve_base_args),
         Some(Command::ResolveTargets(resolve_targets_args)) => targets::run(&resolve_targets_args),
         Some(Command::TreeHashes(tree_hashes_args)) => tree_hashes::run(&tree_hashes_args),
         None => {
