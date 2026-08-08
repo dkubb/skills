@@ -19,6 +19,9 @@ set -o errtrace
 set -o nounset
 set -o pipefail
 
+unset GIT_DIR
+unset GIT_WORK_TREE
+
 readonly DYLINT_REPO='https://github.com/trailofbits/dylint.git'
 readonly DYLINT_REV='9adfa398661273ca7dc99df9bf2c26ae6f61b1c5'
 readonly DYLINT_REF='refs/tags/v6.0.3'
