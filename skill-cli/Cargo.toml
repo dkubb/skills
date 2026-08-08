@@ -19,6 +19,7 @@ workspace = true
 clap = { workspace = true }
 skill-core = { workspace = true }
 skill-code-review = { path = "../skills/code-review" }
+skill-git-review = { path = "../skills/git-review" }
 
 [dev-dependencies]
 pretty_assertions = { workspace = true }

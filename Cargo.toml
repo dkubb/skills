@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["skill-cli", "skill-cli/core", "skills/code-review"]
+members = ["skill-cli", "skill-cli/core", "skills/code-review", "skills/git-review"]
 # Bare `cargo build`/`run` default to the binary for convenience; the CI
 # gate aliases pass `--workspace` to cover every member.
 default-members = ["skill-cli"]

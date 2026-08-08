@@ -66,6 +66,8 @@ Emit results in this order:
 
 ## Utilities
 
+- `skill git-review message VERB --summary TEXT` composes a canonical commit
+  message.
 - Use `git log`, `git show`, `git diff`, and `git rev-list` to collect
   deterministic evidence.
 - Prefer repository wrappers when they produce the same evidence with fewer

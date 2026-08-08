@@ -158,6 +158,7 @@ dependencies = [
  "pretty_assertions",
  "skill-code-review",
  "skill-core",
+ "skill-git-review",
 ]
 
 [[package]]
@@ -175,6 +176,14 @@ version = "0.1.0"
 dependencies = [
  "pretty_assertions",
  "thiserror",
+]
+
+[[package]]
+name = "skill-git-review"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "skill-core",
 ]
 
 [[package]]
