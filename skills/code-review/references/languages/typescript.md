@@ -56,6 +56,17 @@
   redundant annotations that can drift from the implementation.
 - Prefer `satisfies` when checking a value against a shape while preserving its
   useful inferred type.
+- Return and export deeply immutable data by default. A function result or
+  exported constant that exposes an object graph must prevent mutation of every
+  reachable mutable container, not only its top-level value.
+- A mutable return value or exported constant needs a concrete current use case,
+  not speculative flexibility. Its tests must state and exercise the required
+  mutability. Tests for an immutable graph must cover nested reachable values,
+  not only `Object.isFrozen` on the root.
+- When a change characterizes an existing object-graph return or exported
+  constant before modifying it, the characterization test must record whether
+  the current graph is mutable or immutable. A later commit that changes that
+  contract must update the assertion deliberately.
 
 ## Boundaries and runtime data
 
