@@ -101,6 +101,9 @@ Emit results in this order:
 4. Review every commit against the semantic procedure in
    `references/review.md`.
 5. Review the range as an ordered composition, not only as an aggregate diff.
+   Trace each later hunk that edits branch-introduced code to its owning
+   commit. Require a layered, independently meaningful behavior change; flag
+   an otherwise corrective or mechanical edit for folding into that owner.
 6. Report findings before summaries. Do not rewrite history during review.
 7. If repair is requested, create auditable fixups against the owning commits
    and delegate splitting, rebasing, or per-commit gate execution to the
@@ -114,6 +117,8 @@ Emit results in this order:
 - The exact base, head, and complete target range were recorded.
 - The aggregate range and every individual commit were reviewed.
 - Each retained commit contains one indivisible transformation.
+- Later commits do not churn code introduced earlier in the range unless they
+  add a distinct, dependency-valid layer of behavior.
 - Each subject verb matches its diff and every message has canonical form.
 - Dependencies precede dependents and remaining ties follow canonical order.
 - Every commit has sufficient exact-state evidence for its relevant gates.
