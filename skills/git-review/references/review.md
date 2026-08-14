@@ -78,6 +78,27 @@ For each commit, answer these questions in order.
 - Use mutation testing as one oracle, not as a substitute for the deletion
   review.
 
+### Hunk ownership and churn
+
+- For each hunk in a later commit, use blame, `git log -S`, or the earlier
+  parent-to-commit diffs to identify whether the edited code was introduced
+  within the reviewed range.
+- When a later hunk changes branch-introduced code, ask whether it adds a
+  distinct, dependency-valid layer of behavior that could not have been
+  introduced in the owner's final form.
+- Retain an incremental sequence only when each layer is independently
+  deployable, gated, and useful: for example, an intentionally staged
+  capability, an executable TDD contract followed by its implementation, or
+  a separately useful extension of a public behavior.
+- Otherwise report unnecessary churn. The smallest repair is to redistribute
+  the later hunk into the commit that introduced the edited symbol, workflow,
+  configuration, or test, then remove the corrective commit if nothing else
+  remains.
+- Do not treat a file-reading or text-pattern test of configuration written in
+  the same range as evidence that a corrective workflow edit deserves its own
+  commit. Prefer direct behavioral evidence; remove self-snapshot tests when
+  they are the only reason to retain the churn.
+
 ## Range review
 
 - Dependencies must precede dependents.
@@ -86,6 +107,8 @@ For each commit, answer these questions in order.
 - Related commits stay adjacent only after dependency and transformation
   ordering are satisfied.
 - A correction belongs to the commit that introduced the defect or churn.
+- Later hunks that revise branch-introduced code must either be a justified
+  incremental layer or be folded into that code's owning commit.
 - A pre-existing defect remains a standalone `Fix` at the earliest valid
   position.
 - No `fixup!`, `squash!`, WIP, or knowingly broken commit remains in the
