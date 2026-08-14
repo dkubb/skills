@@ -51,22 +51,25 @@
   a validated value.
 - Preserve the distinction between an absent property and a property present
   with `undefined`. Do not weaken exact optional semantics for convenience.
+- Exported constants and functions that return cached or otherwise shared
+  object graphs must return deeply immutable data by default. Prevent mutation
+  of every reachable mutable container, not only the top-level value.
+- For immutable literal data, pair the runtime and compile-time contracts:
+  write `Object.freeze({ ... } as const)`. `Object.freeze` is shallow, so a
+  nested graph also needs recursive freezing and a deeply readonly return type.
+- A mutable exported constant or shared object-graph return needs a concrete
+  current use case, not speculative flexibility. Its tests must state and
+  exercise the required mutability. Tests for an immutable graph must cover
+  nested reachable values, not only `Object.isFrozen` on the root.
+- When a change characterizes an existing exported constant or shared
+  object-graph return before modifying it, the characterization test must
+  record whether the current graph is mutable or immutable. A later commit that
+  changes that contract must update the assertion deliberately.
 - Prefer inference for obvious local values. Give exported boundaries explicit
   contracts when that makes the public API stable and reviewable; avoid
   redundant annotations that can drift from the implementation.
 - Prefer `satisfies` when checking a value against a shape while preserving its
   useful inferred type.
-- Return and export deeply immutable data by default. A function result or
-  exported constant that exposes an object graph must prevent mutation of every
-  reachable mutable container, not only its top-level value.
-- A mutable return value or exported constant needs a concrete current use case,
-  not speculative flexibility. Its tests must state and exercise the required
-  mutability. Tests for an immutable graph must cover nested reachable values,
-  not only `Object.isFrozen` on the root.
-- When a change characterizes an existing object-graph return or exported
-  constant before modifying it, the characterization test must record whether
-  the current graph is mutable or immutable. A later commit that changes that
-  contract must update the assertion deliberately.
 
 ## Boundaries and runtime data
 
