@@ -35,6 +35,39 @@ lightweight smart constructor. Lightness is about audit cost and
 drift surface, not about the raw strength of the falsification.)
 See `least-power.md` for the operational form.
 
+### Preserve facts when reducing representations
+
+Minimize invalid and redundant representations, not distinguishable
+facts about the domain. A typed observation that an artifact exists but
+fails validation is valid; it does not admit the invalid artifact as a
+valid domain value. Recording that failure must remain possible.
+Two classifications having the same current handling does not prove
+they mean the same thing.
+
+For example, `Missing` and `Invalid` artifacts both map to `Repair`
+under a repair policy. Keep the authoritative classifications distinct:
+replacing both with `NeedsRepair` hides the anomaly of an existing
+artifact failing validation. Derive the shared policy result from the
+classification; do not use that result to replace the facts it groups.
+
+A handler's action schema may therefore have fewer cases than the
+observation schema: four factual classifications may map to three
+handler categories. This many-to-one projection is valid when the
+original classification remains available through a linked authoritative
+record. Each layer need not carry the same facts or have the same
+cardinality; the system must preserve the authoritative distinctions.
+
+When evidence cannot establish a classification, represent that
+uncertainty explicitly. Do not invent a definite status to make the
+state space smaller. This requires preserving distinctions supported
+by the domain contract and evidence, not every raw input or speculative
+category.
+
+Before merging cases, ask: **What establishes semantic equivalence
+beyond the same current action?** If the cases describe different facts,
+keep them distinct in the authoritative representation and group only
+in a derived view.
+
 ## Formal vocabulary
 
 The symbols are shared with `state-space-minimization-formal`,
@@ -322,6 +355,9 @@ have to handle any.
 - Avoid result return when failure is impossible.
 - Return typed errors, not raw strings.
 - Return result for expected failure paths, not panics.
+- Preserve distinct failure classifications and genuine uncertainty;
+  a smaller result type must not erase facts (§ "Preserve facts when
+  reducing representations").
 
 ### Remove invalid intermediate representations
 

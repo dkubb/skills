@@ -126,9 +126,11 @@ Prefer:
 
 ### Remove invalid intermediate representations
 
-No section of the docs should be in an indeterminate state. Each
-of the following is an invalid intermediate that pollutes the
-docs' state space:
+Documentation must distinguish established behavior from unresolved
+knowledge. Genuine uncertainty is valid information: state what is
+unknown and why the available evidence cannot resolve it. Do not turn
+an unknown classification into a definite claim to remove ambiguity.
+The following are invalid intermediate representations:
 
 - `TBD` / `TODO` / `XXX` left in shipped documentation
 - "This section is out of date" notes that remain shipped
@@ -137,9 +139,9 @@ docs' state space:
   claimed behavior
 - Documentation that contradicts itself across sections
 
-If the documentation cannot describe the current behavior, fix it
-before merging. The intermediate state where docs are wrong but
-acknowledged-as-wrong is still wrong.
+Before merging, fix claims that misdescribe the current behavior.
+Truthfully documenting genuine uncertainty and its cause is valid;
+acknowledging a known false claim does not make that claim correct.
 
 ### Encode invariants into types
 
@@ -158,10 +160,11 @@ Apply the tier framing from `principles.md` § "Burndown priority:
 infinities first" to documentation work. Address tier-1 first;
 each completion exposes the next hotspot.
 
-1. **Effectively unbounded prose claims.** Vague qualifiers (`may`,
+1. **Effectively unbounded prose claims.** Unsupported qualifiers (`may`,
    `might`, `sometimes`, `appropriately`, `as needed`, `where
-   applicable`) admit any behavior. Highest priority to replace
-   with specific claims.
+   applicable`) leave the contract unclear. Highest priority to replace
+   with evidence-backed conditions or explicit limits of knowledge.
+   Keep qualifiers that accurately express unresolved uncertainty.
 2. **Out-of-tree documentation that describes code.** Wikis,
    external sites, separate API references for code that lives in
    this repo. Drift is structural — bring into the tree or accept
