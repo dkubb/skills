@@ -1,7 +1,7 @@
 ---
 name: state-space-minimization
 description: >-
-  Minimize representable states so invalid states are impossible.
+  Minimize invalid and redundant representations while preserving domain facts.
   Parse, don't validate: replace primitive obsession with domain
   types, smart constructors, and boundary parsing; bound every range
   and cardinality; tighten test matchers; normalize so each fact has
@@ -146,7 +146,10 @@ spaces.
 Minimization is contract-preserving. Do not delete, reject, or make
 awkward any state the real contract requires merely because a smaller
 surface looks cleaner; strictness is a means to remove invalid states,
-not an objective by itself.
+not an objective by itself. Preserve distinguishable facts and genuine
+uncertainty. The same current handling does not make two classifications
+semantically equivalent; a shared policy result can be derived without
+discarding the authoritative classifications.
 
 See `references/principles.md` for the full statement (search
 algorithm, formal vocabulary, weaken-before-strengthen,

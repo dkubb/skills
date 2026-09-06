@@ -117,7 +117,9 @@ canonical eliminations:
   the same atom (UTC vs local time, lowercase vs original-case
   identifier, sorted vs unsorted set), pick the canonical form
   and convert at the boundary. The duplicate representations
-  collapse into one.
+  collapse into one only when the domain contract establishes semantic
+  equivalence. Shared handling is not that proof; see `principles.md`
+  § "Preserve facts when reducing representations".
 
 ### Bound dependency depth — collapse passthrough chains
 
