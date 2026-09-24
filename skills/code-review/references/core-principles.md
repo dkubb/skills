@@ -376,6 +376,15 @@ during review.
 - Otherwise, aggregate fields **MUST** remain private and every construction
   and deserialization path **MUST** enforce the aggregate invariants through
   its constructor or smart constructor.
+- An invariant-bearing type **MUST** have one authoritative constructor or
+  smart constructor, and that boundary **MUST** be the sole producer of
+  admitted values of the type. Every builder, parser, conversion,
+  deserializer, test helper, and internal convenience path **MUST** delegate
+  to it rather than reconstructing or bypassing its checks. The constructor
+  **MUST** be sound and complete for the type's declared domain: reject every
+  invalid input and accept every valid input. A wrapper **MAY** enforce a
+  deliberately stricter policy before delegating, but that policy **MUST NOT**
+  be mistaken for or substituted for the type's own invariants.
 - Mutation **MAY** be exposed only for a concrete requirement. Use the narrowest
   operation that expresses the required transition and preserves every
   invariant; do not expose general writable fields or unrestricted setters.

@@ -120,9 +120,11 @@ covers the rationale; the bullets here are Rust-specific checklist items.
   smart constructor or `garde` validation with constraints that mirror the
   domain type. Do not treat `garde` as a JSON parser or schema generator.
 - Deserialization must call the smart constructor.
-- Goal: no instance exists without the smart constructor.
-- Prefer private fields and smart constructors for domain types with
-  invariants.
+- No instance may exist without the smart constructor. Keep fields private,
+  remove unchecked alternate constructors, and require builders and internal
+  helpers to call the same constructor as external callers. A builder may
+  reject a stricter subset for its own policy, but it must not become the only
+  place where the domain type's invariants are enforced.
 - For each smart constructor, require boundary tests and property tests over
   valid and invalid ranges.
 - For SQLx row mapping, implement `FromRow` and delegate to the smart

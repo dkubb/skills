@@ -134,8 +134,12 @@ diff as a blocker:
 - `deriving DecidableEq, Repr` is the standard clause. When the deriving
   handler cannot reach through recursion, use a standalone
   `deriving instance Repr for X` with a docstring saying why.
-- `private` fields make smart constructors the sole producers of validated
-  types — same goal as the Rust rule: no instance without the constructor.
+- `private` fields make the smart constructor the sole producer of a validated
+  type. Every builder and helper delegates to it; no unchecked alternate
+  constructor may inhabit the type. Prove both directions of its boundary:
+  construction succeeds for every valid input and fails for every invalid
+  input. A wrapper may recognize a stricter policy subset, but that subset is
+  not the type's validity predicate.
 - Shared binders live in section `variable` blocks
   (`variable {κ : Type} [DecidableEq κ]`), not repeated per declaration.
 - Every binder a declaration names must be used by its statement or its
