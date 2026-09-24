@@ -29,6 +29,15 @@ comments.
 
 ## Resolving comments
 
+- Resolve each review flag with the smallest sufficient change that addresses
+  the exact concern. Do not turn a feedback response into a broader audit,
+  refactor, hardening pass, or cleanup unless that extra work is required to
+  resolve the flag correctly.
+- Keep adjacent issues discovered while resolving feedback out of the current
+  response and PR scope. Record or propose them separately; include one only
+  when the user explicitly requests the expansion.
+- If the smallest correct resolution is no code change, explain why and close
+  the flag without manufacturing work.
 - When resolving review comments, add 👍 to helpful feedback and 👎 to
   feedback you will ignore, to reinforce reviewer preferences.
 
