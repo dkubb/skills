@@ -85,8 +85,7 @@ counterpart to "parse, don't validate."
 
 ## Restructure data to remove the constraint
 
-When stacked refinements explode (`NonEmpty AND Sorted AND
-AllPositive AND Unique`), the answer is often *not* more refinement
+When stacked refinements explode (`NonEmpty AND Sorted AND AllPositive AND Unique`), the answer is often *not* more refinement
 machinery. It is restructuring the representation so the constraint
 disappears.
 
@@ -135,7 +134,7 @@ cannot be cached past their validity window. A reusable token requires
 an explicit validity model: expiration, revocation, scope, replay
 semantics, and tests proving stale or replayed tokens fail.
 
-```
+```text
 fn try_post(user, content) -> Result<CanPost, RejectReason> {
     require !user.banned
     require !user.rate_limited
@@ -206,7 +205,7 @@ Plain functions in those languages do not carry that proof; the absence
 of an effect annotation in an idiomatic Rust or TS signature is silence,
 not a guarantee.
 
-```
+```text
 // Koka-style: function declares its effects
   fn compute(x: Int) : <total>            Int     // pure
   fn read_file(p: Path) : <io>            String  // may do I/O

@@ -19,7 +19,7 @@ weaken the invariant by accident.
 
 ## Examples
 
-```
+```text
 predicative: smart constructor enforces 1..=5
   type RetryCount(value)
     new(v): require 1 ≤ v ≤ 5 then RetryCount(v) else error
@@ -28,7 +28,7 @@ constructive: only five inhabitants exist; no constructor to trust
   enum RetryCount = One | Two | Three | Four | Five
 ```
 
-```
+```text
 predicative: a non-empty list via runtime check
   type NonEmptyList[T](Vec[T])
     new(xs): require xs.len() ≥ 1 then NonEmptyList(xs) else error

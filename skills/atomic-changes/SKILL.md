@@ -135,20 +135,20 @@ Emit in this order:
   subject, body, and action-line rules used to classify, order, and write
   each step.
 - Related skills in this repo:
-  - `state-space-minimization` (`references/commits.md`) — the state-space
-    reading of the commit form, and the gate-trailer / incremental-gate
-    machinery behind step 10.
-  - `state-space-minimization` (`references/normalization.md`) — decompose
-    into atoms, then recompose along use.
-  - `code-review` — verify each step against the review rules.
+    - `state-space-minimization` (`references/commits.md`) — the state-space
+      reading of the commit form, and the gate-trailer / incremental-gate
+      machinery behind step 10.
+    - `state-space-minimization` (`references/normalization.md`) — decompose
+      into atoms, then recompose along use.
+    - `code-review` — verify each step against the review rules.
 - Adjacent roles other skill collections may fill — match by role, not
   name:
-  - A narrative-ordering skill owns the *readability* of a sequence;
-    this skill owns the *validity and recoverability* of each step.
-  - A fixup-folding tool owns incorporating audited `fixup!` commits
-    via autosquash; this skill only creates them.
-  - Red/green and checkpoint workflow skills (TDD, WIP modes) are
-    specializations of this loop with their own gates.
+    - A narrative-ordering skill owns the *readability* of a sequence;
+      this skill owns the *validity and recoverability* of each step.
+    - A fixup-folding tool owns incorporating audited `fixup!` commits
+      via autosquash; this skill only creates them.
+    - Red/green and checkpoint workflow skills (TDD, WIP modes) are
+      specializations of this loop with their own gates.
 
 ## Process
 
@@ -212,27 +212,27 @@ Emit in this order:
    two verbs is doing too much — split it.
 5. Order by these criteria, applied in rank order (each one breaks ties in
    the criterion above it):
-   1. **Dependencies before dependents** — whatever must exist for the next
-      step to work goes first (the DAG's topological order).
-   2. **Highest learning opportunity first** — do what teaches the most
-      early, so every later decision is better informed. When the
-      highest-learning step is also high-risk, take the learning through a
-      reversible spike (step 2) and keep the *shipped* sequence on the risk
-      order below.
-   3. **Lowest risk first** — clear low-risk changes early so they deploy
-      and earn feedback while you focus on the riskier ones. This is why
-      transformations run Remove → Fix → Move → Rename → Refactor →
-      Change → Add → Upgrade → Downgrade (dependency moves isolated in
-      their own steps).
-   4. **Related items together** — group steps into a narrative that flows
-      one into the next; do not jump between unrelated items.
-   5. **Minimum churn** — among otherwise valid sequences, minimize the
-      aggregate patch a reviewer must retain across commits. Prefer
-      introducing code in its final branch-local form; fold later corrections
-      into the commit that owns them during an authorized rewrite. This is a
-      late tie-breaker, never a reason to merge independent transformations.
-   6. **Deterministic tie-break** — make each item a distinct unit and sort
-      alphabetically.
+    1. **Dependencies before dependents** — whatever must exist for the next
+       step to work goes first (the DAG's topological order).
+    2. **Highest learning opportunity first** — do what teaches the most
+       early, so every later decision is better informed. When the
+       highest-learning step is also high-risk, take the learning through a
+       reversible spike (step 2) and keep the *shipped* sequence on the risk
+       order below.
+    3. **Lowest risk first** — clear low-risk changes early so they deploy
+       and earn feedback while you focus on the riskier ones. This is why
+       transformations run Remove → Fix → Move → Rename → Refactor →
+       Change → Add → Upgrade → Downgrade (dependency moves isolated in
+       their own steps).
+    4. **Related items together** — group steps into a narrative that flows
+       one into the next; do not jump between unrelated items.
+    5. **Minimum churn** — among otherwise valid sequences, minimize the
+       aggregate patch a reviewer must retain across commits. Prefer
+       introducing code in its final branch-local form; fold later corrections
+       into the commit that owns them during an authorized rewrite. This is a
+       late tie-breaker, never a reason to merge independent transformations.
+    6. **Deterministic tie-break** — make each item a distinct unit and sort
+       alphabetically.
 
    Criterion 3 reduces *system* risk, not task risk. For one task in
    isolation, doing the hard part first can be fine; but a system has to

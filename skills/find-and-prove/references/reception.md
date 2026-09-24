@@ -58,8 +58,7 @@ system: disambiguate THREE readings — (a) the RHS-PRODUCED block has no X;
 (b) no NEW X appears; (c) the WHOLE output bag has no X. Reading (c) is
 almost always FALSE without an explicit frame-absence hypothesis: the frame
 may already carry an X, especially for PERSISTENT accumulating facts. The
-honest forms: a frame-clean IMPLICATION (`frame has no X → output has no
-X`) or a claim scoped to the produced residue. Prose for a bare local
+honest forms: a frame-clean IMPLICATION (`frame has no X → output has no X`) or a claim scoped to the produced residue. Prose for a bare local
 rewrite says "residue block", never "in G′". [Anchor: small-footprint /
 tight specifications — a rule's spec talks only about the footprint it
 touches; whole-bag claims need the frame made explicit.] The

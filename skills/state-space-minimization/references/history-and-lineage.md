@@ -11,21 +11,21 @@ and lists the canonical references.
   *Effective ML* (Jane Street, 2010-11). The phrase is now used across
   Haskell, F#, Elm, Rust, and TypeScript without consistent
   attribution; Minsky is the source.
-  https://blog.janestreet.com/effective-ml-revisited/
+  <https://blog.janestreet.com/effective-ml-revisited/>
 - **"Boolean blindness"** — coined by Bob Harper on his Existential
   Type blog (15 March 2011), attributing the term to Dan Licata.
-  https://existentialtype.wordpress.com/2011/03/15/boolean-blindness/
+  <https://existentialtype.wordpress.com/2011/03/15/boolean-blindness/>
 - **"Parse, don't validate"** — Alexis King, 2019. The canonical
   modern statement of parsing as proof preservation.
-  https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/
+  <https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/>
 - **"Names are not type safety"** — Alexis King, 2020. Why opaque
   newtypes are *extrinsically* safe, while constructive datatypes are
   *intrinsically* safe.
-  https://lexi-lambda.github.io/blog/2020/11/01/names-are-not-type-safety/
+  <https://lexi-lambda.github.io/blog/2020/11/01/names-are-not-type-safety/>
 - **"Constructive vs Predicative Data"** — Hillel Wayne, 2024. When
   each style fits, and the four failure modes for constructive
   modeling.
-  https://www.hillelwayne.com/post/constructive/
+  <https://www.hillelwayne.com/post/constructive/>
 - **Subrange types** — Pascal (Wirth 1970) and Ada (1983) both shipped
   `subtype X is Integer range 1..12` decades before the modern Rust
   pattern-types proposal. The idea is older than the modern revival.
@@ -111,14 +111,14 @@ dependent types to mainstream Rust. None is yet stable in the core
 toolchain.
 
 - Lehmann, Geller, Vazou, Jhala, "Flux: Liquid Types for Rust" (PLDI
-  2023). https://dl.acm.org/doi/10.1145/3591283
+  2023). <https://dl.acm.org/doi/10.1145/3591283>
 - Gäher et al., "RefinedRust: A Type System for High-Assurance
   Verification of Rust Programs" (PLDI 2024).
-  https://plv.mpi-sws.org/refinedrust/paper-refinedrust.pdf
+  <https://plv.mpi-sws.org/refinedrust/paper-refinedrust.pdf>
 - Lattuada et al., "Verus: Verifying Rust Programs using Linear Ghost
   Types" (OOPSLA 2023).
 - Ho & Protzenko, "Aeneas: Rust Verification by Functional Translation"
-  (ICFP 2022). https://dl.acm.org/doi/10.1145/3547647
+  (ICFP 2022). <https://dl.acm.org/doi/10.1145/3547647>
 - Denis, Jourdan, Marché, "Creusot" (FMSE 2022).
 - Unno et al., "Thrust: A Prophecy-based Refinement Type System for
   Rust" (PLDI 2025).
@@ -126,7 +126,7 @@ toolchain.
   Reordering in Rust with Multiparty Session Types" — Rumpsteak
   (PPoPP 2022).
 - Chen, Balzer, Toninho, "Ferrite: A Judgmental Embedding of Session
-  Types in Rust" (ECOOP 2022). https://arxiv.org/abs/2205.06921
+  Types in Rust" (ECOOP 2022). <https://arxiv.org/abs/2205.06921>
 
 ## Practitioner and design tradition
 
@@ -140,15 +140,15 @@ toolchain.
   Modeling Made Functional* (Pragmatic Bookshelf, 2018) — the F#
   curriculum on this topic; single-case discriminated union, choice
   type, constrained type.
-  https://fsharpforfunandprofit.com/series/designing-with-types/
+  <https://fsharpforfunandprofit.com/series/designing-with-types/>
 - Richard Feldman, "Making Impossible States Impossible" (ElmConf 2016)
-  — the canonical Elm/UI angle. https://www.youtube.com/watch?v=IcgmSRJHu_8
+  — the canonical Elm/UI angle. <https://www.youtube.com/watch?v=IcgmSRJHu_8>
 - Edwin Brady, *Type-Driven Development with Idris* (Manning 2017) —
   the dependent-types practitioner reference.
 - Khalil Stemmler, "Make Illegal States Unrepresentable in TypeScript".
-  https://khalilstemmler.com/articles/typescript-domain-driven-design/make-illegal-states-unrepresentable/
+  <https://khalilstemmler.com/articles/typescript-domain-driven-design/make-illegal-states-unrepresentable/>
 - Chris Krycho, "Making Illegal States Unrepresentable — In TypeScript".
-  https://v5.chriskrycho.com/journal/making-illegal-states-unrepresentable-in-ts/
+  <https://v5.chriskrycho.com/journal/making-illegal-states-unrepresentable-in-ts/>
 - Noonan, "Ghosts of Departed Proofs" (Haskell Symposium 2018) —
   phantom-tag preservation of proofs across pipelines.
 - Mark S. Miller, *Robust Composition* (PhD dissertation, 2006) —
@@ -158,10 +158,10 @@ toolchain.
 ## Security-flavored lineage
 
 - Bratus, Patterson et al., "From Shotgun Parsers to More Secure Stacks"
-  (LangSec). http://langsec.org/ShotgunParsersShmoo.pdf
+  (LangSec). <http://langsec.org/ShotgunParsersShmoo.pdf>
 - Sassaman, Patterson, Bratus, "The Halting Problems of Network Stack
   Insecurity" (USENIX ;login: 2011) — LangSec foundational paper.
-  https://langsec.org/papers/Sassaman.pdf
+  <https://langsec.org/papers/Sassaman.pdf>
 - Bratus et al., "The Seven Turrets of Babel" (LangSec) — the
   shotgun-parsing antipattern in context.
 

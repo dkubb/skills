@@ -23,8 +23,7 @@ The highest-yield family in the harvest. Three FIRE-ONs:
 - **Every new wrapper `def P … : Prop` or `structure … : Prop` consumed
   downstream** — prove `P_iff : P ↔ <its definition body>` (often
   `Iff.rfl`). Witnesses plus projections leave four mutants alive:
-  hidden-extra-condition (`P := <real conjunct> ∧ <unrelated
-  true-on-the-witness thing>`), drop-a-field (downstream theorems that don't
+  hidden-extra-condition (`P := <real conjunct> ∧ <unrelated true-on-the-witness thing>`), drop-a-field (downstream theorems that don't
   project that field stay green), hidden-`False` field (every consumer goes
   vacuous while a sibling non-vacuity witness still passes), and
   field-type weakening (drops a sequential-consumption step; passes whenever
@@ -135,8 +134,7 @@ helper term that happens to equal the witness (`∃ t, Reads t ∧ P (helper x)`
 where `helper x` equals `t` at the exhibited witness). Both forms are defeq
 AT THE WITNESS, so no mutant can distinguish them — the mutation gate is
 structurally blind here, and the defect and its fix are syntactic: rewrite
-each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
-P t`). A conjunct whose subject is a ground term binds the helper, not the
+each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧ P t`). A conjunct whose subject is a ground term binds the helper, not the
 existential — a different witness satisfying `Reads` is left unconstrained.
 
 ## B6 Quantified-object coverage

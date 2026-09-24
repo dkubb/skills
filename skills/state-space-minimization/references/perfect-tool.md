@@ -179,7 +179,7 @@ to do one global correction later; locally-optimal-but-
 inconsistent forecloses on that option.
 
 The asymmetry is the same one that justifies the ratchet (see
-`ratchet.md` § "The ratchet"): a one-way tightening preserves
+`ratchet.md` § "Maintaining the ratchet"): a one-way tightening preserves
 optionality. A consistent codebase can be re-optimized with a
 single mechanical sweep; an inconsistent codebase cannot.
 

@@ -122,8 +122,7 @@ recorded reason and the smallest feasible scope:
   intentionally discarded, or `rc=0; cmd || rc=$?` when the code branches on
   the result. Never `set +o errexit` around a region.
 - Intentional overwrite: `>|` on that redirect only.
-- Legal empty glob: toggle in a subshell — `( shopt -u failglob; shopt -s
-  nullglob; ... )` — with a comment saying why empty is a valid state.
+- Legal empty glob: toggle in a subshell — `( shopt -u failglob; shopt -s nullglob; ... )` — with a comment saying why empty is a valid state.
 - Legal absence: `${var:-default}` only where absence is a domain state;
   otherwise `${var:?reason}` so missing input fails with a message.
 - Wider permissions: explicit `chmod` on the specific file after creation.

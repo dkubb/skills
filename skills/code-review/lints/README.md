@@ -6,7 +6,7 @@ This directory hosts the Dylint lint libraries exposed via
 
 ## Layout
 
-```
+```text
 lints/
 ├── README.md
 ├── Cargo.toml                       # workspace root, mirrors symbiote [workspace.lints]

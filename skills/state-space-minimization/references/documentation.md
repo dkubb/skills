@@ -113,8 +113,7 @@ Prefer:
 Describe exactly what the code produces, including each error
 variant by name and every observable side effect.
 
-Anti-patterns: `may throw`, `may return null`, `various
-exceptions`, `generally returns the parsed value`. The codomain
+Anti-patterns: `may throw`, `may return null`, `various exceptions`, `generally returns the parsed value`. The codomain
 implied is "anything"; the range is one thing.
 
 Prefer:
@@ -161,8 +160,7 @@ infinities first" to documentation work. Address tier-1 first;
 each completion exposes the next hotspot.
 
 1. **Effectively unbounded prose claims.** Unsupported qualifiers (`may`,
-   `might`, `sometimes`, `appropriately`, `as needed`, `where
-   applicable`) leave the contract unclear. Highest priority to replace
+   `might`, `sometimes`, `appropriately`, `as needed`, `where applicable`) leave the contract unclear. Highest priority to replace
    with evidence-backed conditions or explicit limits of knowledge.
    Keep qualifiers that accurately express unresolved uncertainty.
 2. **Out-of-tree documentation that describes code.** Wikis,
@@ -216,8 +214,7 @@ The discipline at every link:
 
 ## Anti-patterns
 
-- **Boilerplate that duplicates the signature.** `param x: the x
-  parameter`. Pure waste — no narrowing.
+- **Boilerplate that duplicates the signature.** `param x: the x parameter`. Pure waste — no narrowing.
 - **Comments that explain *what*.** The code already shows the
   what. Useful comments narrow by saying *why* — non-obvious
   constraints, workarounds, hidden invariants — not by restating

@@ -258,8 +258,7 @@ deltas.
   that may start mid-context), do it explicitly and document why.
 - Panic policy: avoid `unwrap`, `expect`, and panic-driven control flow on
   request, worker, or network paths. Crashing must be the explicit design.
-- Where a failure is genuinely impossible, use `.expect("explain why failure
-  is impossible")`, never `.unwrap()`. The message documents the invariant,
+- Where a failure is genuinely impossible, use `.expect("explain why failure is impossible")`, never `.unwrap()`. The message documents the invariant,
   not the operation.
 - Enforce the shared coverage ratchet. Record every absolute uncovered item
   count, keep each configured maximum at the exact current count, and treat any
@@ -298,8 +297,7 @@ deltas.
   applies in spirit at every correctness boundary.
 - **Bounded source, bounded return.** A function whose source is bounded
   (e.g., a fan-out over `ClientListenerSet` capped at N) must not return
-  `Vec<T>` and erase the bound at the boundary. Return `impl
-  ExactSizeIterator<Item = T>`, or a bounded vec type.
+  `Vec<T>` and erase the bound at the boundary. Return `impl ExactSizeIterator<Item = T>`, or a bounded vec type.
 
 ## Concurrency and OS interaction
 

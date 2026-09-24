@@ -341,8 +341,7 @@ compounding holes:
 1. `StatementBinding.lean` was NOT in the build graph (not imported by
    `Ssm`, an explicit orphan-check exception), so `lake build` never
    compiled the guard — a gutted headline kept the build green.
-2. `check_claims` verified the guard and mutants with `lake env lean
-   <file>`, which loads PREBUILT oleans and does not recompile changed
+2. `check_claims` verified the guard and mutants with `lake env lean <file>`, which loads PREBUILT oleans and does not recompile changed
    sources; with the cross-worktree artifact cache restoring stale
    project oleans even across `lake build`, the gate judged STALE
    artifacts (the old, real theorem) after a source edit.
@@ -431,6 +430,7 @@ universes + whitespace collapse), so an honest rebuild round-trips and
 the gate does not flap.
 
 Deletions / simplifications (zero guarantee loss, all interderivable):
+
 - Deleted `StatementBinding.lean` (122 lines) and all its checker
   special-casing (orphan exemption, guard-compile step, id-substring
   check). Removed `import StatementBinding` from `Ssm` and its lakefile

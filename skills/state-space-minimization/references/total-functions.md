@@ -11,7 +11,7 @@ the contract once the input type is right.
 
 ## Examples
 
-```
+```text
 partial: negatives have no real square root
   fn sqrt(x: f64) -> f64
 
@@ -19,7 +19,7 @@ total: input type excludes the partial cases
   fn sqrt(x: NonNegativeF64) -> f64
 ```
 
-```
+```text
 partial: empty slices have no head
   fn head[T](xs: &[T]) -> T
 
@@ -27,7 +27,7 @@ total: input type excludes the partial cases
   fn head[T](xs: &NonEmpty<T>) -> &T
 ```
 
-```
+```text
 partial: index out of range panics
   fn at[T](xs: &[T], i: usize) -> &T
 
