@@ -11,7 +11,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-08-v13"
+  version: "2026-09-v14"
 triggers:
   - "code review"
   - "review this diff"
