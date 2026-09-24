@@ -60,6 +60,20 @@ When reviewing a pull request with the user, proceed one commit at a time.
 - When resolving review comments, add 👍 to helpful feedback and 👎 to
   feedback you will ignore, to reinforce reviewer preferences.
 
+## Portfolio audits
+
+- When open pull requests are growing faster than they can be reviewed and
+  merged, bias the audit toward aggressive scope reduction. Each retained PR
+  must justify its carrying cost with a current concrete bug, required
+  capability, or necessary dependency.
+- Recommend closing speculative hardening, obsolete or duplicated work,
+  low-priority cleanup, and changes with no concrete witness. Do not preserve a
+  PR because of sunk effort; important work can return when a real requirement
+  makes its value and minimum scope clear.
+- Prefer the smallest independently reviewable retained diff. Report scope that
+  should be removed, deferred, or extracted instead of treating every valid
+  change as a reason to keep the current PR open.
+
 ## Copilot reviews
 
 - When requesting a new Copilot review, hide all previous Copilot reviews
