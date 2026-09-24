@@ -14,6 +14,9 @@ These rules apply to tests across languages.
   structure obvious. Do not add section header comments like `// Arrange`,
   `// Act`, or `// Assert` — the blank-line separation and the pervasive AAA
   pattern make them redundant.
+- Apply the same blank-line Arrange → Act → Assert structure to doctests.
+  A doctest is executable test documentation: keep its common-path example
+  readable without section-heading comments.
 - Use one set up + one step per test.
 - Use one check for the result value. Use more checks only for side effects or
   no side effects.
