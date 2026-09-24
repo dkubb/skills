@@ -19,6 +19,25 @@ comments.
 - Keep comments high signal. Do not add praise unless the user explicitly asks
   for that style.
 
+## Commit-by-commit fixup protocol
+
+When reviewing a pull request with the user, proceed one commit at a time.
+
+1. Discuss a suspected issue before leaving a comment. Do not create a review
+   comment merely to preserve an observation the user has not accepted.
+2. Once the user agrees the issue is real, leave one inline conventional comment
+   on the exact affected line or contiguous affected range.
+3. Make a visible `fixup!` commit that targets the commit that introduced the
+   issue. Give the fixup body a short explanation of the intended correction;
+   that body is useful while the fixup remains visible and is intentionally
+   discarded by autosquash.
+4. After the fixup is pushed, edit the original review comment to include a
+   direct URL to that fixup commit. Keep the original finding and rationale; add
+   the link as the resolution record.
+5. Continue with the next review location. Do not replace an inline comment
+   with a general PR comment merely because its line becomes hidden in the
+   aggregate diff after the fixup; that hiding is intentional.
+
 ## Inline scope
 
 - Prefer inline comments on the exact changed lines.
