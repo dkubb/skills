@@ -351,7 +351,7 @@ pub enum NotAnError {                                      // doesn't end in Err
 machine word may opt out via `#[expect(usize_in_pub_error_variant, reason = "...")]`.
 A future config could allow a per-type allowlist via `dylint.toml`.
 
-**Config (`dylint.toml`):**
+Config (`dylint.toml`):
 
 ```toml
 [code_review_lints.usize_in_pub_error_variant]
@@ -777,7 +777,7 @@ pub enum B { X(u64) }                        // different field types
 - Variant order is normalized (sort by name) so reordering doesn't escape
   detection.
 
-**Config (`dylint.toml`):**
+Config (`dylint.toml`):
 
 ```toml
 [code_review_lints.bit_identical_enum_bodies]
@@ -995,7 +995,7 @@ fn example() {
 `clippy.toml`) covers all-scope matching but cannot restrict to test
 scope. The test-scope restriction is the value-add here.
 
-**Config (`dylint.toml`):**
+Config (`dylint.toml`):
 
 ```toml
 [code_review_lints.test_fallback_helpers]

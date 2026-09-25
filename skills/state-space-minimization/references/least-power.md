@@ -26,10 +26,7 @@ actually requires, and signal that fact in its types and call sites.
 
 The state-space framing:
 
-> When two or more primitives are equally capable for the task, choose
-> the one that, in aggregate, accepts the **fewest input states**,
-> returns the **fewest output states**, and uses the **fewest internal
-> state transitions**.
+> When two or more primitives are equally capable for the task, choose the one that, in aggregate, accepts the **fewest input states**, returns the **fewest output states**, and uses the **fewest internal state transitions**.
 
 The "for the task" qualifier is load-bearing in two directions, not
 one.
@@ -56,8 +53,7 @@ Examples of the symmetric failure:
 - Chaining `.map(...).map(...).map(...)` when one transformation
   expresses the composition cleanly. Each intermediate collection is
   a representation that did not exist in the single-step form.
-- Hand-composing `git write-tree && git commit-tree && git
-  update-ref` when porcelain `git commit` already bundles them with
+- Hand-composing `git write-tree && git commit-tree && git update-ref` when porcelain `git commit` already bundles them with
   hook execution and reflog update. The hand-rolled form admits
   states the porcelain forbids (e.g. skipping a hook).
 - Re-implementing `flatMap` as `map` followed by manual flatten when

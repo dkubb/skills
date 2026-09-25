@@ -183,8 +183,7 @@ returns sane data, that an `unsafe` block honors its contract.
 The type system stops at the platform boundary; defensive code
 beyond it is necessary.
 
-Even here, the check should be specific. `try { allocate(...) }
-catch (OutOfMemoryError e) { … }` is specific to the platform
+Even here, the check should be specific. `try { allocate(...) } catch (OutOfMemoryError e) { … }` is specific to the platform
 failure it expects. `try { … } catch (Throwable t) { … }` is not.
 
 ## Examples of just-in-case code to delete

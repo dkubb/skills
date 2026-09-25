@@ -1,0 +1,85 @@
+[lint]
+respect-ignore = true
+respect-gitignore = true
+output-format = "concise"
+quiet = false
+exclude = []
+rules = [
+  "MD001",
+  "MD002",
+  "MD003",
+  "MD004",
+  "MD005",
+  "MD006",
+  # "MD007",  # Nested lists under numbered items use 3-space indent (correct CommonMark for `1. ` prefix)
+  "MD009",
+  "MD010",
+  "MD012",
+  # "MD013",  # Prose documents are not hard-wrapped at 80 characters
+  "MD014",
+  "MD018",
+  "MD019",
+  "MD020",
+  "MD021",
+  "MD022",
+  "MD023",
+  "MD024",
+  "MD025",
+  # "MD026",  # Headers may end with punctuation (e.g. "What is this?")
+  "MD027",
+  "MD028",
+  "MD029",  # Ordered lists must increment (1. 2. 3.) — enforced via style="ordered" below
+  "MD030",
+  "MD031",
+  "MD032",
+  "MD033",
+  "MD034",
+  "MD035",
+  "MD036",
+  "MD037",
+  "MD038",
+  "MD039",
+  "MD040",
+  # "MD041",  # Mado 0.3.1 rejects required YAML frontmatter in SKILL.md
+  "MD046",
+  "MD047",
+]
+
+[lint.md002]
+level = 1
+
+[lint.md003]
+style = "consistent"
+
+[lint.md004]
+style = "consistent"
+
+[lint.md024]
+allow-different-nesting = true
+
+[lint.md025]
+level = 1
+
+[lint.md029]
+style = "ordered"
+
+[lint.md030]
+ul-single = 1
+# ol-single/ol-multi raised to 2 so two-digit list markers (10., 11., …)
+# pass mado's padding check; the check is an upper bound, so single-digit
+# `1. text` (padding 3) and double-digit `10. text` (padding 4) both pass.
+ol-single = 2
+ul-multi = 1
+ol-multi = 2
+
+[lint.md033]
+allowed-elements = []
+
+[lint.md035]
+style = "consistent"
+
+[lint.md036]
+punctuation = ".,;:!?"
+
+[lint.md046]
+style = "fenced"

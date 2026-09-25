@@ -70,7 +70,7 @@ Fire on every decorated relation/step/run: whenever a relation/step/run is
 decorated with a label, tag, event, or annotation, ask: *can ALL my advertised
 theorems survive if every annotation is replaced by ONE constant, or by
 `none` / a no-op?* If yes, the annotation's CORRECTNESS is UNPINNED — erasure
-+ lifting + single-valuedness together prove only "the labeled relation is the
+plus lifting + single-valuedness together prove only "the labeled relation is the
 graph of a single-valued partial function refining the base," and the constant
 function is in that set (the `StepWithEvent := Step ∧ e = none` countermodel
 goes green RECORDING NOTHING). Single-valuedness proves DETERMINISTIC
@@ -173,8 +173,7 @@ a valid transport corollary — demote it, docstring exactly what it does NOT
 claim, and move the new-kind headline to the statement whose new-kind path the
 wiring mutant actually reddens.
 
-The worked origin (W3.6a): a conjunction `decode req raw = some (.node n) ∧
-unwrap n = some items ↔ Spec req raw (.node n) ∧ n.flatten? = some items` was
+The worked origin (W3.6a): a conjunction `decode req raw = some (.node n) ∧ unwrap n = some items ↔ Spec req raw (.node n) ∧ n.flatten? = some items` was
 advertised as join-kind boundary reception — but the landed decoder was
 leaf-only, so for every joined `n` both decoder-side conjuncts are FALSE: the
 join column is all-no and the "reception" holds as an equivalence of two false

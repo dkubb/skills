@@ -83,7 +83,7 @@ baseline is irrelevant because adopting it would weaken the project. For a new
 project, enforce the strongest applicable community baseline or deliberate
 project target from the first change.
 
-## The ratchet
+## Maintaining the ratchet
 
 The ratchet is what turns state-space minimization from a one-time
 audit into a continuous process. Without it, drift is the default —

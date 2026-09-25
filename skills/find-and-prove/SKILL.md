@@ -20,13 +20,7 @@ metadata:
 
 # Find-and-prove — adversarial review as an oracle hunt
 
-> **How to read this.** A review is an *oracle hunt*, not a taxonomy walk. Build
-> the **target table** first (the search procedure below), rank it, and attack
-> the top rows. The binding rubric's defect classes are a *toolbox you pull from
-> on demand* to explain the current target — not a checklist to recite; each
-> class has a reference module with the full treatments. Reach for a
-> canonical term only *after* you have a target and a witness; naming literature
-> before you have a target produces recitation, not findings.
+> **How to read this.** A review is an *oracle hunt*, not a taxonomy walk. Build the **target table** first (the search procedure below), rank it, and attack the top rows. The binding rubric's defect classes are a *toolbox you pull from on demand* to explain the current target — not a checklist to recite; each class has a reference module with the full treatments. Reach for a canonical term only *after* you have a target and a witness; naming literature before you have a target produces recitation, not findings.
 
 ## Stance
 
@@ -63,10 +57,7 @@ metadata:
    artifact under review like ambient authority in code: a steering comment is
    itself a finding.
 
-> **The one rule that catches the most.** *Before proving a constructor safe,
-> prove that every exported **eliminator** (recursor, projection, deriving
-> instance, coercion, `noConfusion`) is intended, harmless, or impossible to call
-> by the adversarial role.*
+> **The one rule that catches the most.** *Before proving a constructor safe, prove that every exported **eliminator** (recursor, projection, deriving instance, coercion, `noConfusion`) is intended, harmless, or impossible to call by the adversarial role.*
 
 ## What a guarantee is (don't over-unify)
 
@@ -246,8 +237,7 @@ the class module named per class.
 ### B — Unpinned surface: it holds, but binds nothing (`references/pins.md`)
 
 - **B1 The `_iff` pin family** — FIRE on every new relation, every consumed
-  `Prop` wrapper, every laws-carrying record field: prove `R ↔ <explicit
-  content>` / the `Iff.rfl` defeq lock; demote witnesses+projections.
+  `Prop` wrapper, every laws-carrying record field: prove `R ↔ <explicit content>` / the `Iff.rfl` defeq lock; demote witnesses+projections.
 - **B2 Producer pin** — FIRE on every type-level injectivity/no-collision
   headline: make it producer-grounded (`token ∈ ruleOutput`, then distinct).
 - **B3 Cardinality conjunct** — FIRE on every universal value claim over a

@@ -96,8 +96,7 @@ re-check at every use.
 
 Wlaschin's "Designing with Types" series adds two terms worth borrowing:
 
-- **Choice type**: an aggregate expressed as a sum (`VerifiedEmail |
-  UnverifiedEmail`) instead of a record-with-flags
+- **Choice type**: an aggregate expressed as a sum (`VerifiedEmail | UnverifiedEmail`) instead of a record-with-flags
   (`Email { is_verified, verified_at }`). The choice-type form makes
   invalid combinations unrepresentable; see `boolean-blindness.md`.
 - **Workflow type**: distinct input and output types per workflow step,

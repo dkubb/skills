@@ -32,7 +32,7 @@ thicket of if-then-else's."
 
 Replace the boolean with the answer it was projecting away.
 
-```
+```text
 boolean blind: caller cannot tell why the user is unavailable
   fn is_available(user) -> bool
 
@@ -46,7 +46,7 @@ richer: caller pattern-matches the reason
   fn availability(user) -> Availability
 ```
 
-```
+```text
 boolean blind: call site reads send(msg, true, false) with no context
   fn send(msg, urgent: bool, sign: bool)
 
@@ -80,7 +80,7 @@ Boolean fields are the same defect at rest. If a record contains
 admits the invalid state `is_verified = true, verified_at = None`. The
 constructive fix is a sum type:
 
-```
+```text
 loose: invalid combinations representable
   type Email = {
     address: String,

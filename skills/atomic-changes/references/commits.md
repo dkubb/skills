@@ -3,8 +3,7 @@
 The canonical form for commits in this repo. A commit is one bounded change:
 one indivisible transformation, a message that names it, and a tree that
 passes every gate relevant to its affected surfaces and transitive consumers.
-Smaller commits give a smaller preimage of failure — when CI breaks, `git
-bisect` lands on a single transformation instead of a tangle.
+Smaller commits give a smaller preimage of failure — when CI breaks, `git bisect` lands on a single transformation instead of a tangle.
 
 ## Atomic
 

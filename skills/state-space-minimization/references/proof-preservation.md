@@ -17,7 +17,7 @@ invariants, phantom-type tags record which checks have run without
 changing the runtime representation. The technique is named after Edsko
 de Vries / Matthew Noonan's *Ghosts of Departed Proofs* paper.
 
-```
+```text
 struct Checked<Tag, T>(T, marker: PhantomData<Tag>)
 struct Sanitized
 struct AuthorizedFor<U>(marker: PhantomData<U>)
@@ -50,7 +50,7 @@ enough.
 Generalized algebraic data types let constructors refine the type
 parameter they return, so the type carries proof at runtime.
 
-```
+```text
 intrinsically-typed AST: only well-typed expressions representable
   enum Expr[T]:
     LitInt(i32)            : Expr[i32]
@@ -79,7 +79,7 @@ predicates checked by the type checker. Liquid Haskell, Flux for Rust,
 F\*, Dafny, RefinedRust, Verus, Creusot, and Aeneas all sit in this
 family.
 
-```
+```text
 liquid-style refinement: type checker proves the predicate
   type Pos = { v: i32 | v > 0 }
   fn divide(numerator: i32, denominator: Pos) -> i32
@@ -88,7 +88,7 @@ liquid-style refinement: type checker proves the predicate
 Pattern types (a Rust proposal) restrict primitives to value patterns
 directly in the type:
 
-```
+```text
   fn day_of_month(month: u32 is 1..=12, day: u32 is 1..=31)
 ```
 
