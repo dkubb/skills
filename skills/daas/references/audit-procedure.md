@@ -37,7 +37,19 @@ unless changes are requested.
 6. **Report actionable findings.** Lead with the most consequential findings.
    Combine observations with the same cause. Keep optional improvements separate,
    and state the scope reviewed, checks performed, and remaining uncertainty.
+   Include small, useful improvements even at low priority; priority orders the
+   report, not which useful suggestions qualify for inclusion.
    If no actionable issue was found, say so without claiming completeness.
+
+## Accepting improvements
+
+Dan readily accepts improvements he agrees with when they require no significant
+code changes, regardless of priority. For substantial changes, weigh the benefit
+against implementation effort, risk, maintenance cost, and competing work.
+State the expected extent of a change separately from the finding's priority.
+
+Apply accepted improvements within the authorized scope. If Dan disagrees, leave
+the suggestion unapplied and do not treat it as an accepted preference.
 
 ## Finding format
 
@@ -50,7 +62,8 @@ Use concise prose containing:
 - **Consequence:** the failure, unnecessary state, reasoning burden, or maintenance
   cost; include the conditions under which it matters.
 - **Improvement:** the smallest useful change, what it preserves, and how to check
-  it; note relevant exceptions or unresolved assumptions.
+  it; indicate whether it is small or substantial, and note relevant exceptions
+  or unresolved assumptions.
 
 Keep explanations proportional to the finding. Do not manufacture findings to
 fill the format, prescribe implementation machinery without a demonstrated need,
