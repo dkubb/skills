@@ -30,6 +30,7 @@ metadata:
 
 ## Utilities
 
+- For audits and code reviews, follow the [audit procedure](./references/audit-procedure.md).
 - Load the linked explanations for principles relevant to the decision,
   including their qualifications and exceptions.
 
