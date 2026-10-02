@@ -349,8 +349,12 @@ This method does not make it necessary to examine merged work on `main` again.
 5. If the gate changed the candidate or the checkout, make sure that you know about each change.
 
 If a gate rejects a placement and you thought that this result was possible, keep the previous checkpoint.
-Use the diagnostic to change the extraction or the group of prerequisites.
 If you reject the candidate, keep its diagnostic and the previous checkpoint.
+
+For each rejected attempt, record what the failure shows and your next decision.
+Include the cause that the evidence shows. If the cause is not known, identify it as open.
+Use this record to change the extraction or its prerequisites, or to stop this attempt.
+Keep this record even if you stop extraction.
 
 Some failures can occur that you did not think were possible.
 Examples are a software failure, a harness failure, and gate results that do not agree.
