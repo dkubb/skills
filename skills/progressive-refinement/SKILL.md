@@ -176,8 +176,10 @@ Each piece can go to its next task while the remaining work continues.
 11. Repair each difference, and compare the result again.
 12. Do the specified gates on the same work that you will keep.
 13. If previous gate evidence has the same inputs and conditions, you can use that evidence again.
-14. If the gates accept the work, make a commit of the batch before a review or an extraction.
+14. If the gates accept the batch, make its commit before a checkpoint review or an extraction.
 15. For each extraction, record the version of its source checkpoint and its target version.
+
+Before the gates accept a batch, you can examine its intent and architecture.
 
 The first checkpoints do not have to show the last sequence of atomic commits.
 That commit records progress in development. The larger feature does not have to be completed.
