@@ -374,16 +374,18 @@ deltas.
   public contract modules in the same Cargo target and logical module as the
   private function. Public contracts in any other logical module, including
   inline modules in the same file, do not provide scope. Incidental coverage
-  within that class and scope is allowed by design; each class's gate is
-  reachability from at least one eligible production public function plus a
-  kill by at least one of those public functions' tests in that class. Do not
-  test private functions directly.
+  within that class and scope is allowed by design; each class's gate requires
+  reachability from at least one eligible production public function and a
+  kill of every in-scope viable mutant by at least one of those public
+  functions' tests in that class, under the adopted mutation accounting.
+  Unviable mutants are accounted and non-gating; timeouts remain failures and
+  do not count as kills. Do not test private functions directly.
   A missing eligible public scope or a surviving mutant does not prove
   dead code: prove that no genuine production entrypoint or public
   interface can reach the behavior in any supported production
   configuration before deleting it. When an eligible production public
   function can reach the behavior with a genuine production-valid input
-  and a mutant survives, strengthen that function's eligible public
+  and a viable mutant survives, strengthen that function's eligible public
   contracts in each failing class. When the behavior is reachable only
   through genuine production entrypoints or public interfaces outside the
   eligible scope, refactor so a genuine production public function in the
