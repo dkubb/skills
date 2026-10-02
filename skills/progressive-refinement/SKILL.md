@@ -188,6 +188,9 @@ Each piece can go to its next task while the remaining work continues.
 15. If the gates accept the batch, make its commit before a checkpoint review or an extraction. Push it immediately.
 16. For each extraction, record the version of its source checkpoint and its target version.
 
+
+Before the gates accept a batch, you can examine its intent and architecture.
+
 The first checkpoints do not have to show the last sequence of atomic commits.
 That commit records progress in development. The larger feature does not have to be completed.
 You must get final publication assurance at a subsequent time. This step does not cancel it.
