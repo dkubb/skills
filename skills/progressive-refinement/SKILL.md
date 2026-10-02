@@ -729,7 +729,12 @@ Before qualification or delivery on a new base, also do this step.
 
 Do not select merged work as the review focus.
 During qualification, do not change the base.
-A new base starts a new target version. Then you must do the related qualification again.
+A new base starts a new target version.
+For this version, examine the evidence with the inputs in S4.
+If the evidence still shows the necessary claim, use it again.
+If the evidence does not show a necessary claim, do the related qualification again.
+
+Obey the user and repository instructions for gates on unchanged patch-ids.
 Work on `main` that has no relation to the selected range does not make it necessary to start an active maturity stage again.
 
 ## References
