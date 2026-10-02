@@ -255,6 +255,9 @@ For each difference, make sure that the gate contract permits it.
 Keep this comparison with the gate evidence.
 File paths do not show the selected test names.
 
+If qualification must test a public function, make sure that the tests call that function.
+Tests that call only a private function do not supply that assurance.
+
 #### Time of reviews
 
 At checkpoints at which a review can help, examine the intent, the architecture, and how the work will continue.
