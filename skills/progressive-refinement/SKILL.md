@@ -238,6 +238,17 @@ Use these labels for different claims:
 - "Qualified" for work that has the necessary assurance for publication
 - "Merged" for work in the base.
 
+#### RTI selection
+
+Use the [RTI skill](https://github.com/dkubb/rust-test-isolator/blob/main/SKILL.md) for its commands and evidence.
+An RTI `EMPTY` result shows that RTI did no checks of functions.
+A constant change or a test-only regression can have this result.
+Do not use this result to accept a Rust change or a test-only regression.
+
+Use the repository's applicable gates for these changes.
+Before you select a production owner, make sure that this owner includes the changed behavior.
+This owner must include the necessary test scope.
+
 #### Time of reviews
 
 At checkpoints at which a review can help, examine the intent, the architecture, and how the work will continue.
