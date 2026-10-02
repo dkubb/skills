@@ -24,7 +24,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Checkpoint:** Recorded work that its gates accept for its maturity stage and that you can put back into use
 - **Batch:** Work that you keep together at one checkpoint
 - **Piece:** A selected change for extraction
-- **Candidate:** A commit that you prepare for a gate or a review
+- **Candidate:** Work that you prepare for a gate or a review
 - **Prerequisite:** A change or input that must be available before a different change or task
 - **Dependent:** A change that has a prerequisite
 - **Dependency:** The relation between a prerequisite and its dependent
