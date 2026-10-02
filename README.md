@@ -15,6 +15,7 @@ lint suite.
 | [`state-space-minimization`](skills/state-space-minimization/SKILL.md) | guidance | Make invalid states unrepresentable. Shrink what a program *can* express until whole classes of bugs have nowhere to live. |
 | [`state-space-minimization-formal`](skills/state-space-minimization-formal/SKILL.md) | guidance | The same idea as a compact formal calculus: domains, ranges, invariants, morphisms, normal forms, and proof-preserving boundaries. |
 | [`atomic-changes`](skills/atomic-changes/SKILL.md) | guidance | Break work into the smallest steps that each leave the system valid or better — foundation first, ordered so partial progress is never a regression. |
+| [`progressive-refinement`](skills/progressive-refinement/SKILL.md) | guidance (draft) | Keep passing checkpoints, refine work through reviews, and extract standalone slices into atomic Git history. |
 | [`code-review`](skills/code-review/SKILL.md) | guidance + CLI | A clear, cross-language code-review discipline — and the rules for changing the rules. Ships a bundled lint suite you can run with `skill code-review lint`. |
 | [`git-review`](skills/git-review/SKILL.md) | guidance + CLI | Review commit ranges against the atomic-changes contract using deterministic Git evidence. |
 
