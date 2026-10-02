@@ -92,7 +92,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
 | Agent, primary agent, repair agent, review agent, context, context fork, conversation, harness, skill, host, prototype, LLM | 19 | AI agents. Rule 1.5 lists "large language model" and "chatbot" in category 19. |
 | Defect, failure, regression, reproducer, diagnostic | 7, 19 | Software testing. Rule 1.5 lists "defect" and "failure" in category 7. |
-| Affected test, unit test, property test, test runner, coverage, mutation testing, instrumentation, formatting, fast gate | 19 | Software testing |
+| Affected test, unit test, property test, test-only regression, production owner, function, constant, test runner, coverage, mutation testing, instrumentation, formatting, fast gate | 19 | Software testing |
 | Fixup, amend, refactor, change class, contract class, presentation sequence, presentation ranking, review contract | 19 | Version control workflow and the atomic-changes skill |
 | Graph, dependency graph, topological sequence, combination, phase, semantic dependency | 7 | Mathematics and software engineering. Rule 1.5 lists "graph", "combination", and "phase" in category 7. |
 | Deployment | 20 | Software release to the user |
@@ -115,7 +115,7 @@ Use the past participle of a technical verb only as an adjective, for example "m
 Rule 8.6 tells you to count each of these items as one word:
 
 - Names: Dan Kubb, Symbiote, DAAS, atomic-changes, git-review, code-review, Clippy, RTI, Rust, ASD-STE100
-- Dates and identifiers: October 2, P1 thru P9, S1 thru S10, D, `main`
+- Dates and identifiers: October 2, P1 thru P9, S1 thru S10, D, `main`, `EMPTY`
 - Quoted labels: "Retained", "Passed ⟨rubric⟩", "Qualified", "Merged"
 - Quoted change classes from atomic-changes: "remove", "fix", "refactor", "move", "rename", "change", "add"
 - Quoted titles: "Conditions for a standalone slice", "manual runbook", "workflow plan".
