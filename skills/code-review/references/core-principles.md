@@ -78,14 +78,14 @@ appear in all capitals.
   including rules based on language semantics or community practice. A rule's
   stated basis explains its intent; it does not make the rule more or less part
   of the review lens.
-- When a rubric rule conflicts with an established project convention,
+- When applicable rules conflict,
   reviewers **MUST** report the conflict, its basis, and the affected scope
   instead of silently suppressing either rule.
-- Reviewers **MUST NOT** migrate a project convention, apply a conflicting
-  rubric rule inconsistently to new code, or widen the change beyond its
-  requested scope without the user's explicit decision. Offer the choices to
-  retain the project convention as a documented exception, apply the rubric
-  rule in a defined local scope, or migrate every affected site.
+- Apply the [rule reconciliation policy](../SKILL.md#language-list), including
+  established user decisions, the stricter applicable requirement, and its
+  validity qualifications. Reviewers **MUST NOT** widen the change beyond its
+  authorized scope. A repeated implementation pattern does not by itself
+  establish an intentional policy exception.
 
 ## Intent and justification
 
