@@ -88,7 +88,6 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Evidence, claim, judgment, assurance, scope | 7 | Assurance cases (ISO/IEC/IEEE 15026) |
 | Review focus, checkpoint review, rubric | 7, 15 | Software review |
 | Qualification, publication, draft publication, final publication | 19 | Software release |
-
 | Owning change, target repair, normalization | 19 | Version control workflow |
 | Waiver | 21 | Quality management. Rule 1.5 lists "waiver" in category 21. |
 | Boundary of validity, minimality, indivisibility | 7 | Software engineering |

@@ -188,7 +188,6 @@ Each piece can go to its next task while the remaining work continues.
 15. If the gates accept the batch, make its commit before a checkpoint review or an extraction. Push it immediately.
 16. For each extraction, record the version of its source checkpoint and its target version.
 
-
 Before the gates accept a batch, you can examine its intent and architecture.
 
 The first checkpoints do not have to show the last sequence of atomic commits.
@@ -347,6 +346,29 @@ Use these labels for different claims:
 - "Qualified" for work that has the necessary assurance for final publication
 - "Merged" for work in the base.
 
+#### RTI selection
+
+Use the [RTI skill](https://github.com/dkubb/rust-test-isolator/blob/main/SKILL.md) for its commands and evidence.
+With the fast gates, examine RTI's selection for the selected commit or range.
+Do this for "move", "remove", and test-only changes too.
+Before you use `EMPTY` as evidence, get that result from RTI.
+
+An RTI `EMPTY` result gives no evidence that production functions have correct behavior.
+A constant change or a test-only regression can have this result.
+Do not use this result to accept a Rust change or a test-only regression.
+
+Use the repository's applicable gates for these changes.
+Before you select a production owner, make sure that this owner includes the changed behavior.
+This owner must include the necessary test scope.
+
+With the fast gates, compare the test names that RTI selects for that owner with the names of the affected tests.
+For each difference, make sure that the gate contract permits it.
+Keep this comparison with the gate evidence.
+File paths do not show the selected test names.
+
+If qualification must test a public function, make sure that the tests call that function.
+Tests that call only a private function do not supply that assurance.
+
 #### Time of reviews
 
 At checkpoints at which a review can help, examine the intent, the architecture, and how the work will continue.
@@ -474,7 +496,7 @@ With the evidence, keep the inputs that can change its claim. Use references to 
 
 - Tree checks: the tree, command, configuration, toolchain, and conditions in which the gate operates
 - Diff checks: the inputs of tree checks, plus the parent, range, selected code owners, and contract classes
-- Selection of affected tests: the inputs of diff checks
+- Selection of affected tests: the inputs of diff checks, plus the selected test names
 - History checks: the applicable metadata
 - Reviews: the intent, the rubric, the governing instructions, and the adjacent context.
 
