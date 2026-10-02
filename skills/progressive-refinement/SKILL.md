@@ -242,7 +242,7 @@ Use these labels for different claims:
 #### RTI selection
 
 Use the [RTI skill](https://github.com/dkubb/rust-test-isolator/blob/main/SKILL.md) for its commands and evidence.
-An RTI `EMPTY` result shows that RTI did no checks of functions.
+An RTI `EMPTY` result gives no evidence that production functions have correct behavior.
 A constant change or a test-only regression can have this result.
 Do not use this result to accept a Rust change or a test-only regression.
 
