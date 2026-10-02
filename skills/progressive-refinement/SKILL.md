@@ -481,7 +481,9 @@ Before you continue, keep the repaired result that its gates accept.
 When you can, use fixups during development, because they are easy to examine.
 Before you keep a fixup, make sure that its gates accept its tree.
 
-Before an amend that changes the tree, make sure that you have approval for changes to the history.
+Obey the applicable user, repository, and skill instructions for the repair method.
+Approval to change history does not cancel an instruction to use fixups.
+Before an amend that changes the tree, make sure that your approval includes this amend.
 Keep the data necessary to put the previous checkpoint back into use. Get evidence for the changed tree.
 The previous evidence applies only to the inputs that it recorded.
 
