@@ -370,18 +370,27 @@ deltas.
 - Mutation scope is two-tier. Public-function mutants run against only that
   function's contract module; incidental coverage is not permitted, so a
   mutant killed only by another function's tests is a miss. Private-function
-  mutants run separately for each applicable class against all of that
-  class's contract modules in the file. Incidental coverage within that
-  class is allowed by design; each class's gate is reachability from at
-  least one public function plus a kill by at least one of those public
-  functions' tests in that class. Do not test private functions directly.
-  A missing public scope or a surviving mutant does not prove dead code:
-  prove that no genuine production entrypoint or public interface can
-  reach the behavior in any supported production configuration before
-  deleting it. When genuine production code reaches the behavior,
-  strengthen the owning public contracts in each failing class or refactor
-  behind a genuine production public contract; never add a test-only
-  public API or a direct private-function contract to make the gate pass.
+  mutants run separately for each applicable class against eligible production
+  public contract modules in the same Cargo target and logical module as the
+  private function. Public contracts in any other logical module, including
+  inline modules in the same file, do not provide scope. Incidental coverage
+  within that class and scope is allowed by design; each class's gate is
+  reachability from at least one eligible production public function plus a
+  kill by at least one of those public functions' tests in that class. Do not
+  test private functions directly.
+  A missing eligible public scope or a surviving mutant does not prove
+  dead code: prove that no genuine production entrypoint or public
+  interface can reach the behavior in any supported production
+  configuration before deleting it. When an eligible production public
+  function can reach the behavior with a genuine production-valid input
+  and a mutant survives, strengthen that function's eligible public
+  contracts in each failing class. When the behavior is reachable only
+  through genuine production entrypoints or public interfaces outside the
+  eligible scope, refactor so a genuine production public function in the
+  helper's Cargo target and logical module reaches it and provides an
+  eligible contract. Never add a test-only public API, widen a private
+  function's visibility merely to make it eligible, or add a direct
+  private-function contract to make the gate pass.
 - When a test chains two or more fallible steps whose success is plumbing
   rather than the subject, return `Result` from the test and use `?`. If this
   requires suppressing `clippy::panic_in_result_fn`, place
