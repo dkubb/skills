@@ -4,7 +4,7 @@ description: Apply Dan Kubb's engineering judgment to software design, implement
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-09-v1"
+  version: "2026-10-v1"
 ---
 
 # dkubb as a skill
@@ -53,6 +53,10 @@ metadata:
   feedback.
 - Resolve competing principles intentionally in context; do not invent a
   universal ranking.
+- When applicable rules conflict, generally prefer the stricter requirement
+  while preserving known valid states and required behavior. Reconcile the
+  governing documents within the authorized scope. For requirements that are
+  not comparable, make the trade-off intentional.
 - Use the outline to find relevant principles, not as a mandatory sequence.
 - Treat technology examples as illustrations; preserve their underlying
   obligations using mechanisms appropriate to the task. Apply the time-travel
