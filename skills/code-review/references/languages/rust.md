@@ -361,19 +361,38 @@ deltas.
   `proptests::discover::discover_rejects_unknown_keys`.
 - Apply the same contract grouping inside `mod proptests`
   (`proptests::try_new::accepts_every_valid_year`), with shared generators
-  in the outer module as fixtures. This scopes the property coverage gate
-  per method and makes per-function property-mutation kill rates
-  measurable (`proptests::try_new::` as the test filter) — a measurement
-  of which properties are load-bearing, not a gate; the mutation gate
-  stays unit-tests-only.
+  in the outer module as fixtures. Scope coverage and mutation independently
+  to the unit contract and each applicable property contract
+  (`proptests::try_new::` as the property test filter). Both classes must
+  independently satisfy the adopted mutation gate; one class's passing result
+  must not compensate for a failure in the other. Preserve justified
+  non-applicability when no in-scope mutant is generated.
 - Mutation scope is two-tier. Public-function mutants run against only that
   function's contract module; incidental coverage is not permitted, so a
   mutant killed only by another function's tests is a miss. Private-function
-  mutants run against all of the file's contract modules; incidental
-  coverage is allowed by design, and the gate is reachability from at least
-  one public function plus a kill by at least one of those public functions'
-  tests. Do not test private functions directly; an unreachable or
-  unkillable private function is dead code to delete, not a gap to cover.
+  mutants run separately for each applicable class against eligible production
+  public contract modules in the same Cargo target and logical module as the
+  private function. Public contracts in any other logical module, including
+  inline modules in the same file, do not provide scope. Incidental coverage
+  within that class and scope is allowed by design; each class's gate requires
+  reachability from at least one eligible production public function and a
+  kill of every in-scope viable mutant by at least one of those public
+  functions' tests in that class, under the adopted mutation accounting.
+  Unviable mutants are accounted and non-gating; timeouts remain failures and
+  do not count as kills. Do not test private functions directly.
+  A missing eligible public scope or a surviving mutant does not prove
+  dead code: prove that no genuine production entrypoint or public
+  interface can reach the behavior in any supported production
+  configuration before deleting it. When an eligible production public
+  function can reach the behavior with a genuine production-valid input
+  and a viable mutant survives, strengthen that function's eligible public
+  contracts in each failing class. When the behavior is reachable only
+  through genuine production entrypoints or public interfaces outside the
+  eligible scope, refactor so a genuine production public function in the
+  helper's Cargo target and logical module reaches it and provides an
+  eligible contract. Never add a test-only public API, widen a private
+  function's visibility merely to make it eligible, or add a direct
+  private-function contract to make the gate pass.
 - When a test chains two or more fallible steps whose success is plumbing
   rather than the subject, return `Result` from the test and use `?`. If this
   requires suppressing `clippy::panic_in_result_fn`, place

@@ -8,9 +8,17 @@ the system's effective rules.
 
 The principles are guidelines, not laws. Intentionality resolves their tensions:
 state which consideration takes precedence here, why, and what is sacrificed.
-Dan has no known stable ordering of the remaining principles; precedence is
-contextual. A useful ranking may emerge from actual decisions and corrections,
-but do not invent one in advance. Compare against an understood baseline so
+When applicable rules conflict, Dan generally prefers the stricter requirement:
+reject more invalid states or require stronger assurance while preserving known
+valid states and required behavior. Reconcile the governing documents within
+the authorized scope so the same conflict does not recur. This preference does
+not justify invented constraints, rejection of legitimate states, or unrelated
+repository-wide cleanup.
+
+Requirements that are not comparable still need a contextual trade-off; this
+preference does not establish a universal ranking of principles. A useful ranking
+may emerge from actual decisions and corrections, but do not invent one in
+advance. Compare against an understood baseline so
 taste and judgment make an explicit trade-off. Explain changed precedence when
 new information changes the decision; admit when a choice was wrong and preserve
 what it taught you. Deliberately pushing a constraint can reveal where the

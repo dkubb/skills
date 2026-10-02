@@ -11,7 +11,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-09-v14"
+  version: "2026-10-v5"
 triggers:
   - "code review"
   - "review this diff"
@@ -141,6 +141,8 @@ triggers:
    rule. Apply its BCP 14 requirements language to distinguish blockers,
    justified exceptions, optional choices, and non-normative advice. Determine
    that a rule applies before assigning severity.
+   Use [DAAS](../daas/SKILL.md) as the guiding engineering judgment alongside
+   these concrete checks, including its audit procedure and approval rule.
 2. Call out primitive obsession as a review blocker. Reference
    `references/core-principles.md` and its "Primitive obsession" section for
    common fixes.
@@ -203,9 +205,13 @@ policy: including a rule makes its enforcement a personal choice regardless of
 whether the rule is based on language semantics, community practice, project
 experience, or a deliberate departure. Labels explain that basis and a rule's
 scope; they do not divide the rubric into personal and objective rules or
-suppress a check. When a rubric rule conflicts with an established project
-convention, report the conflict and ask the user to choose its scope. Do not
-silently apply the rule or migrate surrounding code. A rule that names
+suppress a check. When applicable rules conflict, record the conflict and follow
+the user's established decision. Generally prefer the stricter requirement
+while preserving known valid states and required behavior, and reconcile the
+governing documents within the authorized scope. A repeated implementation
+pattern does not by itself establish an intentional policy exception. Ask when
+requirements are not comparable, validity remains uncertain, or the necessary
+change exceeds the authorized scope. A rule that names
 repository-specific commands, files, domains, or architecture applies only
 when the repository provides that profile or explicitly adopts it. A language
 reference can require adoption of community-standard tooling, but it cannot
@@ -229,12 +235,11 @@ assume that a named repository wrapper already exists.
 
 ### Rule Steps
 
-1. Record contradictions in rules and ask the user which condition applies
-   before you write the rule into the global rules. Do not discard rules.
-   When a rubric rule conflicts with project convention, present the explicit
-   choices: retain the project convention as a documented exception, apply the
-   rubric rule in a defined local scope, or migrate every affected site.
-   Reviewers **MUST NOT** perform any migration without the user's choice.
+1. Resolve recorded conflicts using the Language List's rule above and DAAS.
+   Apply established user decisions without asking for them again. Distinguish
+   implementation noncompliance from opposing policies. An authorized local
+   correction does not authorize an unrelated repository-wide migration;
+   report any broader work separately.
 2. Record automation methods across languages. If a tool can do a rule,
    move it out of manual review.
 3. Capture new guidance immediately when the user provides it. Prefer to
