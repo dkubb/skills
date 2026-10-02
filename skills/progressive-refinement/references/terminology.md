@@ -88,7 +88,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 
 | Terms | Category | Subject field |
 |---|---|---|
-| Git, commit, commit ID, commit boundary, commit message, tree, parent, ancestor, descendant, branch, base, merge base, merge conflict, diff, hunk, range, metadata, checkout, history, linear history, repository, version, status, push, pull request (PR), merge | 19 | Git |
+| Git, commit, commit ID, commit boundary, commit message, tree, parent, ancestor, descendant, branch, base, merge base, merge conflict, diff, patch-id, hunk, range, metadata, checkout, history, linear history, repository, version, status, push, pull request (PR), merge | 19 | Git |
 | Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
 | Agent, primary agent, repair agent, review agent, context, context fork, conversation, harness, skill, host, prototype, LLM | 19 | AI agents. Rule 1.5 lists "large language model" and "chatbot" in category 19. |
 | Defect, failure, regression, reproducer, diagnostic | 7, 19 | Software testing. Rule 1.5 lists "defect" and "failure" in category 7. |
