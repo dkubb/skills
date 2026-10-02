@@ -250,6 +250,11 @@ Use the repository's applicable gates for these changes.
 Before you select a production owner, make sure that this owner includes the changed behavior.
 This owner must include the necessary test scope.
 
+With the fast gates, compare the test names that RTI selects for that owner with the names of the affected tests.
+For each difference, make sure that the gate contract permits it.
+Keep this comparison with the gate evidence.
+File paths do not show the selected test names.
+
 #### Time of reviews
 
 At checkpoints at which a review can help, examine the intent, the architecture, and how the work will continue.
@@ -359,7 +364,7 @@ With the evidence, record all the inputs that can change its claim:
 
 - Tree checks: the tree, command, configuration, toolchain, and conditions in which the gate operates
 - Diff checks: the inputs of tree checks, plus the parent, range, selected code owners, and contract classes
-- Selection of affected tests: the inputs of diff checks
+- Selection of affected tests: the inputs of diff checks, plus the selected test names
 - History checks: the applicable metadata
 - Reviews: the intent, the rubric, and the adjacent context.
 
