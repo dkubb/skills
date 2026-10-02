@@ -218,6 +218,8 @@ The gate contract of the repository can add other necessary gates.
 While the code and the commit boundaries change, use the fast gates. Do not do coverage or mutation testing at that time.
 Before coverage, make the last boundaries of all the atomic commits.
 Before mutation testing, complete coverage for all the last commits in the selected qualification sequence.
+The selected qualification sequence can be one standalone slice.
+The remainder can continue with fast gates while the slice gets qualification.
 For qualification, obey the gate contract of the repository.
 
 Before you make a commit in the local history, do its gates on the same work that you will keep.
