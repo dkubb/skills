@@ -372,8 +372,14 @@ deltas.
   mutants run against all of the file's contract modules; incidental
   coverage is allowed by design, and the gate is reachability from at least
   one public function plus a kill by at least one of those public functions'
-  tests. Do not test private functions directly; an unreachable or
-  unkillable private function is dead code to delete, not a gap to cover.
+  tests. Do not test private functions directly. A missing public scope or a
+  surviving mutant does not prove dead code: prove that no genuine
+  production entrypoint or public interface can reach the behavior in any
+  supported production configuration before deleting it. When genuine
+  production code reaches the behavior, strengthen the owning public
+  contracts in each failing class or refactor behind a genuine production
+  public contract; never add a test-only public API or a direct
+  private-function contract to make the gate pass.
 - When a test chains two or more fallible steps whose success is plumbing
   rather than the subject, return `Result` from the test and use `?`. If this
   requires suppressing `clippy::panic_in_result_fn`, place
