@@ -32,14 +32,16 @@ metadata:
 
 - For audits and code reviews, follow the [audit procedure](./references/audit-procedure.md).
 - When `code-review` or `git-review` also applies, follow its required checks and
-  output order; include principle-based findings within that report.
+  output order; include principle-based findings within that report and apply
+  the audit procedure's approval rule.
 - Load the linked explanations for principles relevant to the decision,
   including their qualifications and exceptions.
 
 ## Process
 
-- Use this rubric where judgment has not been encoded as a rule. Surface
-  contradictions so choices become intentional; respect explicit user decisions.
+- Apply these first principles alongside scenario-specific skills that provide
+  concrete methods for using them. Surface contradictions so choices become
+  intentional; respect explicit user decisions.
 - Practice recursive self-improvement: make assumptions explicit, acquire
   feedback, encode learning within authorized scope, and test it against reality.
   Propose new rules for Dan's acceptance before treating them as policy. No model

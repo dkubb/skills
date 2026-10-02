@@ -30,10 +30,11 @@ unless changes are requested.
    reconstruct and why. Recognize guarantees already established by types or
    boundaries. Match verification effort to the consequence and uncertainty;
    report claims that remain unverified as unresolved.
-5. **Classify and prioritize.** Distinguish a demonstrated defect, a justified
-   trade-off, missing evidence, and an unresolved preference. Missing evidence is
-   not proof of a defect. A stated trade-off can still have unsupported premises
-   or unacceptable consequences: explain those explicitly. Rank findings by
+5. **Classify and prioritize.** Distinguish a demonstrated defect or principle
+   violation, a justified trade-off, missing evidence, and an unresolved
+   preference. Missing evidence alone is not proof of a defect or violation.
+   A stated trade-off can still have unsupported premises or unacceptable
+   consequences: explain those explicitly. Rank findings by
    consequence and scope. Report confidence only for opinions and judgments,
    separately from priority, and explain its basis. Do not invent a universal
    ranking of principles or attribute generic preferences to Dan.
@@ -45,6 +46,28 @@ unless changes are requested.
    inclusion. Put suggestions that address no demonstrated problem or unmet
    requirement under optional improvements.
    If no actionable issue was found, say so without claiming completeness.
+
+## Approval
+
+When DAAS is loaded for a review, flag apparent departures from applicable DAAS
+guidance with their locations, evidence, and reasons the principles apply.
+Challenge them using the procedure above; keep unverified claims unresolved.
+
+A demonstrated violation blocks approval, even if another review skill reports
+no blocker. Resolve it through a fix or an acceptable, case-specific explanation
+from the user or LLM. The explanation must state the intent, address the
+principle's purpose, and account for the trade-offs and consequences. Establish
+its factual premises before accepting it as an
+[intentional exception](./be-intentional-including-when-making-exceptions.md).
+Record the explanation and its scope; an explanation already recorded for the
+same case can suffice without being repeated. Do not report a concern resolved
+by an acceptable explanation as an outstanding finding. Respect explicit user
+decisions and other applicable requirements.
+
+Priority orders findings; it does not make a demonstrated violation optional.
+An unresolved factual claim or preference alone does not establish a violation.
+Demonstrably unmet assurance requirements in applicable DAAS guidance are blocking
+violations even when no behavioral defect has been found.
 
 ## Accepting improvements
 
@@ -63,9 +86,10 @@ Use concise prose containing:
 
 - **Observation:** exact location and concrete evidence; distinguish observation
   from inference.
-- **Assessment:** demonstrated defect, justified trade-off, missing evidence, or
-  unresolved preference; priority by consequence and scope; confidence in
-  opinions or judgments, with its basis and remaining uncertainty.
+- **Assessment:** demonstrated defect or principle violation, justified trade-off,
+  missing evidence, or unresolved preference; whether it blocks approval; priority
+  by consequence and scope; confidence in opinions or judgments, with its basis
+  and remaining uncertainty.
 - **Principle:** the applicable principle and why it applies, with a link to its
   explanation.
 - **Consequence:** the failure, unnecessary state, reasoning burden, or maintenance
