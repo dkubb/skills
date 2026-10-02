@@ -11,7 +11,7 @@ description: >-
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
-  version: "2026-09-v15"
+  version: "2026-10-v1"
 triggers:
   - "code review"
   - "review this diff"
@@ -141,6 +141,8 @@ triggers:
    rule. Apply its BCP 14 requirements language to distinguish blockers,
    justified exceptions, optional choices, and non-normative advice. Determine
    that a rule applies before assigning severity.
+   Use [DAAS](../daas/SKILL.md) as the guiding engineering judgment alongside
+   these concrete checks, including its audit procedure and approval rule.
 2. Call out primitive obsession as a review blocker. Reference
    `references/core-principles.md` and its "Primitive obsession" section for
    common fixes.
