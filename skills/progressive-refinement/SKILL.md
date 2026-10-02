@@ -336,6 +336,11 @@ If such a failure occurs, stop the work that it has an effect on.
 Do an investigation of the failure before you continue that work.
 Independent work can continue if its evidence stays correct.
 
+Before you use development evidence for a new commit, compare the recorded inputs with the new inputs.
+If a gate uses the commit identity or diff selection, compare these inputs too.
+Keep the initial commit identity in the evidence.
+If the evidence no longer shows a necessary claim, get evidence for this claim.
+
 With the evidence, record all the inputs that can change its claim:
 
 - Tree checks: the tree, command, configuration, toolchain, and conditions in which the gate operates
@@ -542,7 +547,12 @@ Before qualification or delivery on a new base, also do this step.
 
 Do not select merged work as the review focus.
 During qualification, do not change the base.
-A new base starts a new target version. Then you must do the related qualification again.
+A new base starts a new target version.
+For this version, examine the evidence with the inputs in S4.
+If the evidence still shows the necessary claim, use it again.
+If the evidence does not show a necessary claim, do the related qualification again.
+
+Obey the user and repository instructions for gates on unchanged patch-ids.
 Work on `main` that has no relation to the selected range does not make it necessary to start an active maturity stage again.
 
 ## References
