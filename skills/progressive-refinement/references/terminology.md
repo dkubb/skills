@@ -21,6 +21,9 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Acceptance criteria:** Conditions that must be correct before you accept the work
 - **Gate:** A check with specified inputs and acceptance criteria
 - **Gate contract:** The gates of a repository and their sequence for each maturity stage
+- **Gate trailer:** A commit-message footer that identifies a gate result with its command hash and checked tree hash
+- **Command hash:** The SHA-1 hash of the exact UTF-8 command text, including its arguments, without a trailing newline
+- **Tree hash:** The Git object ID of the tree that the gate checked
 - **Maturity stage:** A step in the procedure to get assurance, for example development or publication
 - **Checkpoint:** Recorded work that its gates accept for its maturity stage and that you can put back into use
 - **Batch:** Work that you keep together at one checkpoint
@@ -73,6 +76,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Acceptance criteria | 7 | Requirements engineering |
 | System constraint, admission bound, pipeline | 7 | Theory of constraints and flow control |
 | Gate, gate contract, maturity stage, checkpoint | 19 | Continuous integration |
+| Gate trailer, command hash, tree hash | 19 | Git gate evidence |
 | Batch, piece, candidate, placement, placement test | 19 | Version control workflow |
 | Prerequisite, dependent, dependency, shared prerequisite, independent work | 7, 15 | Scheduling and dependency graphs. Rule 1.5 lists "prerequisite" in category 15. |
 | Attempt, extraction, mechanical extraction, remainder (D), target, conservation | 19 | Refactoring and version control |
@@ -91,7 +95,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Terms | Category | Subject field |
 |---|---|---|
 | Git, commit, commit ID, commit boundary, commit message, tree, parent, ancestor, descendant, branch, base, merge base, merge conflict, diff, patch-id, hunk, range, metadata, checkout, history, linear history, repository, version, status, push, pull request (PR), merge | 19 | Git |
-| Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
+| Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, argument, newline, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
 | Agent, primary agent, repair agent, review agent, context, context fork, conversation, harness, skill, host, prototype, LLM | 19 | AI agents. Rule 1.5 lists "large language model" and "chatbot" in category 19. |
 | Defect, failure, regression, reproducer, diagnostic | 7, 19 | Software testing. Rule 1.5 lists "defect" and "failure" in category 7. |
 | Affected test, unit test, property test, test-only change, test-only regression, test name, production owner, function, constant, test runner, coverage, mutation testing, instrumentation, formatting, fast gate | 19 | Software testing |
@@ -117,7 +121,7 @@ Use the past participle of a technical verb only as an adjective, for example "m
 
 Rule 8.6 tells you to count each of these items as one word:
 
-- Names: Dan Kubb, Symbiote, Codex, DAAS, atomic-changes, git-review, code-review, Clippy, RTI, Rust, ASD-STE100
+- Names: Dan Kubb, Symbiote, Codex, DAAS, atomic-changes, git-review, code-review, Clippy, RTI, Rust, ASD-STE100, CI, git-meta, SHA-1, UTF-8
 - Dates and identifiers: October 2, P1 thru P9, S1 thru S10, D, `main`, `EMPTY`, `collaboration.followup_task`, `collaboration.send_message`
 - Quoted labels: "Retained", "Passed ⟨rubric⟩", "Qualified", "Merged"
 - Quoted change classes from atomic-changes: "remove", "fix", "refactor", "move", "rename", "change", "add"
