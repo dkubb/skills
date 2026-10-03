@@ -18,6 +18,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Invariant:** A condition that must stay correct in all of the work
 - **Constraint:** A limit on the work that the user can accept
 - **System constraint:** The condition that sets the limit on accepted progress of the system
+- **Acceptance criteria:** Conditions that must be correct before you accept the work
 - **Gate:** A check with specified inputs and acceptance criteria
 - **Gate contract:** The gates of a repository and their sequence for each maturity stage
 - **Maturity stage:** A step in the procedure to get assurance, for example development or publication
@@ -69,6 +70,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 |---|---|---|
 | Goal, intent, initial intent, governing intent | 7 | Requirements engineering |
 | Invariant, constraint | 7 | Software engineering and formal methods |
+| Acceptance criteria | 7 | Requirements engineering |
 | System constraint, admission bound, pipeline | 7 | Theory of constraints and flow control |
 | Gate, gate contract, maturity stage, checkpoint | 19 | Continuous integration |
 | Batch, piece, candidate, placement, placement test | 19 | Version control workflow |
