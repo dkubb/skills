@@ -31,6 +31,8 @@ Use this skill to make batches of work better and to divide them into commits th
 This skill is most applicable when slices that help the user can go to delivery before the larger work is completed.
 For a small change that is easy, use the usual development procedure and review procedure.
 
+For trials and updates to this draft, use the [trial guidance](references/field-trials.md).
+
 ## Terms
 
 The [terminology reference](references/terminology.md) gives the terms of this skill and their definitions.
