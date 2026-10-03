@@ -43,7 +43,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Review slice:** A slice that includes each of its prerequisites that are not in the base
 - **Standalone slice:** A slice that agrees with all the conditions in "Conditions for a standalone slice"
 - **Delivery:** An accepted result that you supply to the user
-- **Cancellation test:** The decision if the user keeps a slice when the user cancels or reverts the subsequent work
+- **Cancellation test:** The decision if the user keeps a slice when the user rejects, cancels, or reverts the subsequent work
 - **Evidence:** Recorded data and results that show a specified claim
 - **Claim:** Information about the work that has a specified scope
 - **Judgment:** A decision or an estimate that the evidence does not fully show
@@ -104,6 +104,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Verb | Category | Subject field |
 |---|---|---|
 | Merge | 2 c) | Git system operation |
+| Rebase | 2 c) | Git system operation |
 | Revert | 2 c) | Git system operation |
 | Deploy | 2 c) | Software system operation |
 
