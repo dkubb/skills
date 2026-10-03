@@ -78,7 +78,7 @@ A standalone slice agrees with all these conditions in relation to the selected 
 - Each prerequisite is in the base or in the slice.
 - The gates accept each kept atomic commit of the slice in the sequence of its dependencies.
 - If you deploy all of the slice without the subsequent work, no regression occurs.
-- If the user cancels or reverts the remaining work, the user keeps the slice.
+- If the user rejects, cancels, or reverts the remaining work, the user keeps the slice.
 
 Internal dependencies are permitted. Apply the cancellation test to all of the slice and its prerequisites.
 Also apply the cancellation test to each smaller group of changes that you think about for delivery.
@@ -301,11 +301,18 @@ Also record your judgment of the time necessary to complete that work.
 Extraction can increase the number of commits. When you merge a slice, that work goes out of the unmerged scope.
 Select the sequence of work from its effect on accepted progress, not only from the number of its descendants.
 
-At each scope of development or review, find changes that help the user without other work.
-You can merge these changes before the remaining work. Use atomic-changes to identify their change classes.
-These change classes are "remove", "fix", "refactor", "move", "rename", "change", and "add".
+At each scope of development or review, find standalone slices in the work that you already have.
+Use atomic-changes to identify their change classes.
+First look for "remove", "fix", "refactor", "move", and "rename" changes that agree with the cancellation test.
+Give their extraction, review, qualification, and delivery priority over more work on the remainder.
 
-Apply the cancellation test to all change classes. Put prerequisites before dependents.
+Prepare each such slice for a PR.
+When its gates and reviews accept it, merge it under the publication conditions in S10.
+Do not wait for the full feature to prepare or merge these slices.
+Keep a change with the subsequent work if the user would not keep that change without it.
+
+Also apply the cancellation test to "change" and "add".
+Put prerequisites before dependents.
 Select the sequence of delivery from its effect on the system constraint.
 
 For a defect that is in the base, prepare a standalone slice with a reproducer and a correction.
@@ -568,7 +575,9 @@ Get the qualification of each necessary commit in the slice and of all of the sl
 An extraction does not show that you merged or supplied the slice.
 A merge makes the unmerged scope smaller. It does not show that the user can use the result.
 When deployment is necessary for delivery, record its result before you tell the user that delivery is complete.
-After a merge, prepared dependents can go to their next task.
+After a merge, rebase the selected remaining branches on the accepted base at a safe point.
+Keep other work safe, and synchronize shared dependents as S8 tells you.
+Prepared dependents can then go to their next task.
 
 If merged work overlaps the selected range, record a new base and range at a safe point that you identify.
 Before qualification or delivery on a new base, also do this step.
