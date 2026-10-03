@@ -199,11 +199,24 @@ Do not add evidence files to the repository unless no suitable alternative exist
 A workflow that permits checkpoints only after their gates accept can supply that assurance.
 Do not make another record only to repeat that assurance.
 
-For this workflow, use this format for gate trailers:
+For this workflow, use this logical format for gate trailers:
 
 ```text
 Gate-<slug>: <command-sha1> <tree-hash>
 ```
+
+Keep each physical commit-message line within 72 bytes.
+Put the tree hash on an indented continuation line:
+
+```text
+Gate-<slug>: <command-sha1>
+ <tree-hash>
+```
+
+If the key and command hash exceed that limit, put the command hash on an indented continuation line too.
+Keep the trailer block separate from preceding message text with a blank line.
+Use `git interpret-trailers --parse` to read the logical values.
+Its output must contain the same command hash and tree hash as the logical format above.
 
 Use the repository's gate identifier for `<slug>`.
 Calculate `<command-sha1>` from the exact UTF-8 command text, including its arguments, without a trailing newline.
@@ -676,10 +689,6 @@ Work on `main` that has no relation to the selected range does not make it neces
 
 The [code-review skill](../code-review/SKILL.md) uses [git-review](../git-review/SKILL.md) for each target that has a commit.
 Before Dan Kubb accepts this draft, make that skill agree with the sequence in S7.
-
-The git-review commit normalizer rejects the preferred gate trailers because each message line must fit in 72 bytes.
-Make its message rules agree with this trailer format before you use the two together.
-This draft does not give approval to bypass that check.
 
 The unmerged git-factor runtime uses `git hash-object --no-filters` for its command hash.
 That Git blob hash includes an object header. S1 uses SHA-1 of the command bytes only.
