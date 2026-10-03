@@ -206,6 +206,10 @@ That report must include:
 During the repair, the primary agent can continue other work that does not use those files.
 If there is no different agent, the same limits on the repair and the same checkpoint conditions apply.
 
+To use a completed repair agent again, start its next task with the applicable harness command.
+In the Codex collaboration harness, `collaboration.followup_task` starts that task.
+`collaboration.send_message` does not start a new task for a completed agent.
+
 #### Example gates for Rust
 
 In the Rust example from the voice conversations, the initial fast gates are these:

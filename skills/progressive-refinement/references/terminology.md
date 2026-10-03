@@ -115,8 +115,8 @@ Use the past participle of a technical verb only as an adjective, for example "m
 
 Rule 8.6 tells you to count each of these items as one word:
 
-- Names: Dan Kubb, Symbiote, DAAS, atomic-changes, git-review, code-review, Clippy, RTI, Rust, ASD-STE100
-- Dates and identifiers: October 2, P1 thru P9, S1 thru S10, D, `main`, `EMPTY`
+- Names: Dan Kubb, Symbiote, Codex, DAAS, atomic-changes, git-review, code-review, Clippy, RTI, Rust, ASD-STE100
+- Dates and identifiers: October 2, P1 thru P9, S1 thru S10, D, `main`, `EMPTY`, `collaboration.followup_task`, `collaboration.send_message`
 - Quoted labels: "Retained", "Passed ⟨rubric⟩", "Qualified", "Merged"
 - Quoted change classes from atomic-changes: "remove", "fix", "refactor", "move", "rename", "change", "add"
 - Quoted titles: "Conditions for a standalone slice", "manual runbook", "workflow plan".
