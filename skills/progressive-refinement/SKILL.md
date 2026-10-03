@@ -43,7 +43,8 @@ Before you start, record these inputs:
 - The goal and the initial intent
 - The necessary behavior, invariants, and constraints
 - The accepted base and the selected unmerged work
-- The gates and rubrics for each maturity stage.
+- The gates and rubrics for each maturity stage
+- The repository preferences and user approval for publication.
 
 Before a mechanical extraction from a batch, keep that batch at a checkpoint.
 The full feature does not have to be completed.
@@ -102,7 +103,8 @@ Dan Kubb can change them. They apply only to this workflow. They are not new pol
 ### P1. Measure progress with results that help the user
 
 Record the result that helps the user and its acceptance criteria. Measure progress to that result.
-When a result helps the user without other work and agrees with its criteria, supply it immediately.
+When a result helps the user without other work and agrees with its criteria, prepare it for delivery.
+Supply it immediately when its delivery has approval.
 
 ### P2. Keep the intent when you change the structure of the work
 
@@ -311,13 +313,15 @@ Select the sequence of work from its effect on accepted progress, not only from 
 
 At each scope of development or review, find standalone slices in the work that you already have.
 Use atomic-changes to identify their change classes.
-First look for "remove", "fix", "refactor", "move", and "rename" changes that agree with the cancellation test.
+First look for "remove", "fix", "refactor", "move", and "rename" changes to code already in the accepted base.
+Select those changes that agree with the cancellation test.
 Give their extraction, review, qualification, and delivery priority over more work on the remainder.
 
 Prepare each such slice for a PR.
-When its gates and reviews accept it, merge it under the publication conditions in S10.
-Do not wait for the full feature to prepare or merge these slices.
+Do not wait for the full feature to prepare these PRs.
+Merge only with approval and the necessary qualification, as S10 tells you.
 Keep a change with the subsequent work if the user would not keep that change without it.
+During normalization, put repairs and cleanup of new feature code into their owning changes.
 
 Also apply the cancellation test to "change" and "add".
 Put prerequisites before dependents.
@@ -326,7 +330,7 @@ Select the sequence of delivery from its effect on the system constraint.
 For a defect that is in the base, prepare a standalone slice with a reproducer and a correction.
 For a defect that the unmerged work caused, repair its owning change during normalization.
 With this step, you add slices that help the user continuously.
-Do not wait for all extractions before you do a review of a slice or merge it.
+Do not wait for all extractions before you do a review of a slice or prepare its PR.
 
 ### S3. Select one extraction from the remainder (D) — P1, P2, P4, P8, P9
 
@@ -576,8 +580,20 @@ Do not think that all reviews stay correct. Do not think that you must do all re
 
 While the remainder continues, do these steps for each prepared standalone slice.
 When a standalone slice agrees with its conditions, you can tell the user that it is prepared for publication.
-If the approval of the user does not include a push, a PR, or a merge, do not do it.
-If the approval that you have includes it, do not tell the user to give that approval again.
+
+Before publication, read the documented repository preferences and the user's instructions for the session.
+Identify which actions have approval: a push, a PR, or a merge.
+Do each publication action only when it has approval.
+Merge only when a documented repository preference or explicit user instruction permits it.
+The user's restrictions apply even when the repository permits automatic merging.
+If merge approval is missing or unclear, do not merge or enable automatic merging.
+This skill, its change classes, and successful gates or reviews do not give merge approval.
+You can ask the user for merge approval in the session.
+If existing approval includes the action and its conditions, do not ask for it again.
+
+Continue to prepare extraction PRs under the approval that you have.
+Without merge approval, keep prepared PRs open and continue independent work.
+Extraction, review, and qualification do not have to wait for merge approval.
 
 The slice can include dependent commits and independent paths. Record its dependency graph.
 Get the qualification of each necessary commit in the slice and of all of the slice.
