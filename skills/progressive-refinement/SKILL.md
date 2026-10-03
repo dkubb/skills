@@ -671,3 +671,7 @@ Work on `main` that has no relation to the selected range does not make it neces
 
 The [code-review skill](../code-review/SKILL.md) uses [git-review](../git-review/SKILL.md) for each target that has a commit.
 Before Dan Kubb accepts this draft, make that skill agree with the sequence in S7.
+
+The git-review commit normalizer rejects the preferred gate trailers because each message line must fit in 72 bytes.
+Make its message rules agree with this trailer format before you use the two together.
+This draft does not give approval to bypass that check.
