@@ -205,15 +205,16 @@ For this workflow, use this logical format for gate trailers:
 Gate-<slug>: <command-sha1> <tree-hash>
 ```
 
-Keep each physical commit-message line within 72 bytes.
-Put the tree hash on an indented continuation line:
+Use one physical line when the repository's message rules and the message checker permit it.
+Otherwise, fold the value to meet their line limit.
+For a 72-byte limit, use this layout:
 
 ```text
 Gate-<slug>: <command-sha1>
  <tree-hash>
 ```
 
-If the key and command hash exceed that limit, put the command hash on an indented continuation line too.
+If the key and command hash exceed the active line limit, put the command hash on an indented continuation line too.
 Keep the trailer block separate from preceding message text with a blank line.
 Use `git interpret-trailers --parse` to read the logical values.
 Its output must contain the same command hash and tree hash as the logical format above.
