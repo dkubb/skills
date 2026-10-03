@@ -20,7 +20,7 @@ triggers:
 # Progressive refinement
 
 This skill is a draft for Dan Kubb to examine, and its name can change.
-It records the approved workflow intent from the voice conversations of October 2.
+It records the approved workflow intent from the voice conversations of October 2 and October 3.
 It also identifies methods that did not have a test and decisions that are open.
 At this time, the tool goal is a standalone prototype for extraction and for the pipeline.
 Symbiote is a possible subsequent host. This draft is not installed.
@@ -118,6 +118,8 @@ Make the scope of each claim agree with its evidence. Do not make a claim more s
 If evidence shows a fact at a specified scope, you can write that fact at that scope.
 You can also write a judgment. Identify it as a judgment.
 
+Keep only the records necessary to support the claim. Use existing records before you make new ones.
+
 If evidence does not continue to show the claim in the applicable conditions, do not use it again.
 If the results of checks do not agree, do an investigation. Record each judgment that is open.
 
@@ -186,6 +188,33 @@ Before the gates accept a batch, you can examine its intent and architecture.
 The first checkpoints do not have to show the last sequence of atomic commits.
 That commit records progress in development. The larger feature does not have to be completed.
 You must get publication assurance at a subsequent time. This step does not cancel it.
+
+#### Keep only necessary evidence
+
+Use existing gate output, CI records, and Git metadata. Do not duplicate their data.
+Do not add evidence files to the repository unless no suitable alternative exists.
+A workflow that permits checkpoints only after their gates accept can supply that assurance.
+Do not make another record only to repeat that assurance.
+
+For this workflow, use this format for gate trailers:
+
+```text
+Gate-<slug>: <command-sha1> <tree-hash>
+```
+
+Use the repository's gate identifier for `<slug>`.
+Calculate `<command-sha1>` from the exact UTF-8 command text, including its arguments, without a trailing newline.
+For `cargo test`, calculate the SHA-1 hash of `cargo test`.
+Use the checked candidate's tree hash for `<tree-hash>`.
+Add a trailer only for a result that the gate accepts or that S4 permits you to use again.
+
+After a rebase, compare the trailer with the new command and tree.
+Also compare other inputs that the gate uses, as S4 tells you.
+For a diff check, the tree hash alone does not identify its base or selection.
+Keep those inputs in existing gate output or metadata.
+Do not use a trailer again when its evidence no longer supports the claim.
+
+Use gate trailers at this time. A change to git-meta is deferred.
 
 #### Gate repair with an agent
 
@@ -388,7 +417,7 @@ If a gate uses the commit identity or diff selection, compare these inputs too.
 Keep the initial commit identity in the evidence.
 If the evidence no longer shows a necessary claim, get evidence for this claim.
 
-With the evidence, record all the inputs that can change its claim:
+With the evidence, keep the inputs that can change its claim. Use references to existing records where possible:
 
 - Tree checks: the tree, command, configuration, toolchain, and conditions in which the gate operates
 - Diff checks: the inputs of tree checks, plus the parent, range, selected code owners, and contract classes
