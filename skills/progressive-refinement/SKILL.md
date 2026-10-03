@@ -254,8 +254,8 @@ The gate contract of the repository can add other necessary gates.
 Keep the feedback loop fast during development, review, and decomposition.
 While the code, commit boundaries, or commit sequence change, use the fast gates.
 Do not do coverage or mutation testing at that time.
-Do coverage and mutation testing near publication, when the selected slice is ready for final qualification.
-First finalize its code, atomic boundaries, sequence, and reviews through S9 and S10.
+Start coverage and mutation testing only after final review approval of the selected slice.
+First finalize its code, atomic boundaries, and sequence through S9 and S10.
 
 The selected qualification sequence can be one standalone slice.
 The remainder can continue with fast gates while the slice gets qualification.
@@ -619,17 +619,15 @@ Before coverage, make sure that the selected qualification sequence agrees with 
 - During approved normalization, each branch-local correction went into its owning change.
 - Formatting, Clippy, and the affected unit tests and property tests accept each final Rust commit.
   Use RTI for the affected tests and its selection checks in S1.
-- The code reviews, standalone commit reviews, and integrated review accept the work. No blocking review finding is open.
+- The selected sequence has final review approval, including its code, standalone commits, and integrated result. No blocking review finding is open.
 
 Then do the applicable coverage checks for each atomic commit in that sequence.
 Before mutation testing, complete the applicable coverage checks for all commits in that sequence.
 Use this last pass to examine whether the tests exercise and protect the accepted behavior.
 
-If coverage or mutation testing requires a correction, make it in the owning change.
-This can include removing unnecessary code or using a suitable simpler primitive.
-After any correction, return that work to fast gates and review.
-For Rust, formatting, Clippy, and the affected unit and property tests must pass before another coverage or mutation pass.
-Make its atomic boundaries and sequence final again before you continue qualification.
+If qualification requires a correction, return the affected work to fast gates and review.
+Correct its owning change.
+Get final review approval again before you continue qualification.
 Use S4 to decide which previous results still apply.
 
 While the remainder continues, do these steps for each prepared standalone slice.
