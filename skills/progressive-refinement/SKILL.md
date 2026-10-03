@@ -131,6 +131,7 @@ Include its necessary prerequisites. Record the dependencies.
 ### P5. Keep progress that checks accept
 
 Keep only work that the checks for its maturity stage accept.
+Use the fastest checks that are sufficient for the current stage.
 While you try a change, keep the data necessary to put the last accepted work back into use.
 If new evidence shows a possible error in previous assurance, examine that assurance again.
 
@@ -250,10 +251,11 @@ In the Rust example from the voice conversations, the initial fast gates are the
 - The affected unit tests and property tests without instrumentation, with RTI or the test runner of the repository.
 
 The gate contract of the repository can add other necessary gates.
+Keep the feedback loop fast during development, review, and decomposition.
 While the code, commit boundaries, or commit sequence change, use the fast gates.
 Do not do coverage or mutation testing at that time.
-These are final qualification passes for code that has its last atomic boundaries, sequence, and accepted reviews.
-Before you start them, complete S9 and the artifact checks in S10.
+Do coverage and mutation testing near publication, when the selected slice is ready for final qualification.
+First finalize its code, atomic boundaries, sequence, and reviews through S9 and S10.
 
 The selected qualification sequence can be one standalone slice.
 The remainder can continue with fast gates while the slice gets qualification.
@@ -623,8 +625,11 @@ Then do the applicable coverage checks for each atomic commit in that sequence.
 Before mutation testing, complete the applicable coverage checks for all commits in that sequence.
 Use this last pass to examine whether the tests exercise and protect the accepted behavior.
 
-If coverage or mutation testing makes a change necessary, return that work to fast gates and review.
-Make its commit boundaries and sequence final again before you continue qualification.
+If coverage or mutation testing requires a correction, make it in the owning change.
+This can include removing unnecessary code or using a suitable simpler primitive.
+After any correction, return that work to fast gates and review.
+For Rust, formatting, Clippy, and the affected unit and property tests must pass before another coverage or mutation pass.
+Make its atomic boundaries and sequence final again before you continue qualification.
 Use S4 to decide which previous results still apply.
 
 While the remainder continues, do these steps for each prepared standalone slice.
