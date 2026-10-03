@@ -250,9 +250,10 @@ In the Rust example from the voice conversations, the initial fast gates are the
 - The affected unit tests and property tests without instrumentation, with RTI or the test runner of the repository.
 
 The gate contract of the repository can add other necessary gates.
-While the code and the commit boundaries change, use the fast gates. Do not do coverage or mutation testing at that time.
-Before coverage, make the last boundaries of all the atomic commits.
-Before mutation testing, complete coverage for all the last commits in the selected qualification sequence.
+While the code, commit boundaries, or commit sequence change, use the fast gates.
+Do not do coverage or mutation testing at that time.
+These are final qualification passes for code that has its last atomic boundaries, sequence, and accepted reviews.
+Before you start them, complete S9 and the artifact checks in S10.
 
 The selected qualification sequence can be one standalone slice.
 The remainder can continue with fast gates while the slice gets qualification.
@@ -510,6 +511,8 @@ Examine how each atomic commit helps the goal.
 In the review of the integrated result, examine all of the goal.
 
 Use code review to make batches better during development.
+After extraction, do a review of each atomic commit in its standalone context.
+A review of the source batch does not replace that review.
 To examine candidate atomic commits that you made, use git-review.
 git-review examines commit boundaries, sequence, and correct commits. It also makes sure that intent, diff, and message agree.
 
@@ -606,6 +609,23 @@ Do not think that all reviews stay correct. Do not think that you must do all re
 6. Do a review of the integrated result and of how easy it is to read across commit boundaries.
 7. A review of the integrated result does not replace a necessary piece review.
 8. In your reports, keep the claims about checkpoints, qualification, and publication different.
+
+Before coverage, make sure that the selected qualification sequence agrees with all these conditions:
+
+- Each commit is one coherent transformation. Complete the minimality checks in S9 for each commit.
+- The commit boundaries and sequence agree with atomic-changes.
+- During approved normalization, each branch-local correction went into its owning change.
+- Formatting, Clippy, and the affected unit tests and property tests accept each final Rust commit.
+  Use RTI for the affected tests and its selection checks in S1.
+- The code reviews, standalone commit reviews, and integrated review accept the work. No blocking review finding is open.
+
+Then do the applicable coverage checks for each atomic commit in that sequence.
+Before mutation testing, complete the applicable coverage checks for all commits in that sequence.
+Use this last pass to examine whether the tests exercise and protect the accepted behavior.
+
+If coverage or mutation testing makes a change necessary, return that work to fast gates and review.
+Make its commit boundaries and sequence final again before you continue qualification.
+Use S4 to decide which previous results still apply.
 
 While the remainder continues, do these steps for each prepared standalone slice.
 When a standalone slice agrees with its conditions, you can tell the user that it is prepared for publication.
