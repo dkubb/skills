@@ -359,9 +359,11 @@ This method does not make it necessary to examine merged work on `main` again.
 
 1. Make the candidate in an isolated checkout with its selected prerequisites and its recorded target version.
 2. Make sure that the candidate shows the extraction that you selected.
-3. Do the gates of its maturity stage, or use evidence with the same inputs again as P3 tells you.
-4. Record the inputs of each gate result.
-5. If the gate changed the candidate or the checkout, make sure that you know about each change.
+3. Make checks for the applicable acceptance criteria in the governing instructions at the selected base.
+4. Apply those checks to the candidate itself. A match with expected results that you generated does not replace those checks.
+5. Do the gates of its maturity stage, or use evidence with the same inputs again as P3 tells you.
+6. Record the inputs of each gate result.
+7. If the gate changed the candidate or the checkout, make sure that you know about each change.
 
 If a gate rejects a placement and you thought that this result was possible, keep the previous checkpoint.
 If you reject the candidate, keep its diagnostic and the previous checkpoint.
@@ -388,7 +390,7 @@ With the evidence, record all the inputs that can change its claim:
 - Diff checks: the inputs of tree checks, plus the parent, range, selected code owners, and contract classes
 - Selection of affected tests: the inputs of diff checks, plus the selected test names
 - History checks: the applicable metadata
-- Reviews: the intent, the rubric, and the adjacent context.
+- Reviews: the intent, the rubric, the governing instructions, and the adjacent context.
 
 If evidence does not include the necessary claim, do not use it again.
 An accepted extraction shows that the extraction is correct only in the conditions of the test.
