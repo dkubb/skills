@@ -92,7 +92,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
 | Agent, primary agent, repair agent, review agent, context, context fork, conversation, harness, skill, host, prototype, LLM | 19 | AI agents. Rule 1.5 lists "large language model" and "chatbot" in category 19. |
 | Defect, failure, regression, reproducer, diagnostic | 7, 19 | Software testing. Rule 1.5 lists "defect" and "failure" in category 7. |
-| Affected test, unit test, property test, test-only regression, test name, production owner, function, constant, test runner, coverage, mutation testing, instrumentation, formatting, fast gate | 19 | Software testing |
+| Affected test, unit test, property test, test-only change, test-only regression, test name, production owner, function, constant, test runner, coverage, mutation testing, instrumentation, formatting, fast gate | 19 | Software testing |
 | Fixup, amend, refactor, change class, contract class, presentation sequence, presentation ranking, review contract | 19 | Version control workflow and the atomic-changes skill |
 | Graph, dependency graph, topological sequence, combination, phase, semantic dependency | 7 | Mathematics and software engineering. Rule 1.5 lists "graph", "combination", and "phase" in category 7. |
 | Deployment | 20 | Software release to the user |
