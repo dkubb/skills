@@ -675,3 +675,9 @@ Before Dan Kubb accepts this draft, make that skill agree with the sequence in S
 The git-review commit normalizer rejects the preferred gate trailers because each message line must fit in 72 bytes.
 Make its message rules agree with this trailer format before you use the two together.
 This draft does not give approval to bypass that check.
+
+The unmerged git-factor runtime uses `git hash-object --no-filters` for its command hash.
+That Git blob hash includes an object header. S1 uses SHA-1 of the command bytes only.
+These hashes differ for the same command.
+Agree on one hash method before you use gate trailers across these workflows.
+Until then, do not use a trailer from one hash method as evidence for the other.
