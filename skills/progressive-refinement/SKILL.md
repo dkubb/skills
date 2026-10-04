@@ -61,7 +61,7 @@ Keep these outputs:
 - Review results with their scopes
 - A last history that is easy to read.
 
-Identify local checkpoints and work that is prepared for publication as different items.
+Identify local checkpoints, draft PRs, and work prepared for final publication as different items.
 Write a report about open dependencies, open judgments, and missing evidence.
 
 ## Conditions for each kept commit
@@ -69,7 +69,7 @@ Write a report about open dependencies, open judgments, and missing evidence.
 Before you keep a commit in the local history, make sure that the gates of its maturity stage accept it.
 Apply this condition to initial batches, repairs, fixups, atomic commits from extractions, and new commits between them.
 In the Rust example, these gates are formatting, Clippy, and the affected tests without instrumentation.
-The last coverage, mutation testing, and publication checks are different. They are stronger, and they are necessary at subsequent maturity stages.
+The last coverage, mutation testing, and final publication checks are different. They are stronger, and they are necessary at subsequent maturity stages.
 
 If a gate rejects an attempt, keep the failure in that attempt. Do not keep it as a commit in the kept history.
 Temporary Git objects can be necessary to make an isolated candidate for a gate. These objects are not kept checkpoints.
@@ -89,7 +89,7 @@ Also apply the cancellation test to each smaller group of changes that you think
 An accepted placement shows that the change is correct in the conditions of the test.
 The cancellation test shows that the slice helps the user without the subsequent work.
 Delivery before the remaining work must have the two results.
-Before you give a candidate the label "Qualified", it must have its necessary review and publication assurance.
+Before you give a candidate the label "Qualified", it must have its necessary review and final publication assurance.
 This condition also applies to a candidate that the fast gates accept.
 
 Apply these conditions to all change classes, which include "change" and "add".
@@ -105,6 +105,7 @@ Dan Kubb can change them. They apply only to this workflow. They are not new pol
 ### P1. Measure progress with results that help the user
 
 Record the result that helps the user and its acceptance criteria. Measure progress to that result.
+Make progress visible while the work continues.
 When a result helps the user without other work and agrees with its criteria, prepare it for delivery.
 Supply it immediately when its delivery has approval.
 
@@ -175,22 +176,49 @@ Each piece can go to its next task while the remaining work continues.
 3. Record the gates for each maturity stage.
 4. Examine the status of the repository at this time.
 5. Keep other work safe.
-6. Select a batch that helps the user.
-7. Give the task sufficient information for that batch.
-8. When it is necessary, give the task access to the adjacent code, architecture, and constraints.
-9. Write the code for that batch.
-10. Compare the result with the intent and the necessary behavior.
-11. Repair each difference, and compare the result again.
-12. Do the specified gates on the same work that you will keep.
-13. If previous gate evidence has the same inputs and conditions, you can use that evidence again.
-14. If the gates accept the batch, make its commit before a checkpoint review or an extraction.
-15. For each extraction, record the version of its source checkpoint and its target version.
+6. When a work branch starts, open its draft PR with the procedure below.
+7. Select a batch that helps the user.
+8. Give the task sufficient information for that batch.
+9. When it is necessary, give the task access to the adjacent code, architecture, and constraints.
+10. Write the code for that batch.
+11. Compare the result with the intent and the necessary behavior.
+12. Repair each difference, and compare the result again.
+13. Do the specified gates on the same work that you will keep.
+14. If previous gate evidence has the same inputs and conditions, you can use that evidence again.
+15. If the gates accept the batch, make its commit before a checkpoint review or an extraction. Push it immediately.
+16. For each extraction, record the version of its source checkpoint and its target version.
 
 Before the gates accept a batch, you can examine its intent and architecture.
 
 The first checkpoints do not have to show the last sequence of atomic commits.
 That commit records progress in development. The larger feature does not have to be completed.
-You must get publication assurance at a subsequent time. This step does not cancel it.
+You must get final publication assurance at a subsequent time. This step does not cancel it.
+
+#### Open draft PRs and share progress immediately
+
+First check existing approval for pushes and PR creation.
+If that approval is missing, get the necessary decision. Independent local work can continue.
+If the branch already has a PR, use it. Do not create another.
+
+When each new work branch starts, push it and open a draft PR immediately.
+Apply this rule to feature branches and extraction branches.
+If the branch has no commit beyond its base, make an empty planning commit on that base.
+Keep its tree equal to the base. Use applicable gate evidence as S4 permits.
+If the host or repository rejects empty-commit PRs, wait for the first commit that its fast gates accept.
+Then push that commit and open the draft PR immediately.
+
+Push every commit on the work branch immediately.
+Include empty planning commits, batches, repairs, fixups, and metadata commits. Do not batch pushes.
+Push the updated branch immediately after each completed rebase.
+For an authorized history rewrite, use `--force-with-lease=<ref>:<expected-head>`.
+Use the remote head recorded before the rewrite for `<expected-head>`.
+If the lease fails, synchronize with its owner before replacing the branch.
+
+Draft PRs can contain non-atomic checkpoints.
+Do not wait for decomposition, review approval, coverage, or mutation testing to push those checkpoints.
+The conditions for each kept commit still apply.
+Draft publication does not make the work "Qualified" or give merge approval.
+Keep the PR's intent, completed checks, and remaining work accurate.
 
 #### Keep only necessary evidence
 
@@ -297,7 +325,7 @@ Use these labels for different claims:
 
 - "Retained" for a kept checkpoint that has the necessary conservation checks
 - "Passed ⟨rubric⟩" for a review result in the recorded rubric and scope
-- "Qualified" for work that has the necessary assurance for publication
+- "Qualified" for work that has the necessary assurance for final publication
 - "Merged" for work in the base.
 
 #### RTI selection
@@ -642,6 +670,8 @@ Do not think that all reviews stay correct. Do not think that you must do all re
 7. A review of the integrated result does not replace a necessary piece review.
 8. In your reports, keep the claims about checkpoints, qualification, and publication different.
 
+During approved normalization, remove empty commits used only to open the draft PR.
+
 Before coverage, make sure that the selected qualification sequence agrees with all these conditions:
 
 - Each commit is one coherent transformation. Complete the minimality checks in S9 for each commit.
@@ -661,10 +691,11 @@ Get final review approval again before you continue qualification.
 Use S4 to decide which previous results still apply.
 
 While the remainder continues, do these steps for each prepared standalone slice.
-When a standalone slice agrees with its conditions, you can tell the user that it is prepared for publication.
+When a standalone slice agrees with its conditions, you can tell the user that it is prepared for final publication.
+Use its existing draft PR. Mark it ready only after the necessary qualification.
 
-Before publication, read the documented repository preferences and the user's instructions for the session.
-Identify which actions have approval: a push, a PR, or a merge.
+Before final publication, read the documented repository preferences and the user's instructions for the session.
+Identify which actions have approval: a push, a PR, a ready-for-review change, or a merge.
 Do each publication action only when it has approval.
 Merge only when a documented repository preference or explicit user instruction permits it.
 The user's restrictions apply even when the repository permits automatic merging.

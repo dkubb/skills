@@ -24,7 +24,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Gate trailer:** A commit-message footer that identifies an observed gate result with its command hash and checked tree hash
 - **Command hash:** The SHA-1 hash of the exact UTF-8 command text, including its arguments, without a trailing newline
 - **Tree hash:** The Git object ID of the tree that the gate checked
-- **Maturity stage:** A step in the procedure to get assurance, for example development or publication
+- **Maturity stage:** A step in the procedure to get assurance, for example development or final publication
 - **Checkpoint:** Recorded work that its gates accept for its maturity stage and that you can put back into use
 - **Batch:** Work that you keep together at one checkpoint
 - **Piece:** A selected change for extraction
@@ -55,14 +55,16 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Review focus:** The work that a review must examine fully
 - **Rubric:** The criteria for a specified review
 - **Assurance:** The evidence that you must have before you accept work at a maturity stage
-- **Qualification:** The procedure that gets the assurance that is necessary for publication
+- **Qualification:** The procedure that gets the assurance that is necessary for final publication
 - **Publication:** A push, a pull request (PR), or a merge that makes work available to other persons
+- **Draft publication:** A push or draft PR that makes checkpoints available before final qualification
+- **Final publication:** Making qualified work ready for merge or supplying it through merge or release
 - **Admission bound:** A temporary limit on the quantity of work in the pipeline that is not completed
 - **Pipeline:** The sequence of tasks that work goes through to acceptance and delivery
 - **Owning change:** The unmerged change that caused the behavior that a repair corrects
 - **Target repair:** A repair that changes the target, with a record of the change
 - **Waiver:** A decision to accept specified work without one applicable instruction, with a recorded cause and evidence for its facts
-- **Normalization:** The last change of the history before publication that puts fixups into their owning changes
+- **Normalization:** The last change of the history before final publication that puts fixups into their owning changes
 - **Boundary of validity:** The smallest set of changes that keeps the necessary behavior and gate results of a change
 - **Minimality:** The condition that no smaller related extraction agrees with the applicable criteria
 - **Indivisibility:** The condition that no smaller related part of a change can be a commit that its gates accept.
@@ -85,7 +87,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Cancellation test | 7 | Product engineering |
 | Evidence, claim, judgment, assurance, scope | 7 | Assurance cases (ISO/IEC/IEEE 15026) |
 | Review focus, checkpoint review, rubric | 7, 15 | Software review |
-| Qualification, publication | 19 | Software release |
+| Qualification, publication, draft publication, final publication | 19 | Software release |
 | Owning change, target repair, normalization | 19 | Version control workflow |
 | Waiver | 21 | Quality management. Rule 1.5 lists "waiver" in category 21. |
 | Boundary of validity, minimality, indivisibility | 7 | Software engineering |
@@ -110,6 +112,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 | Verb | Category | Subject field |
 |---|---|---|
 | Merge | 2 c) | Git system operation |
+| Push | 2 c) | Git system operation |
 | Rebase | 2 c) | Git system operation |
 | Revert | 2 c) | Git system operation |
 | Deploy | 2 c) | Software system operation |
