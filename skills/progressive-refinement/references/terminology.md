@@ -21,7 +21,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 - **Acceptance criteria:** Conditions that must be correct before you accept the work
 - **Gate:** A check with specified inputs and acceptance criteria
 - **Gate contract:** The gates of a repository and their sequence for each maturity stage
-- **Gate trailer:** A commit-message footer that identifies a gate result with its command hash and checked tree hash
+- **Gate trailer:** A commit-message footer that identifies an observed gate result with its command hash and checked tree hash
 - **Command hash:** The SHA-1 hash of the exact UTF-8 command text, including its arguments, without a trailing newline
 - **Tree hash:** The Git object ID of the tree that the gate checked
 - **Maturity stage:** A step in the procedure to get assurance, for example development or publication
@@ -94,7 +94,7 @@ The terms of ASD-STE100, for example "technical noun", "rule", and "quoted text"
 
 | Terms | Category | Subject field |
 |---|---|---|
-| Git, commit, commit ID, commit boundary, commit message, tree, parent, ancestor, descendant, branch, base, merge base, merge conflict, diff, patch-id, hunk, range, metadata, checkout, history, linear history, repository, version, status, push, pull request (PR), merge | 19 | Git |
+| Git, commit, commit ID, commit boundary, commit message, tree, parent, ancestor, descendant, branch, ref, base, merge base, merge conflict, diff, patch-id, hunk, range, metadata, checkout, history, linear history, repository, version, status, push, pull request (PR), merge | 19 | Git |
 | Code, code owner, software, behavior, feature, artifact, architecture, configuration, toolchain, command, argument, newline, file, resource, queue, segment, path | 19 | Software engineering. Rule 1.5 lists "configuration" in category 7. |
 | Agent, primary agent, repair agent, review agent, context, context fork, conversation, harness, skill, host, prototype, LLM | 19 | AI agents. Rule 1.5 lists "large language model" and "chatbot" in category 19. |
 | Defect, failure, regression, reproducer, diagnostic | 7, 19 | Software testing. Rule 1.5 lists "defect" and "failure" in category 7. |

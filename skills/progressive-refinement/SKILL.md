@@ -227,7 +227,10 @@ Append `^{tree}` to identify it as a tree. Keep the full hash.
 Before a comparison, resolve the expression with `git rev-parse --verify`.
 Gate readers must support this notation before they can use the record again.
 GitHub can still shorten the hash and link it as a commit despite the suffix.
-Add a trailer only for a result that the gate accepts or that S4 permits you to use again.
+Add a trailer only for a gate result that was observed on the named tree.
+If S4 permits reuse on another tree, preserve the initial trailer.
+Do not substitute the new tree hash without an accepted execution on that new tree.
+Keep the reuse judgment with existing gate output or metadata, as S4 tells you.
 
 After a rebase, compare the trailer with the new command and tree.
 Also compare other inputs that the gate uses, as S4 tells you.
@@ -438,6 +441,9 @@ Independent work can continue if its evidence stays correct.
 Before you use development evidence for a new commit, compare the recorded inputs with the new inputs.
 If a gate uses the commit identity or diff selection, compare these inputs too.
 Keep the initial commit identity in the evidence.
+For reuse on another tree, identify the initial result, new tree, and scope of the reuse claim.
+Record which relevant inputs stayed the same.
+Use existing gate output or metadata. Do not duplicate the initial result.
 If the evidence no longer shows a necessary claim, get evidence for this claim.
 
 With the evidence, keep the inputs that can change its claim. Use references to existing records where possible:
@@ -447,6 +453,10 @@ With the evidence, keep the inputs that can change its claim. Use references to 
 - Selection of affected tests: the inputs of diff checks, plus the selected test names
 - History checks: the applicable metadata
 - Reviews: the intent, the rubric, the governing instructions, and the adjacent context.
+
+Keep the inputs that can change the gate's claim fixed.
+Changes to unrelated refs in shared Git storage do not invalidate an attempt.
+Include those refs only if the gate contract checks them.
 
 If evidence does not include the necessary claim, do not use it again.
 An accepted extraction shows that the extraction is correct only in the conditions of the test.
