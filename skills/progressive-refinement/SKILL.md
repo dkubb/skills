@@ -105,7 +105,7 @@ Dan Kubb can change them. They apply only to this workflow. They are not new pol
 ### P1. Measure progress with results that help the user
 
 Record the result that helps the user and its acceptance criteria. Measure progress to that result.
-Make progress visible while the work continues.
+Make each recorded change visible immediately.
 When a result helps the user without other work and agrees with its criteria, prepare it for delivery.
 Supply it immediately when its delivery has approval.
 
@@ -207,12 +207,21 @@ Keep its tree equal to the base. Use applicable gate evidence as S4 permits.
 If the host or repository rejects empty-commit PRs, wait for the first commit that its fast gates accept.
 Then push that commit and open the draft PR immediately.
 
+Keep each work branch's committed history and refs synchronized with GitHub.
 Push every commit on the work branch immediately.
 Include empty planning commits, batches, repairs, fixups, and metadata commits. Do not batch pushes.
 Push the updated branch immediately after each completed rebase.
+Also synchronize authorized branch creation, amends, resets, renames, and deletions immediately.
 For an authorized history rewrite, use `--force-with-lease=<ref>:<expected-head>`.
 Use the remote head recorded before the rewrite for `<expected-head>`.
 If the lease fails, synchronize with its owner before replacing the branch.
+
+After each update, verify that the GitHub ref matches the local commit ID.
+After branch deletion, verify that the GitHub ref is absent.
+If synchronization fails, report it and restore synchronization before making more changes to that branch.
+Independent work can continue.
+
+Git pushes publish commits and refs. They do not include uncommitted working-tree or index changes.
 
 Draft PRs can contain non-atomic checkpoints.
 Do not wait for decomposition, review approval, coverage, or mutation testing to push those checkpoints.
@@ -692,7 +701,10 @@ Use S4 to decide which previous results still apply.
 
 While the remainder continues, do these steps for each prepared standalone slice.
 When a standalone slice agrees with its conditions, you can tell the user that it is prepared for final publication.
-Use its existing draft PR. Mark it ready only after the necessary qualification.
+Use its existing draft PR. Keep it draft until the slice is ready for merge.
+Before you mark it ready, verify final review approval, completed qualification, and successful required GitHub checks.
+Also verify that no merge conflict or other merge-readiness blocker is open.
+Marking a PR ready does not give permission to merge it.
 
 Before final publication, read the documented repository preferences and the user's instructions for the session.
 Identify which actions have approval: a push, a PR, a ready-for-review change, or a merge.
