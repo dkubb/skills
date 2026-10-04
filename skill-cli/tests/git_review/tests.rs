@@ -485,6 +485,32 @@ mod message {
     }
 
     #[test]
+    fn renders_long_trailers() {
+        let hash = "a".repeat(40);
+        let body = format!(
+            "Keep exact evidence.\n\nGate-test: {hash} {hash}\n - opaque metadata\n-Token: accepted"
+        );
+        let expected_message = format!(
+            "Fix gate evidence\\n\\nKeep exact evidence.\\n\\nGate-test: {hash} {hash}\\n - opaque metadata\\n-Token: accepted"
+        );
+
+        let output = skill()
+            .args([
+                "git-review",
+                "message",
+                "fix",
+                "--summary",
+                "gate evidence",
+                "--body",
+                &body,
+            ])
+            .output()
+            .expect("compose long trailers");
+
+        assert_eq!(observed(output), expected(&expected_message));
+    }
+
+    #[test]
     fn rejects_overlong_body() {
         let output = skill()
             .args([
@@ -529,6 +555,32 @@ mod check_messages {
             .args([&base, "HEAD"])
             .output()
             .expect("check valid messages");
+
+        assert_eq!(
+            observed(output),
+            Observed {
+                code: Observed::SUCCESS,
+                stdout: Vec::new(),
+                stderr: Vec::new(),
+            }
+        );
+    }
+
+    #[test]
+    fn accepts_long_trailers() {
+        let repo = TestRepo::new();
+        let base = repo.commit("Add base commit");
+        let hash = "a".repeat(40);
+        let message = format!(
+            "Fix gate evidence\n\nKeep exact command and tree identities.\n\n\
+             Gate-test: {hash} {hash}\n - opaque metadata\n-Token: accepted"
+        );
+        let _valid = repo.commit(&message);
+
+        let output = command(&repo, "check-messages")
+            .args([&base, "HEAD"])
+            .output()
+            .expect("check long trailers");
 
         assert_eq!(
             observed(output),
