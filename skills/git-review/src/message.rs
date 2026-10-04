@@ -79,13 +79,19 @@ pub(crate) fn has_atomic_subject(subject: &str) -> bool {
 
 /// Check that every body bullet is a canonical action line.
 pub(crate) fn has_valid_action_lines(message: &str) -> bool {
-    message.lines().skip(2).all(|line| {
+    let lines: Vec<&str> = message.lines().collect();
+    let trailer_start = trailer_start(&lines);
+
+    lines.iter().enumerate().skip(2).all(|(position, line)| {
         let trimmed = line.trim_start();
         if ["What:", "Why:", "How:"]
             .iter()
             .any(|label| trimmed.starts_with(label))
         {
             return false;
+        }
+        if position >= trailer_start {
+            return true;
         }
         let Some(rest) = trimmed.strip_prefix(['-', '*']) else {
             return true;
@@ -106,18 +112,57 @@ pub(crate) fn has_valid_action_lines(message: &str) -> bool {
     })
 }
 
-/// Check wrapping, separators, and trailing whitespace.
+/// Check wrapping, separators, and trailing whitespace, excluding trailer widths.
 pub(crate) fn has_valid_format(message: &str) -> bool {
     let lines: Vec<&str> = message.lines().collect();
     let Some(subject) = lines.first() else {
         return false;
     };
 
+    let trailer_start = trailer_start(&lines);
+
     !subject.is_empty()
         && lines.get(1).is_none_or(|line| line.is_empty())
+        && lines.iter().enumerate().all(|(position, line)| {
+            (line.len() <= 72 || position >= trailer_start) && !line.ends_with(char::is_whitespace)
+        })
+}
+
+/// Locate a complete final trailer block, or return the end of the message.
+fn trailer_start(lines: &[&str]) -> usize {
+    let content_end = lines
+        .iter()
+        .rposition(|line| !line.is_empty())
+        .map_or(0, |position| position + 1);
+    let trailer_start = lines
+        .iter()
+        .take(content_end)
+        .rposition(|line| line.is_empty())
+        .map_or(content_end, |position| position + 1);
+    let is_trailer = |line: &str| {
+        line.split_once(':').is_some_and(|(key, _)| {
+            let token = key.trim_end_matches([' ', '\t']);
+            !token.is_empty()
+                && token
+                    .bytes()
+                    .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+        })
+    };
+    let has_trailers = trailer_start >= 2
+        && lines
+            .get(trailer_start)
+            .is_some_and(|line| is_trailer(line))
         && lines
             .iter()
-            .all(|line| line.len() <= 72 && !line.ends_with(char::is_whitespace))
+            .take(content_end)
+            .skip(trailer_start + 1)
+            .all(|line| line.starts_with([' ', '\t']) || is_trailer(line));
+
+    if has_trailers {
+        trailer_start
+    } else {
+        lines.len()
+    }
 }
 
 /// Parse the arguments for composing a canonical commit message.
@@ -188,4 +233,185 @@ pub(crate) fn run(args: &MessageArgs) -> Result<(), SkillError> {
         &json_object([("message", Value::String(message))]),
     )?;
     Ok(())
+}
+
+#[cfg(test)]
+mod proptests;
+
+#[cfg(test)]
+#[expect(
+    clippy::inline_modules,
+    reason = "group tests by their owning message contract"
+)]
+mod tests {
+    mod has_valid_format {
+        use crate::message::has_valid_format;
+
+        #[test]
+        fn accepts_long_trailer_values() {
+            let hash = "a".repeat(40);
+            let message = format!(
+                "Fix gate evidence\n\nKeep exact command and tree identities.\n\n\
+                 Gate-rti-default: {hash} {hash}\n\
+                 Reviewed-by: {}\n\n",
+                "Reviewer".repeat(20)
+            );
+
+            assert!(has_valid_format(&message));
+        }
+
+        #[test]
+        fn accepts_folded_trailer_values() {
+            let value = "a".repeat(80);
+            let message = format!("Fix gate evidence\n\nGate-1 \t: {value}\n {value}\n\t{value}");
+
+            assert!(has_valid_format(&message));
+        }
+
+        #[test]
+        fn accepts_71_byte_subject_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix {}{trailer}", "a".repeat(67));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(accepted);
+        }
+
+        #[test]
+        fn accepts_72_byte_subject_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix {}{trailer}", "a".repeat(68));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(accepted);
+        }
+
+        #[test]
+        fn rejects_73_byte_subject_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix {}{trailer}", "a".repeat(69));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(!accepted);
+        }
+
+        #[test]
+        fn accepts_71_byte_body_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix gate evidence\n\n{}{trailer}", "a".repeat(71));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(accepted);
+        }
+
+        #[test]
+        fn accepts_72_byte_body_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix gate evidence\n\n{}{trailer}", "a".repeat(72));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(accepted);
+        }
+
+        #[test]
+        fn rejects_73_byte_body_with_trailers() {
+            let trailer = format!("\n\nGate-test: {}", "a".repeat(80));
+            let message = format!("Fix gate evidence\n\n{}{trailer}", "a".repeat(73));
+
+            let accepted = has_valid_format(&message);
+
+            assert!(!accepted);
+        }
+
+        #[test]
+        fn rejects_trailers_followed_by_prose() {
+            let value = "a".repeat(80);
+            let message = format!("Fix gate evidence\n\nGate-test: {value}\nOrdinary body.");
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_trailers_without_a_separating_blank_line() {
+            let message = format!(
+                "Fix gate evidence\n\nOrdinary body.\nGate-test: {}",
+                "a".repeat(80)
+            );
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_orphan_continuations() {
+            let value = "a".repeat(80);
+            let message = format!("Fix gate evidence\n\n {value}\nGate-test: {value}");
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_underscore_in_trailer_keys() {
+            let message = format!("Fix gate evidence\n\nBad_key: {}", "a".repeat(80));
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_spaces_inside_trailer_keys() {
+            let message = format!("Fix gate evidence\n\nBad key: {}", "a".repeat(80));
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_empty_trailer_keys() {
+            let message = format!("Fix gate evidence\n\n: {}", "a".repeat(80));
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_non_ascii_trailer_keys() {
+            let message = format!("Fix gate evidence\n\nTökén: {}", "a".repeat(80));
+
+            assert!(!has_valid_format(&message));
+        }
+
+        #[test]
+        fn rejects_trailing_whitespace_in_trailers() {
+            let message = format!("Fix gate evidence\n\nGate-test: {} ", "a".repeat(80));
+
+            assert!(!has_valid_format(&message));
+        }
+    }
+
+    mod has_valid_action_lines {
+        use crate::message::has_valid_action_lines;
+
+        #[test]
+        fn accepts_metadata_continuations() {
+            let message = "Fix gate evidence\n\nGate-test: accepted\n - opaque metadata\n\t* opaque metadata\n-Token: accepted";
+
+            assert!(has_valid_action_lines(message));
+        }
+
+        #[test]
+        fn rejects_body_bullets_before_trailers() {
+            let message = "Fix gate evidence\n\n- opaque body\n\nGate-test: accepted";
+
+            assert!(!has_valid_action_lines(message));
+        }
+
+        #[test]
+        fn rejects_body_labels_in_trailers() {
+            let message = "Fix gate evidence\n\nWhy: explain the change";
+
+            assert!(!has_valid_action_lines(message));
+        }
+    }
 }
