@@ -202,7 +202,7 @@ Do not make another record only to repeat that assurance.
 For this workflow, use this logical format for gate trailers:
 
 ```text
-Gate-<slug>: <command-sha1> <tree-hash>
+Gate-<slug>: <command-sha1> <tree-hash>^{tree}
 ```
 
 Use one physical line when the repository's message rules and the message checker permit it.
@@ -211,18 +211,22 @@ For a 72-byte limit, use this layout:
 
 ```text
 Gate-<slug>: <command-sha1>
- <tree-hash>
+ <tree-hash>^{tree}
 ```
 
 If the key and command hash exceed the active line limit, put the command hash on an indented continuation line too.
 Keep the trailer block separate from preceding message text with a blank line.
 Use `git interpret-trailers --parse` to read the logical values.
-Its output must contain the same command hash and tree hash as the logical format above.
+Its output must preserve the command hash and the typed tree expression above.
 
 Use the repository's gate identifier for `<slug>`.
 Calculate `<command-sha1>` from the exact UTF-8 command text, including its arguments, without a trailing newline.
 For `cargo test`, calculate the SHA-1 hash of `cargo test`.
 Use the checked candidate's tree hash for `<tree-hash>`.
+Append `^{tree}` to identify it as a tree. Keep the full hash.
+Before a comparison, resolve the expression with `git rev-parse --verify`.
+Gate readers must support this notation before they can use the record again.
+GitHub can still shorten the hash and link it as a commit despite the suffix.
 Add a trailer only for a result that the gate accepts or that S4 permits you to use again.
 
 After a rebase, compare the trailer with the new command and tree.
