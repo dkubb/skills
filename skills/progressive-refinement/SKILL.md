@@ -236,7 +236,13 @@ Do not add evidence files to the repository unless no suitable alternative exist
 A workflow that permits checkpoints only after their gates accept can supply that assurance.
 Do not make another record only to repeat that assurance.
 
-For this workflow, use this logical format for gate trailers:
+Use commit-message gate trailers only in Dan Kubb's private code at this time.
+Do not add gate trailers to Venice AI commit messages.
+For other repositories, keep required gate evidence outside commit-message trailers.
+Use existing gate output or CI records. The required gates still apply.
+This rule does not authorize rewriting existing commit messages.
+
+When gate trailers are permitted, use this logical format:
 
 ```text
 Gate-<slug>: <command-sha1> <tree-hash>^{tree}
@@ -263,6 +269,7 @@ Use the checked candidate's tree hash for `<tree-hash>`.
 Append `^{tree}` to identify it as a tree. Keep the full hash.
 Before a comparison, resolve the expression with `git rev-parse --verify`.
 Gate readers must support this notation before they can use the record again.
+The suffix identifies the object type to Git. It does not control GitHub links.
 GitHub can still shorten the hash and link it as a commit despite the suffix.
 Add a trailer only for a gate result that was observed on the named tree.
 If S4 permits reuse on another tree, preserve the initial trailer.
@@ -275,7 +282,7 @@ For a diff check, the tree hash alone does not identify its base or selection.
 Keep those inputs in existing gate output or metadata.
 Do not use a trailer again when its evidence no longer supports the claim.
 
-Use gate trailers at this time. A change to git-meta is deferred.
+Use gate trailers only where the scope above permits them. A change to git-meta is deferred.
 
 #### Gate repair with an agent
 
