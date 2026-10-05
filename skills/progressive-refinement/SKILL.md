@@ -236,9 +236,11 @@ Do not add evidence files to the repository unless no suitable alternative exist
 A workflow that permits checkpoints only after their gates accept can supply that assurance.
 Do not make another record only to repeat that assurance.
 
-Use commit-message gate trailers only in Dan Kubb's private code at this time.
-Do not add gate trailers to Venice AI commit messages.
-For other repositories, keep required gate evidence outside commit-message trailers.
+Do not add commit-message gate trailers by default.
+Enable them only for a specific `dkubb` repository that has adopted them and has explicit opt-in.
+Use a repository allowlist in documented preferences or explicit user instructions for the session.
+Ownership by `dkubb` and private visibility do not supply opt-in.
+Without opt-in, keep required gate evidence outside commit-message trailers.
 Use existing gate output or CI records. The required gates still apply.
 This rule does not authorize rewriting existing commit messages.
 
@@ -641,6 +643,15 @@ Approval to change history does not cancel an instruction to use fixups.
 Before an amend that changes the tree, make sure that your approval includes this amend.
 Keep the data necessary to put the previous checkpoint back into use. Get evidence for the changed tree.
 The previous evidence applies only to the inputs that it recorded.
+
+If trailer removal is authorized for published commits under human review, use message-only amend fixups.
+Use [`git commit --fixup=reword:<owning-commit>`](https://git-scm.com/docs/git-commit) or an equivalent message-only method.
+Put the corrected message in the fixup. Remove only the gate trailers.
+Preserve other message text and other trailers.
+Keep gate evidence outside commit messages.
+Verify that the fixup changes no files. Keep the published owning commit intact.
+Push each fixup immediately.
+Wait until the human review is complete and normalization is authorized before autosquash.
 
 If you have approval to change the last history, put each correction into its owning change during normalization.
 If a change helps without other changes, keep it in a different commit.
