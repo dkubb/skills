@@ -17,6 +17,7 @@ lint suite.
 | [`atomic-changes`](skills/atomic-changes/SKILL.md) | guidance | Break work into the smallest steps that each leave the system valid or better — foundation first, ordered so partial progress is never a regression. |
 | [`code-review`](skills/code-review/SKILL.md) | guidance + CLI | A clear, cross-language code-review discipline — and the rules for changing the rules. Ships a bundled lint suite you can run with `skill code-review lint`. |
 | [`git-review`](skills/git-review/SKILL.md) | guidance + CLI | Review commit ranges against the atomic-changes contract using deterministic Git evidence. |
+| [`gh-review`](skills/gh-review/SKILL.md) | guidance | Write and publish GitHub PR feedback with Conventional Comments, precise inline ranges, and verified submission. |
 
 ## Use them
 
