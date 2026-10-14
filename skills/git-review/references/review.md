@@ -57,6 +57,22 @@ For each commit, answer these questions in order.
 - Is the summary imperative, simple, and free of `and` or `or`?
 - Does the body explain why the commit exists without repeating the diff?
 - Are action lines canonical when the body makes multiple observations?
+- For a fixup, does its message follow the fixup rules below?
+
+#### Fixup messages
+
+Keep the autosquash-compatible subject `fixup! <target subject>` unchanged.
+Put the correction's description in the body, not in the target subject.
+Every fixup must have a concise body explaining what it corrects and why,
+so reviewers can evaluate it before approving autosquash. Apply the body
+rules from `atomic-changes/references/commits.md` to the correction itself;
+do not repeat the target's message.
+
+```text
+fixup! Add request timeout
+
+Reject zero durations so requests cannot bypass the timeout.
+```
 
 ### Integrity
 
