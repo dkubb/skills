@@ -101,6 +101,17 @@ stays adjacent unless another functional dependency requires otherwise.
 - No `What:` / `Why:` / `How:` labels. When the body makes more than one point,
   use action lines instead of prose bullets.
 
+## Trailers
+
+- Put trailers in a final block separated from the body by a blank line.
+- Use Git's `Key: value` form, with ASCII letters, digits, or hyphens in the
+  key. Indented continuation lines belong to the preceding trailer value.
+- Trailer values and their continuations may exceed 72 columns so hashes,
+  URLs, and other machine-readable metadata remain intact. Subject and body
+  lines retain their existing limits. Trailing whitespace remains invalid.
+- The existing prohibition on `What:` / `Why:` / `How:` labels also applies
+  in trailer blocks.
+
 ## Action lines
 
 When the body has multiple observations, write each as one action line:
