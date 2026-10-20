@@ -71,9 +71,13 @@ Emit results in this order:
 - `skill git-review check-messages BASE_REF [BRANCH_REF]` rejects messages
   that violate the canonical form and emits each invalid commit as JSONL. Use
   `--root [REF]` to inspect a full reachable history.
-- `skill git-review check-dates BASE_REF [BRANCH_REF]` rejects author or
-  committer timestamps that do not strictly follow every parent and emits one
-  JSON result object.
+- `skill git-review check-dates BASE_REF [BRANCH_REF]` rejects committer
+  timestamps that do not strictly follow their parents, except the resolved
+  base commit, and emits one JSON result object. Author dates are not ordered.
+  Changing the base does not require rewriting author or committer dates.
+  Prefer matching author/committer names and dates, retaining the original
+  author identity and timestamp. Advance dates minimally only when a
+  non-base parent requires it; do not reset them to the current time.
 - `skill git-review tree-hashes BASE_REF [BRANCH_REF]` emits commit and tree
   identities as JSONL before a rewrite. Use `--commits-file PATH` to restrict
   output.

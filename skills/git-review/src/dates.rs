@@ -1,4 +1,4 @@
-//! Check commit timestamps for monotonic order.
+//! Check committer timestamps within a review range.
 
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
@@ -11,7 +11,7 @@ use crate::git::run as run_git;
 use crate::invalid;
 use crate::output::{json_object, write_json_line};
 
-/// check commit timestamps for monotonic order.
+/// check committer timestamps for monotonic order.
 #[derive(Clone, Debug, Parser)]
 pub(crate) struct CheckDatesArgs {
     /// base ref for the revision range.
@@ -27,12 +27,12 @@ pub(crate) struct CheckDatesArgs {
     repo: PathBuf,
 }
 
-/// One commit whose timestamp does not strictly follow its parents.
+/// One commit whose committer date does not follow a non-base parent.
 #[derive(Debug, Eq, PartialEq)]
 struct Violation {
     /// Violating commit SHA.
     commit: String,
-    /// Latest parent committer timestamp.
+    /// Latest non-base parent committer timestamp.
     parent: i64,
     /// Commit author timestamp.
     author: i64,
@@ -62,11 +62,12 @@ fn parse_author_committer(line: &str) -> Result<(i64, i64), SkillError> {
     ))
 }
 
-/// Find the newest committer timestamp among `parents`.
-fn max_parent_timestamp(repo: &Path, parents: &str) -> Result<i64, SkillError> {
-    let mut maximum: i64 = 0;
-    for parent in parents.split_whitespace() {
-        maximum = maximum.max(parent_timestamp(repo, parent)?);
+/// Find the newest committer timestamp among parents other than the base.
+fn max_parent_timestamp(repo: &Path, parents: &str, base: &str) -> Result<Option<i64>, SkillError> {
+    let mut maximum = None;
+    for parent in parents.split_whitespace().filter(|parent| *parent != base) {
+        let timestamp = parent_timestamp(repo, parent)?;
+        maximum = Some(maximum.unwrap_or(timestamp).max(timestamp));
     }
     Ok(maximum)
 }
@@ -84,13 +85,13 @@ fn read_author_committer(repo: &Path, commit: &str) -> Result<(i64, i64), SkillE
 }
 
 /// Inspect one commit for a date-order violation.
-fn inspect_commit(repo: &Path, commit: &str) -> Result<Option<Violation>, SkillError> {
+fn inspect_commit(repo: &Path, commit: &str, base: &str) -> Result<Option<Violation>, SkillError> {
     let parents = run_git(repo, &["show", "-s", "--format=%P", commit])?;
     if parents.is_empty() {
         return Ok(None);
     }
 
-    inspect_non_root(repo, commit, &parents)
+    inspect_non_root(repo, commit, &parents, base)
 }
 
 /// Inspect a commit after its non-empty parent list is known.
@@ -98,10 +99,13 @@ fn inspect_non_root(
     repo: &Path,
     commit: &str,
     parents: &str,
+    base: &str,
 ) -> Result<Option<Violation>, SkillError> {
-    let parent = max_parent_timestamp(repo, parents)?;
+    let Some(parent) = max_parent_timestamp(repo, parents, base)? else {
+        return Ok(None);
+    };
     let (author, committer) = read_author_committer(repo, commit)?;
-    if author > parent && committer > parent {
+    if committer > parent {
         Ok(None)
     } else {
         Ok(Some(Violation {
@@ -114,10 +118,10 @@ fn inspect_non_root(
 }
 
 /// Inspect a pre-resolved commit list.
-fn inspect_commits(repo: &Path, commits: &str) -> Result<Vec<Violation>, SkillError> {
+fn inspect_commits(repo: &Path, commits: &str, base: &str) -> Result<Vec<Violation>, SkillError> {
     let mut violations = Vec::new();
     for commit in commits.lines() {
-        if let Some(violation) = inspect_commit(repo, commit)? {
+        if let Some(violation) = inspect_commit(repo, commit, base)? {
             violations.push(violation);
         }
     }
@@ -131,7 +135,15 @@ fn find_violations(args: &CheckDatesArgs) -> Result<Vec<Violation>, SkillError> 
         &args.repo,
         &["rev-list", "--reverse", "--topo-order", &range],
     )?;
-    inspect_commits(&args.repo, &commits)
+    let base = run_git(
+        &args.repo,
+        &[
+            "rev-parse",
+            "--verify",
+            &format!("{}^{{commit}}", args.base_ref),
+        ],
+    )?;
+    inspect_commits(&args.repo, &commits, &base)
 }
 
 /// Render the date-order report.
@@ -173,7 +185,7 @@ fn run_with_writer(args: &CheckDatesArgs, out: &mut dyn Write) -> Result<(), Ski
     )))
 }
 
-/// Check author and committer timestamps for strictly increasing order.
+/// Check committer timestamps against parents other than the selected base.
 ///
 /// # Errors
 ///

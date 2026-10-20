@@ -23,9 +23,22 @@ Collect mechanical facts before semantic judgment:
 1. Resolve the base and target commits.
 2. Record each commit's subject, parent, changed files, diff size, and tree.
 3. Check canonical message form.
-4. Check author and committer date order.
+4. Check committer date order against parents other than the resolved base.
+   Record author dates without requiring chronological order.
 5. Identify `fixup!`, `squash!`, merge, revert, and WIP commits.
 6. Record exact-state gate evidence for each commit.
+
+The base parent is exempt from committer date ordering. A branch commit may
+predate a newer base after rebasing; that alone is never a reason to rewrite
+its author or committer date. For a merge commit, still check every other
+parent. Author dates record authorship and need not follow parent dates.
+
+Prefer matching author and committer names and dates. When aligning them,
+keep the original author identity and timestamp; do not substitute the
+reviewer's identity or the current time. Advance both dates only when a
+non-base parent requires it, using the smallest strictly later timestamp.
+A newly selected base must not trigger a timestamp bump. Metadata equality
+is a preference, not an additional date-check failure condition.
 
 Mechanical checks can reject invalid syntax or metadata. They cannot prove
 that a commit is one transformation, that its verb describes the diff, or

@@ -198,9 +198,11 @@ fn install_fake_git(directory: &Path) {
          fail_at=${GIT_TEST_FAIL_AT:-none}\n\
          case \"$*\" in\n\
            *rev-list*main..HEAD*) [ \"$fail_at\" != revisions ] || exit 7; printf 'child\\n' ;;\n\
+           *rev-parse*) [ \"$fail_at\" != base ] || exit 7; printf 'base\\n' ;;\n\
            *rev-list*) [ \"$fail_at\" != resolve ] || exit 7; printf 'child\\n' ;;\n\
            *--format=%P*) [ \"$fail_at\" != parents ] || exit 7; printf '%s' \"${GIT_TEST_PARENTS-parent}\" ;;\n\
            *'--format=%at %ct'*) [ \"$fail_at\" != dates ] || exit 7; printf '%s' \"${GIT_TEST_DATES-101 101}\" ;;\n\
+           *'--format=%ct base') printf '300' ;;\n\
            *--format=%ct*) [ \"$fail_at\" != parent ] || exit 7; printf '%s' \"${GIT_TEST_PARENT-100}\" ;;\n\
            *--format=%s*) [ \"$fail_at\" != subject ] || exit 7; printf 'Add message checker' ;;\n\
            *--format=%B*) [ \"$fail_at\" != body ] || exit 7; printf 'Add message checker' ;;\n\
@@ -956,6 +958,7 @@ mod check_dates {
     fn reports_violation_as_json() {
         let repo = TestRepo::new();
         let base = repo.commit_at("Add base commit", 100, 100);
+        let _first = repo.commit_at("Add first branch commit", 100, 100);
         let invalid = repo.commit_at("Add date checker", 100, 100);
 
         let output = command(&repo, "check-dates")
@@ -972,6 +975,118 @@ mod check_dates {
                 )
                 .into_bytes(),
                 stderr: b"Error: invalid input: date order violations detected (1)\n".to_vec(),
+            }
+        );
+    }
+
+    #[test]
+    fn preserves_branch_dates_older_than_a_new_base() {
+        let repo = TestRepo::new();
+        let base = repo.commit_at("Add newer base", 300, 300);
+        repo.git(&["branch", "new-base", &base]);
+        let _first = repo.commit_at("Add first branch commit", 100, 100);
+        let _second = repo.commit_at("Add second branch commit", 101, 101);
+
+        let output = command(&repo, "check-dates")
+            .args(["new-base", "HEAD"])
+            .output()
+            .expect("preserve dates across the base boundary");
+
+        assert_eq!(
+            observed(output),
+            Observed {
+                code: Observed::SUCCESS,
+                stdout: b"{\"status\":\"ok\",\"violations\":[]}\n".to_vec(),
+                stderr: Vec::new(),
+            }
+        );
+    }
+
+    #[test]
+    fn accepts_author_dates_older_than_branch_parents() {
+        let repo = TestRepo::new();
+        let base = repo.commit_at("Add base commit", 100, 100);
+        let _first = repo.commit_at("Add first branch commit", 101, 101);
+        let _second = repo.commit_at("Add earlier authored work", 50, 102);
+
+        let output = command(&repo, "check-dates")
+            .args([&base, "HEAD"])
+            .output()
+            .expect("check only committer ordering");
+
+        assert_eq!(
+            observed(output),
+            Observed {
+                code: Observed::SUCCESS,
+                stdout: b"{\"status\":\"ok\",\"violations\":[]}\n".to_vec(),
+                stderr: Vec::new(),
+            }
+        );
+    }
+
+    #[test]
+    fn ignores_the_base_parent_of_a_merge() {
+        let repo = TestRepo::new();
+        let fake_bin = tempfile::tempdir().expect("create fake git directory");
+        install_fake_git(fake_bin.path());
+        let output = command(&repo, "check-dates")
+            .args(["main", "HEAD"])
+            .env("PATH", fake_bin.path())
+            .env("GIT_TEST_PARENTS", "base parent")
+            .env("GIT_TEST_DATES", "50 101")
+            .output()
+            .expect("exclude only the base parent");
+
+        assert_eq!(
+            observed(output),
+            Observed {
+                code: Observed::SUCCESS,
+                stdout: b"{\"status\":\"ok\",\"violations\":[]}\n".to_vec(),
+                stderr: Vec::new(),
+            }
+        );
+    }
+
+    #[test]
+    fn still_checks_the_other_parent_of_a_merge() {
+        let repo = TestRepo::new();
+        let fake_bin = tempfile::tempdir().expect("create fake git directory");
+        install_fake_git(fake_bin.path());
+        let output = command(&repo, "check-dates")
+            .args(["main", "HEAD"])
+            .env("PATH", fake_bin.path())
+            .env("GIT_TEST_PARENTS", "base parent")
+            .env("GIT_TEST_DATES", "200 100")
+            .output()
+            .expect("enforce ordering against the non-base parent");
+
+        assert_eq!(observed(output), Observed {
+            code: Observed::INPUT_ERROR,
+            stdout: b"{\"status\":\"violations\",\"violations\":[{\"author\":200,\"commit\":\"child\",\"committer\":100,\"parent\":100}]}\n".to_vec(),
+            stderr: b"Error: invalid input: date order violations detected (1)\n".to_vec(),
+        });
+    }
+
+    #[test]
+    fn reports_base_resolution_failure() {
+        let repo = TestRepo::new();
+        let fake_bin = tempfile::tempdir().expect("create fake git directory");
+        install_fake_git(fake_bin.path());
+        let output = command(&repo, "check-dates")
+            .args(["main", "HEAD"])
+            .env("PATH", fake_bin.path())
+            .env("GIT_TEST_FAIL_AT", "base")
+            .output()
+            .expect("report base resolution failure");
+
+        assert_eq!(
+            observed(output),
+            Observed {
+                code: Observed::COMMAND_ERROR,
+                stdout: Vec::new(),
+                stderr:
+                    b"Error: command `git rev-parse --verify main^{commit}` exited with code 7\n"
+                        .to_vec(),
             }
         );
     }
