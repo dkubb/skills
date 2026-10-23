@@ -6,8 +6,8 @@ Minimize the state space of the program
 
 ## Write Good Commits
 
-Use the canonical atomic-changes format for git commit messages, wrapped at
-72 characters
+Use the canonical atomic-changes format for git commit subjects and bodies,
+wrapped at 72 characters. Trailer values may exceed this limit.
 Use Conventional Commit syntax for pull request titles
 Document the Why, What and How: What changed, Why the commit exists, and How
 the approach works when not obvious
