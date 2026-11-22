@@ -223,6 +223,23 @@ theorem pathsClean_iff_reach_inter
     · intro hx
       exact (Set.notMem_empty x hx).elim
 
+/-- Constructive sufficiency (`I_repr(m(A)) = ∅`) implies `Sufficient`
+for EVERY input path set `ps` — constructive encodings survive the
+addition of arbitrary construction paths. -/
+theorem rank1_sufficient_any_paths
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    (h : SufficientRank1 m A) (ps : PathSet.{u, v, w} A) :
+    Sufficient m A ps := by
+  refine ⟨fun _ => h, ?_⟩
+  intro p
+  ext x
+  constructor
+  · rintro ⟨_, hI⟩
+    rw [show I_repr (m.apply A) = ∅ from h] at hI
+    exact Set.notMem_empty x hI
+  · intro hx
+    exact (Set.notMem_empty x hx).elim
+
 /-- Anti-vacuity refutation: if ANY enumerated path in `m.paths A ps`
 reaches ANY invalid state `x ∈ I_repr(m(A))`, then `m` is NOT
 sufficient — a leaky path cannot be hidden or dropped. -/
