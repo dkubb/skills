@@ -206,10 +206,12 @@ a template, a slot) — ask: *can a bad lowerer `b'` falsify `Q` while
 every reducer rule behaves correctly?* If yes, `Q` is established only
 through the trusted boundary `b`, so `R(b') ⊄ C(A)` voids it exactly as
 above: `Q` is predicative, conditional on lowering well-formedness, not a
-constructive (rule-level) theorem. State it with the conditional in the
-statement (`Q under LoweredOccUnique`), and keep `LoweredOccUnique` a
-hypothesis until the lowering relation is itself an artifact with its own
-`C`. A rule-level theorem quantifies over all programs; a property a bad
+constructive (rule-level) theorem. State the required input property as a
+hypothesis. For example,
+if output labels must be unique and the reducer copies them from the
+lowered input, two equal input labels refute an unconditional guarantee.
+Discharge the hypothesis by proving that the lowering produces unique
+labels. A rule-level theorem quantifies over all programs; a property a bad
 program breaks is predicated on the program inhabiting `C`.
 
 ## Artifact Calculus
