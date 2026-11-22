@@ -1,7 +1,7 @@
 /-
 Proof-preservation rules of the state-space-minimization calculus
 (SKILL.md § "Boundary Calculus", proof-obligation rule, and
-§ "Proof-preservation corollary"). Calculus version: 2026-06-v8.
+§ "Proof-preservation corollary"). Calculus version: 2026-06-v9.
 
 Formalizes the rule
 

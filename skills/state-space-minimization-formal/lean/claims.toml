@@ -49,8 +49,8 @@
 # LEAN-INTERNAL ONLY: these tie the lakefile semver, the Reflection.lean
 # header, and the README literals together. The reflection is versioned
 # independently of `../SKILL.md`; there is no SKILL version stamp here.
-version_lakefile = "2026.6.8"
-version_header  = "2026-06-v8"
+version_lakefile = "2026.6.9"
+version_header  = "2026-06-v9"
 
 # ───────────────────────── Core notation (definitions) ─────────────────
 

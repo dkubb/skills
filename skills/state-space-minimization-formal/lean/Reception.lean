@@ -1,6 +1,6 @@
 /-
 Reception semantics of the state-space-minimization calculus
-(SKILL.md § "Reception Semantics"). Calculus version: 2026-06-v8.
+(SKILL.md § "Reception Semantics"). Calculus version: 2026-06-v9.
 
 Formalizes the *structural* content: denotational equivalence `≡_D`
 and the support-subset admissibility/narrowing relations as set

@@ -1,6 +1,6 @@
 /-
 Lean formalization of the state-space-minimization calculus that
-`../SKILL.md` OWNS. Formalization version: 2026-06-v8 — versioned
+`../SKILL.md` OWNS. Formalization version: 2026-06-v9 — versioned
 INDEPENDENTLY of `../SKILL.md`; it tracks the skill's calculus by
 content and review, not by a shared stamp (the `check_claims` version
 gate cross-checks only the Lean-internal stamps and never reads

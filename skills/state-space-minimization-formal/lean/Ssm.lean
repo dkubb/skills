@@ -1,6 +1,6 @@
 /-
 Root module of the state-space-minimization-formal Lean
-formalization. Calculus version: 2026-06-v8.
+formalization. Calculus version: 2026-06-v9.
 
 This module imports EVERY calculus module and is the sole default
 target in `lakefile.toml`. The orphan check in `check_claims` fails if

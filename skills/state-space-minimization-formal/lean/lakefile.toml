@@ -2,9 +2,9 @@ name = "ssm-formal-reflection"
 # Formalization version, versioned INDEPENDENTLY of ../SKILL.md. The
 # reflection tracks the skill's calculus by content and review, not by a
 # shared stamp; `check_claims` never reads ../SKILL.md. This semver
-# (2026.6.8) mirrors the Reflection.lean header (2026-06-v8) and is
+# (2026.6.9) mirrors the Reflection.lean header (2026-06-v9) and is
 # cross-checked against claims.toml and README.md by the gate.
-version = "2026.6.8"
+version = "2026.6.9"
 keywords = ["math"]
 # The root module `Ssm` imports every calculus module and is the SOLE
 # default target. The `check_claims` orphan gate fails if any module

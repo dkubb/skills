@@ -145,11 +145,11 @@ both sides or not at all.
 ## Version parity
 
 The reflection is **versioned independently** of `../SKILL.md`. Its
-formalization version (currently `2026-06-v8`, semver `2026.6.8`) is a
+formalization version (currently `2026-06-v9`, semver `2026.6.9`) is a
 Lean-internal stamp: it tracks `../SKILL.md`'s calculus by **content
 and review**, not by a shared stamp the gate enforces. `check_claims`
 cross-checks only the Lean-internal stamps — the `lakefile.toml`
-`version` (`2026.6.8`), the `Reflection.lean` header (`2026-06-v8`),
+`version` (`2026.6.9`), the `Reflection.lean` header (`2026-06-v9`),
 `claims.toml`, and these README literals — and it **does not read
 `../SKILL.md`**. Matching internal stamps are the signal that the Lean
 files are connected to each other; the connection to the skill is by

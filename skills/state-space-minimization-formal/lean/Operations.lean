@@ -2,7 +2,7 @@
 Function range/gap/preimage, the six operations, and the Invariants
 of the state-space-minimization calculus (SKILL.md § "Core Notation"
 `R(f)`/`G(f)`/`f⁻¹`, § "Operations", § "Invariants"). Calculus
-version: 2026-06-v8.
+version: 2026-06-v9.
 
 The structural content of each operation (domain/codomain narrowing,
 preimage, normalization determinants) is kernel rank. The operations'
