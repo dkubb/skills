@@ -5,7 +5,8 @@ permission, or other consumable value. Write the proposed law beside the
 smallest example that would violate it.
 
 1. **What is being counted?** Identify the unit, owner and allowed sources
-   and sinks. A fork may copy a fact needed by two readers. For a conserved
+   and sinks. Use the [resource-or-fact rule][resource-or-fact] to classify
+   each value before imposing linearity. For a conserved
    budget, state the bound on the *sum* of the children's budgets. Check a
    parent with one unit and two children each claiming that unit.
 2. **Who can mint, delegate or spend authority?** Trace each operation to
@@ -25,3 +26,5 @@ smallest example that would violate it.
 
 Use the [resource review questions](../../find-and-prove/references/resources.md)
 to test the resulting laws against duplicated grants and composed runs.
+
+[resource-or-fact]: ../../state-space-minimization/references/proof-preservation.md#resource-or-fact-classify-before-imposing-linearity
