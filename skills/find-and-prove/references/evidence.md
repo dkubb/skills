@@ -8,8 +8,8 @@ catalog and robust-writing habits stay in `references/lean-robustness.md`.
 ## H1 Mutation discipline
 
 **Mutate intentionally — execute, don't argue.** Reasoning "a bad mutant would
-surely fail" is how vacuity *survives* review; apply the mutant and recompile
-(`just compile`), let the compiler rule. *Vacuity* (is each stated theorem
+surely fail" is how vacuity *survives* review; recompile the mutant with the project's
+verification command and inspect the diagnostic. *Vacuity* (is each stated theorem
 real?): break ONE def *under* a headline (consume doesn't decrement; remaining
 is always original; canonical args ignore authority context; error returns the
 recorded head; child debits full allocation not used share); if it still proves,

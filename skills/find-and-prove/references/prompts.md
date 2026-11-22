@@ -102,11 +102,9 @@ producer", "the producer", "the only", "two rules"/"all N", "the persistent toke
 old decl name; flag each comment a new arm may have falsified.
 ```
 
-## Reproduced winning prompts (blind-reproduction validated, attempt 1)
+## Independent review prompts
 
-Each prompt below reproduced a known Pro-level finding with a fresh
-subagent on the first attempt (adjudication rule 9). The filter-safe
-recipe common to all four: state the system as a neutral
+For an independent review, state the system as a neutral
 algebraic/multiset puzzle, make the relevant invariants/bounds EXPLICIT,
 give the technique as a single self-question, and ask for a minimal
 witness/decision plus the missing condition. Include the design fact that

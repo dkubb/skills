@@ -7,7 +7,7 @@ headlines that pin a caller instead of the helper. The class's core is the
 
 ## B1 The `_iff` pin family
 
-The highest-yield family in the harvest. Three FIRE-ONs:
+Check these three cases:
 
 - **Every new erasure/refinement RELATION on the mutable surface** — prove
   `R ↔ <explicit intended content>` as a headline, every field/conjunct
@@ -64,8 +64,8 @@ collide." When executing these mutants, apply detector isolation
 ## B3 Cardinality conjunct
 
 FIRE on every universal value claim over a linear/unique resource:
-`∀ x, P x → x = good` is forged by TWO copies of the right thing — the
-most-recurring forgery class in the harvest. `count = 1` is first-class,
+`∀ x, P x → x = good` is forged by TWO copies of the right thing. `count =
+1` is first-class,
 never derived from a `∀`-uniqueness reading; and the `∃ rest` decomposition
 form (`state = good :: rest`) needs an explicit not-in-rest clause
 (`good ∉ rest`), else the second copy hides in the rest. The deciding
@@ -103,8 +103,8 @@ theorem already demanded, so it is cheap) or descend the name to what the
 standalone bundle carries. Deciding witness: inhabit the record in the
 adversarial state the dropped hypothesis would have excluded, then exhibit
 two states — the name's reading TRUE in one, FALSE in the other — both
-carrying an instance the stored fields cannot distinguish (the harvest
-witness: two same-key replies, one sealed and one caller-forged, with the
+carrying an instance the stored fields cannot distinguish (for example, two
+same-key replies, one sealed and one caller-forged, with the
 record's public constructor admitting both). Auditing each disclaimer for
 honesty is NOT this check: reviewers who confirmed every disclaimer honest
 still missed that the disclaimed axis was the name's load-bearer.
