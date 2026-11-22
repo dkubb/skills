@@ -94,8 +94,8 @@ more checks rather than re-stating the base ones.
 
 ## Bounded primitives
 
-Every domain has both a lower and upper bound. `principles.md` § "When
-replacing String or Vec, go directly to the bounded form" is law: a
+[Bound ranges and cardinality](../principles.md#bound-ranges-and-cardinality)
+applies to SQL domains as well. A
 `text` column that is `not_empty` only is a `NonEmptyString` —
 placeholder, not destination. Add the upper bound at the same time you
 add the lower bound, or record (in the `COMMENT`) why you cannot.
