@@ -578,8 +578,8 @@ SELECT * FROM test.try_cast_label(' a')       \gx /dev/stdout
 SELECT * FROM test.try_cast_label(NULL) \gx /dev/stdout
 ```
 
-Mirrors `testing.md` § "test the trusted boundary" — every invalid
-input class is asserted, the boundary value and boundary + 1 are both
+Following the [integration test guidance](../testing.md#integration-tests),
+every invalid input class is asserted, the bound and its successor are both
 tested, and the NULL case is recorded because it is *not* what naive
 readers expect.
 
