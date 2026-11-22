@@ -406,4 +406,10 @@ def Obl
     (x : State) : Prop :=
   f.D = A.S ∧ x ∈ f.D ∧ x ∈ R bd.toBoundary
 
+/-- Pinning the contract supplies the embedding for its previous states. -/
+theorem contractPinned_preserves_states {A A' : Artifact State Obs}
+    (pinned : ContractPinned A A') : ContractStatesPreserved A A' := by
+  intro x hx
+  exact A'.C_subset_S (pinned.symm ▸ hx)
+
 end SSM

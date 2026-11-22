@@ -510,6 +510,16 @@ headline = false
 residual = false
 
 [[claim]]
+id = "strict.pinned_states"
+statement = "Pinning a contract preserves representability of its states under the new artifact."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.contractPinned_preserves_states"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A A' : Artifact State Obs}, SSM.ContractPinned A A' → SSM.ContractStatesPreserved A A'"
+headline = false
+residual = false
+
+[[claim]]
 id = "strict.behavior_preserved"
 statement = "Strict premise B(A')|_C = B(A)|_C: contract behavior preserved on both sides."
 rank = "kernel-definition"
