@@ -245,200 +245,52 @@ can observe and collect a witness.
 
 ## How to use this skill
 
-This skill uses **progressive disclosure**. SKILL.md is a router; load
-only the reference files relevant to the current task. Read prerequisites
-before the techniques that use them. Cross-references to examples and
-related techniques are optional. See
-[documentation normalization](references/normalization.md#application-documentation).
+Read [principles](references/principles.md) for the vocabulary, six
+operations, and search procedure. Choose profiles by the result the
+user needs. The Outputs section describes what each profile delivers.
+The file names below are relative to `references/`.
 
-**Presentation strategy.** Each module introduces its formal
-definitions first, then applies them to practical cases and examples.
-The formal frame is a dependency of the practical claim; placing the
-dependency first gives every practical claim a frame to attach to. The
-same dependency-before-dependent rule that orders the modules orders
-the sections within each module.
-
-### Foundation — always load
-
-1. `references/principles.md` — vocabulary (domain, codomain, range,
-   preimage), six operations, mechanism ladder, decision
-   rubric, types as hypotheses, self-similarity.
-
-### Profile → module map
-
-Classify the task into output profile(s) first (Process step 2),
-then load that profile's modules in router order.
-`references/principles.md` is the foundation for every profile and
-is omitted from the rows below. The "by symptom" column lists the
-profile's optional modules: load one only when its entry in the
-symptom router below matches evidence in the task.
-
-| Profile | Always | By symptom |
+| Profile | Load first | Additional materials |
 |---|---|---|
-| Core type / boundary | constructive-vs-predicative | primitive-obsession, boolean-blindness, total-functions, proof-preservation, architectural-scopes, ingress-and-boundaries, least-power, defensive-code |
-| Testing | testing | defensive-code |
-| Documentation | documentation, normalization | |
-| Commit | commits, normalization | |
-| Normalization | normalization | least-power |
-| Tooling / ratchet | perfect-tool, ratchet | |
-| Language | languages/&lt;lang&gt;.md per file type in scope, after the profile's other modules | |
-| Skill-refinement | skill-refinement | |
+| Core type / boundary | constructive-vs-predicative.md | Choose by the evidence below. |
+| Testing | testing.md | defensive-code.md for branches a test cannot reach |
+| Documentation | normalization.md, documentation.md | |
+| Commit | normalization.md, commits.md | |
+| Normalization | normalization.md | least-power.md for passthroughs or sprawl |
+| Tooling / ratchet | perfect-tool.md, ratchet.md | |
+| Language | Applicable profiles above | languages/rust.md, languages/typescript.md (also JavaScript), languages/sql.md, languages/regex.md |
+| Skill-refinement | skill-refinement.md | history-and-lineage.md for origins and citations |
 
-### Cross-cutting lenses — load early when relevant
+For a core type or boundary task, follow the evidence:
 
-These modules are high-leverage, but not automatic. Load them right
-after principles only when the selected profile needs their distinction.
+| Evidence | Module |
+|---|---|
+| Primitive parameters stand for domain values | primitive-obsession.md |
+| A Boolean discards the reason for an outcome | boolean-blindness.md |
+| Panic, sentinel, or partial function | total-functions.md |
+| Unwrapping a value discards a proof, tag, or refinement | proof-preservation.md |
+| Choosing the aggregate, value object, or bounded context that owns an invariant | architectural-scopes.md |
+| External input, deserialization, expiring guarantees, or ambient authority | ingress-and-boundaries.md |
+| A stored fact repeats another field or creates a cross-field constraint | normalization.md; also the scope or ingress module if ownership or parsing changes |
+| Several primitives can express the same operation | least-power.md |
+| An upstream guarantee makes a defensive check or handler unreachable | defensive-code.md |
 
-2. `references/constructive-vs-predicative.md` — the deepest split
-   for *how* to encode an invariant. Intrinsic vs extrinsic safety;
-   smart-constructor trusted-boundary audit; four hard-case fallbacks.
-   Load for representation, constructor, parser, proof, or boundary
-   tasks.
-3. `references/normalization.md` — the deepest split for *where* to
-   place information. Formal frame (atoms, FDs, transitive reduction,
-   lattice of decompositions, Galois connection); decompose-then-
-   recompose strategy; applies to data, code, commits, and
-   documentation alike. Load for placement, decomposition, drift,
-   commits, documentation topology, or progressive-disclosure tasks.
-
-If neither distinction is needed, skip both and continue to the specific
-technique module.
+For a whole-skill audit, read the principles and both cross-cutting
+lenses (constructive vs predicative, normalization), each applicable
+technique, then the language references. A prerequisite introduces a
+concept needed for the current task. Links to examples and companion
+procedures are optional. Load another module when its guidance becomes
+necessary. For a language without a module, derive the answer from
+principles. Load history-and-lineage.md directly for a citation request.
 
 ### Formal escalation
 
-`state-space-minimization-formal` is not only for formal
-deliverables — switching to its calculus mid-task is a reasoning
-move. Stating `S(A)`, `C(A)`, and `R(b)` and discharging the
-strictness and proof-preservation obligations forces commitments
-that prose analysis lets slide, and reasoning in the
-formal-methods register tends to surface further narrowings of the
-state space. Escalate when invariants resist prose analysis, a
-design feels under-constrained, or two encodings seem equivalent
-and the dominance argument will not come into focus; derive in
-notation, then translate the result back into the deliverable's
-form. Escalate liberally: the notation costs a few tokens, and a
-single additional narrowing it surfaces pays for it many times
-over (`references/principles.md` § "Core principle": narrowings
-compound). The strongest escalation is a checked translation:
-reflect the derivation into a mechanically verifiable form (Lean,
-TLA+) and let the checker grade it — translation forces
-commitments even the notation lets slide, and the checker finds
-undischargeable obligations that prose audits miss.
-
-### Technique modules — load by symptom
-
-Choose the entry that matches the evidence from the task.
-
-- primitive parameters / weak domain types →
-  `references/primitive-obsession.md`
-- boolean returns or boolean parameters that throw away the reason →
-  `references/boolean-blindness.md`
-- partial functions, panics on bad input, sentinel returns →
-  `references/total-functions.md`
-- values are unwrapped back to primitives, revalidated downstream,
-  passed through proof-losing conversions, or need phantom tags /
-  GADTs / refinement / dependent / substructural proof preservation →
-  `references/proof-preservation.md`
-- value object / aggregate / bounded context / anti-corruption layer
-  scope decisions →
-  `references/architectural-scopes.md`
-- raw external input, deserialization, env / CLI / config / database
-  rows, or DTO translation →
-  `references/ingress-and-boundaries.md`
-- nonmonotonic or time-varying invariants such as not-banned,
-  not-expired, lease-held, current-price →
-  `references/ingress-and-boundaries.md`
-- authority should be passed explicitly instead of being ambiently
-  available →
-  `references/ingress-and-boundaries.md`
-- duplicate fields or cross-field constraints suggest changing
-  representation so the constraint disappears →
-  `references/architectural-scopes.md` when the owning aggregate /
-  context is in question; plus `references/ingress-and-boundaries.md`
-  for the boundary-parsing technique; plus
-  `references/normalization.md` for the placement frame
-- choosing between equally capable primitives; mutation-driven
-  simplification; rule of least power / least privilege; η-reduction →
-  `references/least-power.md`
-- function-decomposition sprawl, tiny passthrough functions, god
-  functions, deciding whether to merge or split, code organization,
-  module-level normalization, recompose into the right grain →
-  `references/normalization.md` + `references/least-power.md`
-  (under-power with composition)
-- auditing defensive checks against impossible-by-type or
-  impossible-by-flow inputs; catch-all exception handlers without a
-  known failure mode; redundant validation after upstream parsing;
-  deleting just-in-case branches that have nothing left to defend →
-  `references/defensive-code.md`
-- tighter test matchers, side-effect coverage, Hyrum's-Law testing,
-  mutation testing as state-space verification →
-  `references/testing.md`
-- writing or auditing documentation; choosing between rich type /
-  doctest / co-located rationale / boundary prose for an invariant;
-  removing vague qualifiers from prose claims; documentation drift
-  as a state-space leak; progressive disclosure as topological sort →
-  `references/documentation.md` + `references/normalization.md`
-- writing or auditing commit messages; sequencing commits by
-  transformation priority (Remove → Fix → Move → Rename → Refactor →
-  Change → Add → Upgrade → Downgrade);
-  deciding commit granularity for small preimage of failure;
-  encoding gate results as commit trailers; atomic-commits as
-  decompose-then-recompose →
-  `references/commits.md` + `references/normalization.md`
-- designing code, tests, or tooling against an imagined perfect
-  enforcer (perfect mutation tester, perfect formatter, perfect
-  linter); choosing consistency over local optimality so
-  project-wide transforms stay cheap; building a real tool with
-  few special cases and re-applying as it improves; applying a
-  rubric as a deterministic program (the LLM runs the program,
-  output matches what the program would produce) →
-  `references/perfect-tool.md`
-- setting project thresholds for tooling-enforced state-space
-  rules; ratcheting current values toward aspirational targets;
-  choosing forcing functions; weakening thresholds only on
-  explicit user request →
-  `references/ratchet.md`
-- auditing or improving this skill; converting use evidence into
-  skill findings →
-  `references/skill-refinement.md`
-- origin of the slogans, canonical citations, further reading →
-  `references/history-and-lineage.md`
-
-### Language modules — load by file type in scope
-
-- Rust files → `references/languages/rust.md`
-- TypeScript / JavaScript files → `references/languages/typescript.md`
-- SQL / database migrations / `CREATE DOMAIN` / `CHECK` constraints,
-  database normalization concrete forms → `references/languages/sql.md`
-- Regex patterns in any language (string validation, lexer, route
-  matchers, denylists) → `references/languages/regex.md`
-
-If the work spans multiple symptoms, load multiple technique files. If
-the work spans multiple languages, load each language file.
-
-### End-to-end linear read order
-
-For a whole-skill audit, use this reading order:
-
-1. `references/principles.md`
-2. `references/constructive-vs-predicative.md`
-3. `references/normalization.md`
-4. `references/primitive-obsession.md`
-5. `references/boolean-blindness.md`
-6. `references/total-functions.md`
-7. `references/proof-preservation.md`
-8. `references/architectural-scopes.md`
-9. `references/ingress-and-boundaries.md`
-10. `references/least-power.md`
-11. `references/defensive-code.md`
-12. `references/testing.md`
-13. `references/documentation.md`
-14. `references/commits.md`
-15. `references/perfect-tool.md`
-16. `references/ratchet.md`
-17. `references/skill-refinement.md`
-18. `references/history-and-lineage.md`
-19. `references/languages/<lang>.md` for each language in scope
+Use [state-space-minimization-formal](../state-space-minimization-formal/SKILL.md)
+to reason about a hard invariant or compare candidate encodings. Write
+down the representable states, the contract, and each construction
+path's range. Check strictness, proof preservation, and dominance. For
+a mechanical check, translate those obligations into Lean or TLA+.
+Translate the result back into the form the user requested.
 
 ## Inputs
 
