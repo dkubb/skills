@@ -197,6 +197,32 @@ def ContractReachable {A : Artifact State Obs}
     (ps : PathSet.{u, v, w} A) : Prop :=
   A.C ⊆ Reach ps
 
+/-- Proves `PathsClean` is equivalent to the aggregate reachable set
+being disjoint from `I_repr(m(A))`. -/
+theorem pathsClean_iff_reach_inter
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    {ps : PathSet.{u, v, w} A} :
+    PathsClean m A ps ↔ Reach (m.paths A ps) ∩ I_repr (m.apply A) = ∅ := by
+  constructor
+  · intro h
+    ext x
+    constructor
+    · rintro ⟨⟨p, hx⟩, hI⟩
+      have hmem : x ∈ I_reach ((m.paths A ps).path p).2 := ⟨hx, hI⟩
+      rw [h p] at hmem
+      exact Set.notMem_empty x hmem
+    · intro hx
+      exact (Set.notMem_empty x hx).elim
+  · intro h p
+    ext x
+    constructor
+    · rintro ⟨hx, hI⟩
+      have hmem : x ∈ Reach (m.paths A ps) ∩ I_repr (m.apply A) := ⟨⟨p, hx⟩, hI⟩
+      rw [h] at hmem
+      exact Set.notMem_empty x hmem
+    · intro hx
+      exact (Set.notMem_empty x hx).elim
+
 /-- Anti-vacuity refutation: if ANY enumerated path in `m.paths A ps`
 reaches ANY invalid state `x ∈ I_repr(m(A))`, then `m` is NOT
 sufficient — a leaky path cannot be hidden or dropped. -/

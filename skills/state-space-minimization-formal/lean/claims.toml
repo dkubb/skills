@@ -632,6 +632,16 @@ headline = false
 residual = false
 
 [[claim]]
+id = "select.paths_clean_iff"
+statement = "PathsClean(m,A,ps) ↔ Reach(m.paths A ps) ∩ I_repr(m(A)) = ∅."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.pathsClean_iff_reach_inter"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} {ps : SSM.PathSet A}, SSM.PathsClean m A ps ↔ SSM.Reach (m.paths A ps) ∩ SSM.I_repr (m.apply A) = ∅"
+headline = false
+residual = false
+
+[[claim]]
 id = "select.sufficient_paths"
 statement = "Anti-vacuity: if any path retained by m.paths A ps reaches an invalid state x ∈ I_repr(m(A)), then ¬Sufficient(m,A,ps)."
 rank = "kernel-theorem"
