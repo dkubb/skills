@@ -655,6 +655,40 @@ over accumulated evidence `E*`, not one case — otherwise the rule
 fires vacuously on every use. Materiality and the report gate are
 owned by `references/skill-refinement.md`.
 
+## Outputs
+
+In output-layer mode, emit the items below. In reasoning mode they
+are derived internally and translated into the deliverable's form.
+
+- Invalid-state sets: `I_repr`, and `I_reach` per boundary.
+- Chosen encoding and dominance reason.
+- Boundary morphisms.
+- Contract-preservation obligation.
+- Proof-preservation obligation.
+- Reception-narrowing obligation, when text is the artifact.
+- Normal form.
+- Residual gap, if nonempty.
+
+## Utilities
+
+Run `./check_claims` from the [Lean project](lean/README.md) to verify
+the declarations, theorems, and residuals in its [manifest](lean/claims.toml).
+The prose rules also require evidence outside that manifest:
+
+- For equally ranked mechanisms with equal residuals, compare their audit
+  costs using the architecture and toolchain under review. The Lean
+  selection relation checks residuals and rank.
+- For confluence, prove that alternative reduction orders reach a common
+  normal form. Lean checks idempotence of a single normalizer, which
+  establishes that applying it again preserves its result.
+- For output guarantees that depend on a lowering, model the lowering or
+  carry its well-formedness as a hypothesis. The calculus gives the
+  bad-lowerer test as a review procedure.
+- For transitions and composition, supply a preservation argument for
+  each enabled step, identify the source of an arriving value, and
+  establish cross-component compatibility. The boundary theorems alone
+  do not prove these properties of a particular transition system.
+
 ## Process
 
 1. State `S`, `C`, `I_repr = S \ C`, and, when boundaries exist,
@@ -678,20 +712,6 @@ owned by `references/skill-refinement.md`.
    obligations, and the selection justification (the dominance
    reason). In reasoning mode, translate the derivation into the
    deliverable's form; the notation remains as intermediate work.
-
-## Outputs
-
-In output-layer mode, emit the items below. In reasoning mode they
-are derived internally and translated into the deliverable's form.
-
-- Invalid-state sets: `I_repr`, and `I_reach` per boundary.
-- Chosen encoding and dominance reason.
-- Boundary morphisms.
-- Contract-preservation obligation.
-- Proof-preservation obligation.
-- Reception-narrowing obligation, when text is the artifact.
-- Normal form.
-- Residual gap, if nonempty.
 
 ## Validation Checklist
 
