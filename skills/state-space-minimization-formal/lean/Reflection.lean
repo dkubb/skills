@@ -320,42 +320,38 @@ def SubsetMinimalOn
   ∀ n ∈ Candidates, resid n ⊆ resid m → resid m ⊆ resid n
 
 /-- SKILL.md § "Encoding Order": "Only sufficient mechanisms compete
-for rank" — eligibility gates the whole selection. -/
+for rank" — eligibility gates the whole selection, wired directly to
+the concrete `Sufficient` predicate over the input `PathSet`. -/
 def EligibleMechanisms
     (Candidates : Set (Mechanism.{u, v, w} State Obs))
     (A : Artifact State Obs)
-    (Sufficient : Mechanism.{u, v, w} State Obs → Prop) :
+    (ps : PathSet.{u, v, w} A) :
     Set (Mechanism.{u, v, w} State Obs) :=
-  {n | n ∈ Candidates ∧ Sufficient n ∧ BehaviorOK n A}
+  {n | n ∈ Candidates ∧ Sufficient n A ps ∧ BehaviorOK n A}
 
 /-- SKILL.md § "Artifact Calculus": the selection objective — among
-eligible mechanisms, ⊆-minimal residual then earliest rank. This is
-the whole lexicographic order the calculus selects by. -/
+eligible mechanisms, ⊆-minimal residual then earliest rank. -/
 def EarliestSufficient
     (Candidates : Set (Mechanism.{u, v, w} State Obs))
     (A : Artifact State Obs)
-    (Sufficient : Mechanism.{u, v, w} State Obs → Prop)
+    (ps : PathSet.{u, v, w} A)
     (m : Mechanism.{u, v, w} State Obs) : Prop :=
-  m ∈ EligibleMechanisms Candidates A Sufficient ∧
+  m ∈ EligibleMechanisms Candidates A ps ∧
   SubsetMinimalOn
-    (EligibleMechanisms Candidates A Sufficient) (fun n => Residual n A) m ∧
-  ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
+    (EligibleMechanisms Candidates A ps) (fun n => Residual n A) m ∧
+  ∀ n ∈ EligibleMechanisms Candidates A ps,
     Residual n A = Residual m A → m.rank.index ≤ n.rank.index
 
-/-- Proves the lattice is normatively sound: the selected mechanism is
-always one the calculus admits — it is sufficient AND preserves
-behavior. The eligibility gate is load-bearing: `EarliestSufficient`
-cannot return an insufficient or behavior-breaking mechanism. This is
-the kernel content that justifies the whole selection lattice's
-presence (without it the definitions would model an order with no
-guaranteed property of its chosen element). -/
+/-- Proves the selection lattice is normatively sound: an
+`EarliestSufficient` mechanism is genuinely `Sufficient` (over `ps`)
+and preserves behavior (`BehaviorOK`). -/
 theorem earliestSufficient_admissible
     {Candidates : Set (Mechanism.{u, v, w} State Obs)}
     {A : Artifact State Obs}
-    {Sufficient : Mechanism.{u, v, w} State Obs → Prop}
+    {ps : PathSet.{u, v, w} A}
     {m : Mechanism.{u, v, w} State Obs}
-    (h : EarliestSufficient Candidates A Sufficient m) :
-    Sufficient m ∧ BehaviorOK m A :=
+    (h : EarliestSufficient Candidates A ps m) :
+    Sufficient m A ps ∧ BehaviorOK m A :=
   ⟨h.1.2.1, h.1.2.2⟩
 
 /-- SKILL.md § "Encoding Order": the fallback when no mechanism is

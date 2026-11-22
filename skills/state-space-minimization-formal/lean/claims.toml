@@ -708,31 +708,31 @@ residual = false
 
 [[claim]]
 id = "select.eligible"
-statement = "EligibleMechanisms: only sufficient, behavior-preserving candidates compete for rank."
+statement = "EligibleMechanisms: only mechanisms satisfying concrete Sufficient n A ps and BehaviorOK n A compete for rank."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.EligibleMechanisms"
-expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Artifact State Obs → (SSM.Mechanism State Obs → Prop) → Set (SSM.Mechanism State Obs)"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → (A : Artifact State Obs) → SSM.PathSet A → Set (SSM.Mechanism State Obs)"
 headline = false
 residual = false
 
 [[claim]]
 id = "select.earliest_sufficient"
-statement = "EarliestSufficient: ⊆-minimal residual then earliest rank among eligible mechanisms."
+statement = "EarliestSufficient: ⊆-minimal residual then earliest rank among eligible mechanisms over input PathSet ps."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.EarliestSufficient"
-expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Artifact State Obs → (SSM.Mechanism State Obs → Prop) → SSM.Mechanism State Obs → Prop"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → (A : Artifact State Obs) → SSM.PathSet A → SSM.Mechanism State Obs → Prop"
 headline = false
 residual = false
 
 [[claim]]
 id = "select.earliest_admissible"
-statement = "The selected mechanism is admissible: an EarliestSufficient mechanism is Sufficient and preserves behavior (the eligibility gate is load-bearing). This is the kernel theorem justifying the selection lattice's normative presence."
+statement = "The selected mechanism is admissible: an EarliestSufficient mechanism satisfies concrete Sufficient m A ps and BehaviorOK m A."
 rank = "kernel-theorem"
 lean_module = "Reflection"
 lean_decl = "SSM.earliestSufficient_admissible"
-expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {Candidates : Set (SSM.Mechanism State Obs)} {A : Artifact State Obs} {Sufficient : SSM.Mechanism State Obs → Prop} {m : SSM.Mechanism State Obs}, SSM.EarliestSufficient Candidates A Sufficient m → Sufficient m ∧ SSM.BehaviorOK m A"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {Candidates : Set (SSM.Mechanism State Obs)} {A : Artifact State Obs} {ps : SSM.PathSet A} {m : SSM.Mechanism State Obs}, SSM.EarliestSufficient Candidates A ps m → SSM.Sufficient m A ps ∧ SSM.BehaviorOK m A"
 headline = false
 residual = false
 
