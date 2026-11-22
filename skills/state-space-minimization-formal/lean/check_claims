@@ -108,6 +108,8 @@ struct Claim {
     statement: String,
     rank: String,
     #[serde(default)]
+    lean_module: String,
+    #[serde(default)]
     lean_decl: String,
     #[serde(default)]
     expected_type: String,
@@ -459,6 +461,23 @@ fn main() {
                 &mut errors,
                 format!("headline {:?}: mutant file {} missing", c.id, c.mutant),
             );
+            continue;
+        }
+        let module = dir.join(".lake/build/lib/lean")
+            .join(c.lean_module.replace('.', "/")).with_extension("olean");
+        let deps = Command::new("lake")
+            .args(["env", "lean", "--deps", &c.mutant])
+            .current_dir(&dir)
+            .output();
+        let imports_module = deps.is_ok_and(|out| {
+            out.status.success() && String::from_utf8_lossy(&out.stdout)
+                .lines().any(|path| Path::new(path) == module)
+        });
+        if !imports_module {
+            fail(&mut errors, format!(
+                "headline {:?}: mutant {} must import local module {:?}",
+                c.id, c.mutant, c.lean_module
+            ));
             continue;
         }
         let status = Command::new("lake")

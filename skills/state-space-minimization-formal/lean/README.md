@@ -101,8 +101,9 @@ anti-vacuous. It fails (nonzero exit) on any of:
   change.
 - **Per-headline mutants (exact single-diagnostic pin).** Every headline
   claim carries a rejecting mutant in `mutants/` and a `mutant_error`
-  diagnostic headline in `claims.toml`. The gate compiles each mutant and requires
-  non-zero exit with **exactly one** Lean error matching
+  diagnostic headline in `claims.toml`. Lean must resolve a direct import
+  of the claim’s local module in that mutant. The gate requires a non-zero
+  exit with exactly one Lean error matching
   `<mutant>:<mutant_error>` — catching both vacuous compiles and
   contaminated/stale false kills.
 - **Residual-rank restriction.** A `residual=true` row may carry only an
