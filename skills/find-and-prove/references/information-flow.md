@@ -56,6 +56,11 @@ hidden-policy probing.
 
 ## I6 Declassification & endorsement discipline
 
+For each intended release, record the information released, the role allowed
+to receive it, the boundary where release occurs, and when it is permitted.
+Check that changing untrusted inputs cannot change that release decision
+outside the declared policy (robust declassification).
+
 **Evaluator / provenance poisoning** (record-now-judge-later) — can a candidate
 produce a trace that's *safe as execution* but *misleading as evidence*
 (labels, region boundaries, version mapping, divergence spans, check
