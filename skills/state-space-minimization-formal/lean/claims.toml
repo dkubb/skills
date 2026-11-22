@@ -804,6 +804,16 @@ expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs 
 headline = false
 residual = false
 
+[[claim]]
+id = "dominance.strict"
+statement = "With decidable contract membership, replacing a dominated predicative artifact with its constructive encoding is a strict refinement."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.constructiveDominance_strict"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {Ac Ap : Artifact State Obs} (decideContract : DecidablePred fun x => x ∈ Ac.C), SSM.ConstructiveDominance Ac Ap → SSM.Strict Ap Ac"
+headline = false
+residual = false
+
 # ─────────────────────────── Operations ───────────────────────────────
 
 [[claim]]

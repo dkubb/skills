@@ -421,4 +421,27 @@ theorem strict_preserves_restricted_behavior {A A' : Artifact State Obs}
   obtain ⟨_, _, _, preserves⟩ := step
   exact preserves input.val input.property
 
+/-- Constructive dominance supplies a strict step from the wider
+predicative carrier to the constructive carrier when contract membership
+is decidable. This supplies the case split without a classical axiom. -/
+theorem constructiveDominance_strict {Ac Ap : Artifact State Obs}
+    (decideContract : DecidablePred (· ∈ Ac.C)) (dom : ConstructiveDominance Ac Ap) :
+    Strict Ap Ac := by
+  letI := decideContract
+  have pinned : ContractPinned Ap Ac := dom.contract_pinned.symm
+  refine ⟨pinned, contractPinned_preserves_states pinned, ?_, ?_⟩
+  · have empty : ∀ x, x ∉ I_repr Ac := fun _ invalid =>
+      invalid.2 (dom.constructive ▸ invalid.1)
+    constructor
+    · intro x invalid
+      exact (empty x invalid).elim
+    · intro reverse
+      apply dom.predicative_wider.2
+      intro x hx
+      if valid : x ∈ Ac.C then exact valid else
+        have invalid : x ∈ I_repr Ap := ⟨hx, fun h => valid (dom.contract_pinned ▸ h)⟩
+        exact (empty x (reverse invalid)).elim
+  · intro x hx
+    exact dom.behavior_eq x (dom.contract_pinned ▸ hx)
+
 end SSM
