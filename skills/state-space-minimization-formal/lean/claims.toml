@@ -859,6 +859,16 @@ headline = false
 residual = false
 
 [[claim]]
+id = "ops.total_preimage"
+statement = "A function is total into a declared codomain exactly when its preimage covers the whole declared domain."
+rank = "kernel-theorem"
+lean_module = "Operations"
+lean_decl = "SSM.Fn.total_iff_preimage_eq_domain"
+expected_type = "∀ {D : Type u_1} {K : Type u_2} {f : D → K} {Dom : Set D} {Cod : Set K}, SSM.Fn.Total f Dom Cod ↔ SSM.Fn.Preimage f Dom Cod = Dom"
+headline = false
+residual = false
+
+[[claim]]
 id = "inv.exhaustiveness_residual"
 statement = "Exhaustiveness: closed sums are matched without a catch-all; a catch-all is admissible only when the sum is open."
 rank = "operator-policy"
