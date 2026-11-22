@@ -652,6 +652,19 @@ headline = false
 residual = false
 
 [[claim]]
+id = "select.rank1_strengthening"
+statement = "For rank-1 mechanisms, Sufficient(m,A,ps) ↔ SufficientRank1(m,A) (I_repr(m(A)) = ∅)."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.rank1_sufficient_iff"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} {ps : SSM.PathSet A}, m.rank.index = 1 → (SSM.Sufficient m A ps ↔ SSM.SufficientRank1 m A)"
+headline = true
+mutant = "mutants/mut_sufficient_rank1_predicative.lean"
+mutant_error = "40:2: error: Type mismatch"
+mutant_result = "mut_sufficient_rank1_predicative.lean:40:2: error: Type mismatch — a rank-1 mechanism with I_repr ≠ ∅ cannot discharge Sufficient even when its paths are trusted."
+residual = false
+
+[[claim]]
 id = "select.sufficient_paths"
 statement = "Anti-vacuity: if any path retained by m.paths A ps reaches an invalid state x ∈ I_repr(m(A)), then ¬Sufficient(m,A,ps)."
 rank = "kernel-theorem"

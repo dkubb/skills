@@ -240,6 +240,14 @@ theorem rank1_sufficient_any_paths
   · intro hx
     exact (Set.notMem_empty x hx).elim
 
+/-- SKILL.md § "Encoding Order": for rank-1 mechanisms, `Sufficient`
+is equivalent to `SufficientRank1` (`I_repr(m(A)) = ∅`). -/
+theorem rank1_sufficient_iff
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    {ps : PathSet.{u, v, w} A} (hr1 : m.rank.index = 1) :
+    Sufficient m A ps ↔ SufficientRank1 m A :=
+  ⟨fun h => h.1 hr1, fun h => rank1_sufficient_any_paths h ps⟩
+
 /-- Anti-vacuity refutation: if ANY enumerated path in `m.paths A ps`
 reaches ANY invalid state `x ∈ I_repr(m(A))`, then `m` is NOT
 sufficient — a leaky path cannot be hidden or dropped. -/
