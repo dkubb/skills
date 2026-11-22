@@ -79,7 +79,11 @@ analysis.]
   the *most precise* sound one? Is the slack an authored choice or baked-in
   over-approximation?
 
-## Dynamics & composition — *across time, substitution, runtime*
+## F4 Composition battery
+
+Check the forkability of any affine guarantee under the authority checks
+above. For a check followed by use, establish that the checked state still
+holds at use. Then examine the relevant composition:
 
 - **Safety / liveness / fairness** (Alpern–Schneider) — is "authorization safety"
   silently assuming progress, freshness, cleanup, revocation?
