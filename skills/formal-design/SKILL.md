@@ -45,6 +45,11 @@ Use the project's proof checker to verify declarations and witnesses.
 
 ## Process
 
+Start with [recon](references/recon.md). Check the named declarations and
+their types. If reviewed components already determine every design choice
+and their composition introduces no new correspondence claim, proceed to
+implementation. Otherwise run every applicable question set below.
+
 | Slice kind | Trigger | Module |
 |---|---|---|
 | New increment / rung | any next-slice planning | `references/increment-scoping.md` |
@@ -53,11 +58,7 @@ Use the project's proof checker to verify declarations and witnesses.
 | Carrier / representation choice | "where does this value live?" | `references/carrier-representation.md` |
 | Interface / seam extraction | factoring duplicated theorems | `references/seam-extraction.md` |
 | Effect channel / invariant theorem | replay-checking, returned values | `references/effect-channels.md` |
-| Before any of the above | verify the machinery a spec names | `references/recon.md` |
 | While building | lemmas the NEXT rung will need | `references/proof-hygiene.md` |
-
-Multiple kinds can apply to one slice — run every matching set. A design
-round may be SKIPPED only under the criterion in `references/recon.md`.
 
 ## Shared principles
 
