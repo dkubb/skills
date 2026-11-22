@@ -412,4 +412,13 @@ theorem contractPinned_preserves_states {A A' : Artifact State Obs}
   intro x hx
   exact A'.C_subset_S (pinned.symm ▸ hx)
 
+/-- A caller observing a contract value gets the same result after a strict
+refinement. The pinned contract transports its membership proof. -/
+theorem strict_preserves_restricted_behavior {A A' : Artifact State Obs}
+    (step : Strict A A') (input : {x // x ∈ A.C}) :
+    B_restrict A' ⟨input.val, step.1.symm ▸ input.property⟩ =
+      B_restrict A input := by
+  obtain ⟨_, _, _, preserves⟩ := step
+  exact preserves input.val input.property
+
 end SSM

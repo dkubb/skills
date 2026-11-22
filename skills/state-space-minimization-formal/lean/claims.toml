@@ -539,6 +539,16 @@ expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs 
 headline = false
 residual = false
 
+[[claim]]
+id = "strict.restricted_behavior"
+statement = "A strict refinement preserves the observation on each pinned contract input."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.strict_preserves_restricted_behavior"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A A' : Artifact State Obs} (step : SSM.Strict A A') (input : { x // x ∈ A.C }), SSM.B_restrict A' ⟨↑input, ⋯⟩ = SSM.B_restrict A input"
+headline = false
+residual = false
+
 # ─────────────────────── Selection / encoding order ───────────────────
 
 [[claim]]
