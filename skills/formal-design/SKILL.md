@@ -1,15 +1,8 @@
 ---
 name: formal-design
 description: >-
-  Pre-flight decision procedures run BEFORE authoring a slice/rung of a formal
-  (Lean or similar) system: identity design, carrier/representation choice,
-  primitive forcing, increment scoping, seam/interface extraction, effect
-  channels, recon discipline, and proof-engineering forward hygiene. Each slice
-  kind has a keyed question set with the failure mode each question pre-empts —
-  answering them before building prevents the defects the review-time sibling
-  (find-and-prove) would otherwise catch after the fact. Use when planning the
-  next increment of a formally-proven system, choosing between design
-  candidates, or deciding whether a design round is needed at all.
+  Plan a formal system increment before implementation. Use when choosing a
+  representation, identity, primitive, interface, or proof obligation.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
