@@ -481,9 +481,11 @@ construction path, so it has a range `R(t)` and a reachable-invalid set
 **enumerate each minted token against each uniqueness bound in `C(A)`**: a
 per-*key* freshness premise narrows `R(t)` on the by-key family but not on
 an owner-scoped family, so a pre-existing owner-scoped token plus the mint
-gives `R(t) ∩ I_repr(A) ≠ ∅` (mint `pending pid k` onto a strand already
-holding `pending pid k'`). Close it with a per-owner *phase* premise on
-`t`, never a contract widening and never a negative premise that couples
+gives `R(t) ∩ I_repr(A) ≠ ∅`. For example, a fresh request ID permits
+two pending requests for the same account. If each account may have only
+one pending request, require the account to be idle before accepting one.
+Close the gap with this per-owner *phase* premise on `t`, never a contract
+widening and never a negative premise that couples
 the rule to global state.
 
 **Step-closure of a consumed premise.** A premise `φ` that `t` consumes is
