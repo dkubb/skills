@@ -244,10 +244,10 @@ ordinary refactoring).
 ## How to use this skill
 
 This skill uses **progressive disclosure**. SKILL.md is a router; load
-only the reference files relevant to the current task. The router order
-is a topological sort of the module dependency graph — every module is
-loaded only after its dependencies. See `references/normalization.md` §
-"Application: documentation" for the formal account.
+only the reference files relevant to the current task. Read prerequisites
+before the techniques that use them. Cross-references to examples and
+related techniques are optional. See
+[documentation normalization](references/normalization.md#application-documentation).
 
 **Presentation strategy.** Each module introduces its formal
 definitions first, then applies them to practical cases and examples.
@@ -325,8 +325,7 @@ undischargeable obligations that prose audits miss.
 
 ### Technique modules — load by symptom
 
-Entries below are ordered by dependency. A later module may reference
-an earlier one; earlier modules do not depend on later ones.
+Choose the entry that matches the evidence from the task.
 
 - primitive parameters / weak domain types →
   `references/primitive-obsession.md`
@@ -417,8 +416,7 @@ the work spans multiple languages, load each language file.
 
 ### End-to-end linear read order
 
-For full skill loading (rather than targeted use), the topological
-sort of the module DAG is:
+For a whole-skill audit, use this reading order:
 
 1. `references/principles.md`
 2. `references/constructive-vs-predicative.md`
@@ -439,9 +437,6 @@ sort of the module DAG is:
 17. `references/skill-refinement.md`
 18. `references/history-and-lineage.md`
 19. `references/languages/<lang>.md` for each language in scope
-
-Each module loads only after its dependencies. A reader following this
-order encounters every concept after the concepts it references.
 
 ## Inputs
 

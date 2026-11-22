@@ -377,12 +377,11 @@ back-fills the meaning later. The black-box state is the
 state-space leak: the reader's understanding is in an
 indeterminate state until the back-fill completes.
 
-The skill applies this rule to its own reference files. The
-skill *is* a normalized DAG of concepts; the SKILL.md router is
-the topological sort applied to a load order. A reference that
-loads forward (module A cites module B before B has been
-introduced) is the documentation analog of a passthrough chain
-the reader cannot yet shorten.
+Treat a link as a prerequisite when the reader needs its definition or
+procedure to perform the current task. A link to an example, comparison,
+or later application can point forward. For instance, `perfect-tool.md`
+and `ratchet.md` link to each other to explain how their procedures
+compose. Either procedure can be read on its own.
 
 ### Formal definitions are dependencies of practical applications
 
