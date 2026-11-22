@@ -80,18 +80,9 @@ construction path `b' ≠ b` with
 For constructive `A`, `Obl(f)` is discharged by the type and survives
 the addition of arbitrary new construction paths.
 
-**The bad-lowerer test (is a claimed run output constructive or
-predicative?).** When a property `Q` is asserted of an artifact's
-*outputs* and one of the construction paths `b` is an authored lowering
-— program data the reducer reads but does not compute (an occurrence id,
-a template, a slot) — ask: *can a bad lowerer `b'` falsify `Q` while
-every reducer rule behaves correctly?* If yes, `Q` is established only
-through the trusted boundary `b`, so `R(b') ⊄ C(A)` voids it exactly as
-above: `Q` is predicative, conditional on lowering well-formedness, not a
-constructive (rule-level) theorem. State the required input property as a
-hypothesis. For example,
-if output labels must be unique and the reducer copies them from the
-lowered input, two equal input labels refute an unconditional guarantee.
-Discharge the hypothesis by proving that the lowering produces unique
-labels. A rule-level theorem quantifies over all programs; a property a bad
-program breaks is predicated on the program inhabiting `C`.
+**Conditional output guarantees.** Suppose a reducer copies labels from
+a lowered input and the output contract requires unique labels. Duplicate
+input labels refute an unconditional guarantee even if every reducer rule
+is correct. Carry input uniqueness as a hypothesis until the lowering
+relation proves it. To look for this failure, apply the bad-lowerer test
+(D1) in [find-and-prove's scope checks](../../find-and-prove/references/scope.md).
