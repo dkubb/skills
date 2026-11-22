@@ -431,13 +431,7 @@ fn main() {
         .collect();
     if build_ok && !decls.is_empty() {
         match probe_decls(&dir, &decls) {
-            Ok((missing, bad_axioms)) => {
-                for d in missing {
-                    fail(
-                        &mut errors,
-                        format!("lean_decl {d:?} not found in built environment"),
-                    );
-                }
+            Ok(bad_axioms) => {
                 for (d, ax) in bad_axioms {
                     fail(
                         &mut errors,
@@ -681,13 +675,10 @@ fn transitively_imported(dir: &Path, root: &str) -> BTreeSet<String> {
 }
 
 /// Probe every decl with `#print` (existence) and every theorem with
-/// `#print axioms` (cleanliness). Returns (missing decls, [(decl,
-/// non-allowlisted-axiom)]).
-type ProbeOut = (Vec<String>, Vec<(String, String)>);
+/// `#print axioms` (cleanliness). Compilation errors include the offending declaration.
+type ProbeOut = Vec<(String, String)>;
 fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> {
     let mut probe = String::from("import Ssm\nset_option autoImplicit false\n");
-    // Use a unique marker before each #print so we can attribute the
-    // "unknown" errors to a specific decl by line ordering.
     for (d, is_thm) in decls {
         probe.push_str(&format!("#print {d}\n"));
         if *is_thm {
@@ -710,21 +701,10 @@ fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> 
         String::from_utf8_lossy(&out.stderr)
     );
 
-    let mut missing: Vec<String> = Vec::new();
-    let mut bad_axioms: Vec<(String, String)> = Vec::new();
-
-    // Existence: any "Unknown constant/identifier `Name`" names a
-    // missing decl. Collect the backtick-quoted names.
-    for line in combined.lines() {
-        let l = line.trim();
-        if l.contains("Unknown constant") || l.contains("Unknown identifier") {
-            if let Some(name) = between(l, '`', '`') {
-                if decls.iter().any(|(d, _)| *d == name) && !missing.contains(&name) {
-                    missing.push(name);
-                }
-            }
-        }
+    if !out.status.success() {
+        return Err(std::io::Error::other(combined));
     }
+    let mut bad_axioms = Vec::new();
 
     // Axiom cleanliness: lines like
     //   'Name' depends on axioms: [propext, Quot.sound]
@@ -749,7 +729,7 @@ fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> 
             }
         }
     }
-    Ok((missing, bad_axioms))
+    Ok(bad_axioms)
 }
 
 /// Print the type of every (id, decl, _) via `#check @<decl>` under
@@ -812,12 +792,6 @@ fn probe_types(
     Ok(map)
 }
 
-fn between(s: &str, open: char, close: char) -> Option<String> {
-    let i = s.find(open)?;
-    let rest = &s[i + open.len_utf8()..];
-    let j = rest.find(close)?;
-    Some(rest[..j].to_string())
-}
 
 /// Read both named and anonymous errors from Lean's diagnostic stream.
 fn mutant_errors(output: &[u8]) -> Result<Vec<String>, serde_json::Error> {
