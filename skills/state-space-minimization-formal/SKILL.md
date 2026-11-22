@@ -1,15 +1,8 @@
 ---
 name: state-space-minimization-formal
 description: >-
-  Notation and inference rules for state-space minimization:
-  S/C/I_repr/I_reach state sets, boundary morphisms, strictness and
-  dominance rules, the encoding order, proof obligations, reception
-  semantics for text rewrites, and the skill-gap rules.
-  Two uses: the output layer when the deliverable is formal, and a
-  reasoning mode when it is not — working in the calculus activates
-  formal-methods reasoning and surfaces constraints that prose
-  analysis misses. Semantics live in the state-space-minimization
-  skill's reference modules.
+  Derive state-space invariants, boundary guarantees, and encoding choices
+  for a formal deliverable or as a proof step in a design or review.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
