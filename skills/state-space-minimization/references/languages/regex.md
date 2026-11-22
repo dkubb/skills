@@ -176,9 +176,9 @@ Defenses, in order:
    surface usually evaporates.
 2. **Possessive quantifiers / atomic groups** — `(?>...)`, `a++`,
    `a*+` in PCRE / Java / Ruby refuse to backtrack into the group.
-   Use them on every loop whose contents are unambiguous. JavaScript
-   gained `(?>...)` and possessive quantifiers in ES2024; Rust's
-   `regex` crate is backtrack-free by construction.
+   Use these only when later terms never need a character consumed by
+   the group. ES2024 has neither construct. In JavaScript, rewrite
+   overlapping alternatives so each input has one way to match.
 3. **Switch engines** when the input is hostile. `regex` (Rust) and
    `re2` (C++, Go, Python via `pyre2`) guarantee linear time. Use
    `hyperscan` (Intel, BSD-3) for high-throughput multi-pattern
