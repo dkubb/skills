@@ -738,11 +738,11 @@ residual = false
 
 [[claim]]
 id = "select.fallback"
-statement = "FallbackChoice: when no mechanism is sufficient, the earliest that detects/documents/rejects the targeted invalid states."
+statement = "FallbackChoice: when no candidate satisfies Sufficient n A ps, the earliest that detects, documents, or rejects the targeted invalid states."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.FallbackChoice"
-expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → Set State → (SSM.Mechanism State Obs → Set State → Prop) → (SSM.Mechanism State Obs → Prop) → SSM.Mechanism State Obs → Prop"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Set (SSM.Mechanism State Obs) → (A : Artifact State Obs) → SSM.PathSet A → Set State → (SSM.Mechanism State Obs → Set State → Prop) → SSM.Mechanism State Obs → Prop"
 headline = false
 residual = false
 

@@ -359,11 +359,13 @@ sufficient — earliest mechanism that detects, documents, or rejects
 the targeted invalid states; the remainder is the residual gap. -/
 def FallbackChoice
     (Candidates : Set (Mechanism.{u, v, w} State Obs))
+    (A : Artifact State Obs)
+    (ps : PathSet.{u, v, w} A)
     (TargetInvalid : Set State)
-    (DetectsRejectsOrDocuments : Mechanism.{u, v, w} State Obs → Set State → Prop)
-    (Sufficient : Mechanism.{u, v, w} State Obs → Prop)
+    (DetectsRejectsOrDocuments :
+      Mechanism.{u, v, w} State Obs → Set State → Prop)
     (m : Mechanism.{u, v, w} State Obs) : Prop :=
-  (∀ n ∈ Candidates, ¬ Sufficient n) ∧
+  (∀ n ∈ Candidates, ¬ Sufficient n A ps) ∧
   m ∈ Candidates ∧
   DetectsRejectsOrDocuments m TargetInvalid ∧
   ∀ n ∈ Candidates,

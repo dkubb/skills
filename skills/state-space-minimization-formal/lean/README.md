@@ -41,7 +41,8 @@ The **full** calculus is now reflected. Formalized: state sets and the
 trust theorems; `Strict` and the refinement order; the selection
 objective (eligibility requiring path sufficiency with rank-1 strengthening,
 ⊆-minimality, rank, and admissibility of the selected mechanism) and the
-fallback; optional liveness (`ContractReachable`); constructive dominance;
+fallback when no candidate satisfies the same path predicate; optional
+liveness (`ContractReachable`); constructive dominance;
 `Obl` and the proof-preservation rules (`Needs`/`Erases`/`Flows` ⇒
 `ProofObligation`); reception semantics (denotation, support-subset
 `AdmissibleRewrite`, `ReceptionNarrowing`, completeness);
