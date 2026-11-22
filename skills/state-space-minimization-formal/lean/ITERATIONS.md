@@ -341,10 +341,10 @@ compounding holes:
 1. `StatementBinding.lean` was NOT in the build graph (not imported by
    `Ssm`, an explicit orphan-check exception), so `lake build` never
    compiled the guard — a gutted headline kept the build green.
-2. `check_claims` verified the guard and mutants with `lake env lean <file>`, which loads PREBUILT oleans and does not recompile changed
-   sources; with the cross-worktree artifact cache restoring stale
-   project oleans even across `lake build`, the gate judged STALE
-   artifacts (the old, real theorem) after a source edit.
+2. `check_claims` verified the guard and mutants with `lake env lean <file>`,
+   which loads PREBUILT oleans and does not recompile changed sources.
+   The cross-worktree artifact cache restored stale project oleans even
+   across `lake build`, so the gate judged the old theorem after a source edit.
 
 Fix (make the gate self-contained and cache-safe):
 
