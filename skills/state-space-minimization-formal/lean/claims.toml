@@ -474,7 +474,7 @@ lean_decl = "SSM.ContractPinned"
 expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
 headline = true
 mutant = "mutants/mut_strict_drop_pin.lean"
-mutant_result = "mut_strict_drop_pin.lean:36:2: error: Tactic `rfl` failed — widening C to univ cannot satisfy ContractPinned (univ ≠ {true})."
+mutant_result = "mut_strict_drop_pin.lean:35:2: error: Tactic `rfl` failed — widening C to univ cannot satisfy ContractPinned (univ ≠ {true})."
 residual = false
 
 [[claim]]
