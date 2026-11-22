@@ -33,7 +33,7 @@ CONSTRAINT check_02_max_length
 CONSTRAINT check_03_only_printable_chars
     CHECK (VALUE ~ '\A[[:print:]]*\Z')
 CONSTRAINT check_04_no_invisible_chars
-    CHECK (VALUE !~ '[​-‏ -  -⁯﻿]')
+    CHECK (VALUE !~ U&'[\200B-\200F\2028-\202F\205F-\206F\FEFF]')
 CONSTRAINT check_05_no_leading_or_trailing_whitespace
     CHECK (VALUE = trim(VALUE))
 ;
@@ -570,7 +570,7 @@ SELECT * FROM test.try_cast_label(repeat('a', 257)) \gx /dev/stdout
 SELECT * FROM test.try_cast_label('')         \gx /dev/stdout
 SELECT * FROM test.try_cast_label(E'a\tb')    \gx /dev/stdout
 SELECT * FROM test.try_cast_label(E'a\nb')    \gx /dev/stdout
-SELECT * FROM test.try_cast_label(E'a​b')    \gx /dev/stdout
+SELECT * FROM test.try_cast_label(U&'a\200Bb')    \gx /dev/stdout
 SELECT * FROM test.try_cast_label(' a')       \gx /dev/stdout
 
 -- NULL is documented because domain CHECKs do not fire on NULL;
