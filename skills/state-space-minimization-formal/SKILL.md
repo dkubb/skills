@@ -190,8 +190,9 @@ safety, the trusted-boundary audit, the hard-case fallbacks).
 
 For predicative `A`, every consumer `f` with `D(f) = S(A)` whose
 contractual behavior is specified only on `C(A)` carries an
-obligation `Obl(f)` that the input came through `R(b)`. (`Obl(f)`, not `P_f`: `P` is the boundary
-evidence predicate.) Adding a second construction path `b' ≠ b` with
+obligation `Obl(f)` that the input came through `R(b)`. (`Obl(f)`, not
+`P_f`: `P` is the boundary evidence predicate.) Adding a second
+construction path `b' ≠ b` with
 `R(b') ⊄ C(A)` voids `Obl(f)` globally.
 
 For constructive `A`, `Obl(f)` is discharged by the type and survives
@@ -608,7 +609,8 @@ Semantics: `state-space-minimization` `references/principles.md`
 
 $$
 \begin{array}{rcl}
-\mathrm{Req}(E) &:=& \text{distinctions the evidence } E \text{ exercised or required} \\
+\mathrm{Req}(E) &:=& \text{distinctions the evidence } E
+\text{ exercised or required} \\
 K(\mathrm{Skill}) &:=& \text{distinctions expressible by the skill}
 \end{array}
 $$
