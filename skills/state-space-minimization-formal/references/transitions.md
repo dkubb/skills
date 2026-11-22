@@ -34,8 +34,10 @@ $$
 
 Discharge `Preserves(t, φ)` and fold `φ` into the run invariant, OR keep
 `φ` as a named admitted-code obligation and stop asserting the smaller run
-invariant is *sufficient*. Two consecutive minting `t` at the same owner
-is the canonical witness that a one-step premise is not step-closed.
+invariant is *sufficient*.
+To check whether a legal first step consumes the premise needed
+for the next one, use the two-step phase-closure test (D3) in
+[find-and-prove's scope checks](../../find-and-prove/references/scope.md).
 
 **Reachability is not arrival.** `x ∈ R(t)` says the state is *reachable*,
 not that a token *arrived* by `t`. In an unordered carrier a
