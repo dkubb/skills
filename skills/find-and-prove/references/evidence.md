@@ -160,7 +160,8 @@ reasoning. Run these BEFORE any judgment lens:
   can shadow core symbols so a headline reads as one claim and elaborates as
   another (Wiedijk's Pollack-inconsistency: the printer/parser as attack
   surface — the system prints a statement that reads as a different claim
-  than it elaborates to). Re-elaborate every headline under `set_option pp.all true` (or
+  than it elaborates to). Re-elaborate every headline under `set_option
+  pp.all true` (or
   `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
   When the artifact author is untrusted (LLM-generated proofs included), add
   an external kernel pass (`lean4checker`) — elaborator exploits are outside

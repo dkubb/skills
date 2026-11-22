@@ -179,4 +179,3 @@ single-valued? If only the latter three, the constant/degenerate
 annotation satisfies them all — vacuous. A label is real only once one
 theorem READS IT BACK against what the step produced.
 ```
-

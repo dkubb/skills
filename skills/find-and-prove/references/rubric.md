@@ -48,7 +48,8 @@ they exist; the entry here is the binding one-screen form.
   delete-BOTH counter-mutant (drop hypothesis and conjunct; still proves ⇒
   echo). Sibling: swap the exhibited run witness for the trivial one and
   require failure.
-- **A5 Fuel/partiality vacuity** (graduated; keep) — `∃ fuel` and `partial def` opt-outs.
+- **A5 Fuel/partiality vacuity** (graduated; keep) — `∃ fuel` and `partial
+  def` opt-outs.
 - **A6 Inhabitance vs conditional schema** — FIRE on every fixture theorem
   `(h : Step …) ⊢ C`: hypothesis-supplied steps are not machine-checked
   inhabitable; compile the concrete `∃`-witness.
@@ -207,7 +208,6 @@ they exist; the entry here is the binding one-screen form.
   "consume" only for linear removal, "read" for persistent facts; "support"
   never "provenance" (graduated); tag export twins; boundary-based over
   event-based capstone names.
-
 - **C9 Deferral honesty** [parametricity] (Fable's `genPreserves`; blind-
   reproduced) — FIRE on every deferred global property of a helper and
   before accepting any mutation survivor as by-design: re-derive every
@@ -411,7 +411,8 @@ drill.
   diagnostics offline.
 - **I3 Non-interference** [two-run / low-equivalence; relational Hoare /
   self-composition; unwinding per-step; QIF / min-entropy for measurement] —
-  FIRE on every confidentiality claim: prove `LowEq role s₁ s₂ ∧ secrets vary → low observations equal ∧ next states LowEq` by self-composition; a
+  FIRE on every confidentiality claim: prove `LowEq role s₁ s₂ ∧ secrets
+  vary → low observations equal ∧ next states LowEq` by self-composition; a
   constructor count is a smell (crude `log₂k`), not a measurement.
 - **I4 Chosen-prefix oracle / active automaton learning** [Angluin L*] — FIRE
   when the adversary drives execution to a boundary: each public tag after the
