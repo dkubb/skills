@@ -528,9 +528,9 @@ Part of this work trialed making the **Lean project canonical**: rewriting
 the README to "Lean is normative", and coupling the gate to SKILL.md via a
 claim-id↔row bijection. That trial was **reverted**. The decision:
 
-- `../SKILL.md` stays the **normative prose calculus**, byte-identical to
-  `main`. The Lean project is a **non-normative, full, hardened reflection**
-  of it, and `check_claims` is **Lean-internal** (it does not read SKILL.md;
+- At the end of the trial, `../SKILL.md` matched `main` and remained the
+  normative prose calculus. The Lean project models the claims recorded in
+  `claims.toml`, and `check_claims` is **Lean-internal** (it does not read SKILL.md;
   the bijection is gone, the anti-vacuity machinery — type pin, per-headline
   mutants, residual-rank, orphan, axioms, cache-safe rebuild — stays).
 
@@ -541,8 +541,7 @@ claim-id↔row bijection. That trial was **reverted**. The decision:
   effectiveness — its payoff is the formalization's own machine-checked
   correctness, not sharper per-task output. So the readable prose stays the
   primary artifact; the Lean is kept because it is genuinely improved
-  (full-calculus, vacuity closed, adversarially hardened) and worth locking
-  in.
+  by the additional proofs and regression checks.
 
 The canonicalization is reproducible if retried: the driving prompt is
 `CANONICALIZE_PROMPT.md` (kept on disk, gitignored). This log is retained as

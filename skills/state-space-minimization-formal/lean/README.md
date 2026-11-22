@@ -35,11 +35,14 @@ proves it.
   needs choice the gate flags the non-allowlisted axiom, which is the
   ratchet working.
 
-## Scope — the full calculus
+## Scope of the Lean model
 
-The **full** calculus is now reflected. Formalized: state sets and the
-trust theorems; `Strict` and the refinement order; the selection
-objective (eligibility requiring path sufficiency with rank-1 strengthening,
+The reflection covers the claims listed in `claims.toml`. The skill also
+specifies costs, confluence, lowering checks, and transition closure. See
+[Utilities](../SKILL.md#utilities) for their verification scope.
+
+The model covers state sets and the trust theorems, strict refinement, and the
+selection objective (eligibility requiring path sufficiency with rank-1 strengthening,
 ⊆-minimality, rank, and admissibility of the selected mechanism) and the
 fallback when no candidate satisfies the same path predicate; optional
 liveness (`ContractReachable`); constructive dominance;
@@ -159,8 +162,8 @@ review, not by a stamp.
 
 Originally a Codex (GPT-class) reflection probe of `../SKILL.md` on
 2026-06-12, graded by compilation under Lean 4.30.0 + mathlib.
-Subsequently expanded to the full calculus and adversarially hardened;
-the refinement and hardening iterations are logged in `ITERATIONS.md`.
+[The iteration history](ITERATIONS.md) records which claims and checks
+were added after the initial probe.
 
 ## Building and checking
 
