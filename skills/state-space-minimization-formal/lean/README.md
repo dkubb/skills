@@ -39,10 +39,9 @@ proves it.
 
 The **full** calculus is now reflected. Formalized: state sets and the
 trust theorems; `Strict` and the refinement order; the selection
-objective (`Sufficient` with a coverage-witnessed construction-path
-set, eligibility, ⊆-minimality, rank, and the theorem that the chosen
-mechanism is admissible) and the fallback; optional contract reachability
-(`ContractReachable`); constructive dominance;
+objective (path sufficiency with rank-1 strengthening, eligibility,
+⊆-minimality, rank, and admissibility of the selected mechanism) and the
+fallback; optional liveness (`ContractReachable`); constructive dominance;
 `Obl` and the proof-preservation rules (`Needs`/`Erases`/`Flows` ⇒
 `ProofObligation`); reception semantics (denotation, support-subset
 `AdmissibleRewrite`, `ReceptionNarrowing`, completeness);
@@ -63,6 +62,9 @@ Allowlisted residuals (claims no command can enforce; see
 - `selfsim.spans_repeated_use_residual` — "`E*` spans repeated use" is
   empirical; carried as an abstract hypothesis and proved
   load-bearing.
+- `select.path_enumeration_residual` — whether the supplied `PathSet`
+  (and `m.paths`) enumerates every construction path of real code
+  (deserializers, FFI, derives) is an operator audit obligation.
 - `select.rank_metric_residual` — the encoding-order table is derived
   per architecture, not an axiom.
 - `select.rank_vocabularies_residual` — the encoding-order rank
@@ -134,7 +136,7 @@ are not silently carried as dead values.
 Lean identifiers mirror the calculus names wherever the calculus names
 a thing (`I_repr`, `I_reach`, `R`, `Strict`, `Sufficient`, `Obl`,
 `Needs`, `Erases`, `Flows`, `Req`, `K`). Where Lean coins a name for
-an implicit calculus concept (`ContractPinned`, `ConstructionPaths`,
+an implicit calculus concept (`ContractPinned`, `PathSet`,
 `ReceptionComplete`), the coined name is back-ported into `../SKILL.md`
 prose. Renames on either side are vocabulary drift and must land on
 both sides or not at all.

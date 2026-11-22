@@ -533,7 +533,7 @@ residual = false
 
 [[claim]]
 id = "select.path_set"
-statement = "PathSet: the enumerated construction paths supplied for analysis of A."
+statement = "PathSet: the enumerated construction paths of A, supplied as analysis input (the sufficiency claim ranges over m.paths A ps, not a separate caller-supplied domain)."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.PathSet"
@@ -573,11 +573,11 @@ residual = false
 
 [[claim]]
 id = "select.mechanism"
-statement = "Mechanism m: apply, rank; inducing m(A)."
+statement = "Mechanism m: apply, paths, rank; inducing both m(A) and its transformed construction paths m.paths A ps."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.Mechanism"
-expected_type = "Type u_1 → Type u_2 → Type (max u_1 u_2)"
+expected_type = "Type u_1 → Type u_2 → Type (max (max u_1 u_2) (u_3 + 1))"
 headline = false
 residual = false
 
@@ -603,7 +603,7 @@ residual = false
 
 [[claim]]
 id = "select.sufficient_rank1"
-statement = "Sufficient(m) for rank-1 strengthens to I_repr(m(A)) = ∅."
+statement = "SufficientRank1(m,A): I_repr(m(A)) = ∅ — the rank-1 strengthening of sufficiency."
 rank = "kernel-definition"
 lean_module = "Reflection"
 lean_decl = "SSM.SufficientRank1"
@@ -612,27 +612,56 @@ headline = false
 residual = false
 
 [[claim]]
-id = "select.construction_paths"
-statement = "ConstructionPaths: the enumerated path set with a coverage witness tying it to m(A)'s actual constructors."
+id = "select.paths_clean"
+statement = "PathsClean(m,A,ps): I_reach(m(A),b) = ∅ for every path b in m.paths A ps."
 rank = "kernel-definition"
 lean_module = "Reflection"
-lean_decl = "SSM.ConstructionPaths"
-expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → Artifact State Obs → Type (max u_1 (u_3 + 1))"
+lean_decl = "SSM.PathsClean"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → (A : Artifact State Obs) → SSM.PathSet A → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.sufficient"
+statement = "Sufficient(m,A,ps): I_reach(m(A),b) = ∅ for every path b in m.paths A ps, strengthening to I_repr(m(A)) = ∅ when rank = 1."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Sufficient"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → SSM.Mechanism State Obs → (A : Artifact State Obs) → SSM.PathSet A → Prop"
 headline = false
 residual = false
 
 [[claim]]
 id = "select.sufficient_paths"
-statement = "Sufficient(m) := I_reach(m(A),b) = ∅ for every enumerated, COVERING construction path b; coverage closes the Paths=Empty vacuity."
+statement = "Anti-vacuity: if any path retained by m.paths A ps reaches an invalid state x ∈ I_repr(m(A)), then ¬Sufficient(m,A,ps)."
 rank = "kernel-theorem"
 lean_module = "Reflection"
-lean_decl = "SSM.sufficientWithPaths_imp_irepr_empty"
-expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} (cp : SSM.ConstructionPaths m A), SSM.SufficientWithPaths m A cp → SSM.I_repr (m.apply A) = ∅"
+lean_decl = "SSM.leaky_path_not_sufficient"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} {ps : SSM.PathSet A} (p : (m.paths A ps).Paths) {x : State}, x ∈ SSM.R ((m.paths A ps).path p).snd → x ∈ SSM.I_repr (m.apply A) → ¬SSM.Sufficient m A ps"
 headline = true
-mutant = "mutants/mut_sufficient_empty_paths.lean"
-mutant_error = "36:33: error: Type mismatch"
-mutant_result = "mut_sufficient_empty_paths.lean:36:33: error: Type mismatch — an empty path set cannot satisfy the coverage obligation for an artifact with S=univ, so it can no longer vacuously discharge sufficiency."
+mutant = "mutants/mut_sufficient_leaky_path.lean"
+mutant_error = "48:4: error: Type mismatch"
+mutant_result = "mut_sufficient_leaky_path.lean:48:4: error: Type mismatch — retaining a leaky construction path alongside a trusted one makes Sufficient unprovable."
 residual = false
+
+[[claim]]
+id = "select.predicative_separation"
+statement = "Non-collapse separation: there exists a rank-2 predicative mechanism with I_repr(m(A)) ≠ ∅ that is Sufficient and ContractReachable (Sufficient does not collapse to SufficientRank1)."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.predicative_sufficient_separation"
+expected_type = "∃ A m, m.rank.index = 2 ∧ SSM.I_repr (m.apply A) ≠ ∅ ∧ ∀ (ps : SSM.PathSet A), SSM.Sufficient m A ps ∧ SSM.ContractReachable (m.paths A ps)"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.path_enumeration_residual"
+statement = "PathSet & m.paths fidelity: whether ps and m.paths A ps faithfully reflect every construction path of real code (including any paths m claims to remove) is an operator audit obligation."
+rank = "operator-policy"
+lean_decl = ""
+headline = false
+residual = true
+residual_justification = "Lean checks sufficiency over the exact path domain m.paths A ps, preventing a sufficiency proof from substituting a smaller domain than m.paths A ps. Whether ps and m.paths faithfully reflect every real-world construction path of a program (e.g. serde derives, unsafe casts, FFI, and whether m genuinely eliminates any path m.paths drops) is an external operator audit obligation, not decidable inside Lean."
 
 [[claim]]
 id = "select.subset_minimal"
@@ -691,7 +720,7 @@ rank = "operator-policy"
 lean_decl = ""
 headline = false
 residual = true
-residual_justification = "The rank assignment is an architecture-dependent derivation ('a mechanism ranks earlier when it governs more construction paths; ties break by earlier detection phase'). The Rank STRUCTURE is formalized (positive index, used by the selectors), but WHICH concrete mechanism gets which rank is an operator judgment per architecture — no command can derive the table for an arbitrary system."
+residual_justification = "The rank assignment is an architecture-dependent derivation ('a mechanism ranks earlier when it governs more construction paths; ties break by earlier detection phase'). The Rank STRUCTURE is formalized (positive index, used by the selectors, and the rank-1 strengthening `m.rank.index = 1 → SufficientRank1 m A` keys on this assignment), but WHICH concrete mechanism gets which rank is an operator judgment per architecture — no command can derive the table for an arbitrary system."
 
 [[claim]]
 id = "select.rank_vocabularies_residual"
