@@ -58,6 +58,7 @@ implementation. Otherwise run every applicable question set below.
 | Carrier / representation choice | "where does this value live?" | `references/carrier-representation.md` |
 | Interface / seam extraction | factoring duplicated theorems | `references/seam-extraction.md` |
 | Effect channel / invariant theorem | replay-checking, returned values | `references/effect-channels.md` |
+| Resource / authority | splitting, spending, delegating, or composing a bounded resource | [Resources](references/resources.md) |
 | While building | lemmas the NEXT rung will need | `references/proof-hygiene.md` |
 
 ## Shared principles
