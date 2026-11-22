@@ -59,6 +59,7 @@ implementation. Otherwise run every applicable question set below.
 | Interface / seam extraction | factoring duplicated theorems | `references/seam-extraction.md` |
 | Effect channel / invariant theorem | replay-checking, returned values | `references/effect-channels.md` |
 | Resource / authority | splitting, spending, delegating, or composing a bounded resource | [Resources](references/resources.md) |
+| Confidentiality / seal | a caller can observe results derived from private state | [Confidentiality](references/confidentiality.md) |
 | While building | lemmas the NEXT rung will need | `references/proof-hygiene.md` |
 
 ## Shared principles
