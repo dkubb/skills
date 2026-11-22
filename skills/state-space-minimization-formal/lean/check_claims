@@ -1,7 +1,7 @@
 #!/usr/bin/env rust-script
 //! Mechanical gate for the state-space-minimization-formal calculus.
 //!
-//! Run from the `lean/` directory:
+//! Run the script in `lean/` from any directory:
 //!     ./check_claims
 //! (needs elan on PATH: export PATH="$HOME/.elan/bin:$PATH")
 //!
@@ -130,8 +130,12 @@ fn fail(errors: &mut Vec<String>, msg: String) {
 }
 
 fn lean_dir() -> PathBuf {
-    // The script lives in lean/; run relative to its own directory.
-    std::env::current_dir().expect("cwd")
+    Path::new(env!("RUST_SCRIPT_PATH"))
+        .canonicalize()
+        .expect("resolve check_claims script")
+        .parent()
+        .expect("script directory")
+        .to_owned()
 }
 
 fn main() {
