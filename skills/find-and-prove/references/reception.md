@@ -51,6 +51,11 @@ says), never keep the aspirational name with a clarifying docstring alone —
 the name is what readers carry. The deciding witness is the satisfying
 violator; building it is cheap and settles the argument.
 
+For a claim about causal arrival, apply the
+[transition distinction](../../state-space-minimization-formal/SKILL.md#transitions-as-boundary-morphisms).
+A run can reach the named state through another transition. If that run
+satisfies the predicate, the predicate establishes reachability alone.
+
 ## C4 Frame honesty ("no X" claims in redex ++ frame systems)
 
 FIRE on every "no X" / "contains no X" claim in a `redex ++ frame` rewrite
