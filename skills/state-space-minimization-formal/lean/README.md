@@ -41,7 +41,8 @@ The **full** calculus is now reflected. Formalized: state sets and the
 trust theorems; `Strict` and the refinement order; the selection
 objective (`Sufficient` with a coverage-witnessed construction-path
 set, eligibility, ⊆-minimality, rank, and the theorem that the chosen
-mechanism is admissible) and the fallback; constructive dominance;
+mechanism is admissible) and the fallback; optional contract reachability
+(`ContractReachable`); constructive dominance;
 `Obl` and the proof-preservation rules (`Needs`/`Erases`/`Flows` ⇒
 `ProofObligation`); reception semantics (denotation, support-subset
 `AdmissibleRewrite`, `ReceptionNarrowing`, completeness);

@@ -532,6 +532,46 @@ headline = false
 residual = false
 
 [[claim]]
+id = "select.path_set"
+statement = "PathSet: the enumerated construction paths supplied for analysis of A."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.PathSet"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Type (max u_1 (u_3 + 1))"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.reach"
+statement = "Reach(ps): union of R(b) across all enumerated construction paths in ps."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.Reach"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → {A : Artifact State Obs} → SSM.PathSet A → Set State"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.contract_reachable"
+statement = "ContractReachable(ps): A.C ⊆ Reach(ps) — optional liveness property separate from Sufficient."
+rank = "kernel-definition"
+lean_module = "Reflection"
+lean_decl = "SSM.ContractReachable"
+expected_type = "{State : Type u_1} → {Obs : Type u_2} → {A : Artifact State Obs} → SSM.PathSet A → Prop"
+headline = false
+residual = false
+
+[[claim]]
+id = "select.empty_paths_not_live"
+statement = "An empty path set fails ContractReachable whenever A.C is nonempty (separating liveness from sufficiency)."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.empty_paths_not_contract_reachable"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} (ps : SSM.PathSet A), IsEmpty ps.Paths → ∀ {x : State}, x ∈ A.C → ¬SSM.ContractReachable ps"
+headline = false
+residual = false
+
+[[claim]]
 id = "select.mechanism"
 statement = "Mechanism m: apply, rank; inducing m(A)."
 rank = "kernel-definition"

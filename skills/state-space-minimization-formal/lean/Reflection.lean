@@ -129,6 +129,38 @@ structure Rank where
   index : Nat
   positive : 0 < index
 
+/-- SKILL.md § "Inputs": "The construction paths of `A`: the set of
+all boundary morphisms that can produce values of `A`. Quantifiers
+`∀b` range over this set; it must be enumerated, not assumed."
+Each path names a boundary that constructs values of the artifact. -/
+structure PathSet (A : Artifact State Obs) where
+  Paths : Type w
+  path : Paths → Σ U : Type w, Boundary A U
+
+/-- Total reachable state set across all enumerated construction paths. -/
+def Reach {A : Artifact State Obs} (ps : PathSet.{u, v, w} A) : Set State :=
+  {x | ∃ p : ps.Paths, x ∈ R (ps.path p).2}
+
+/-- Optional liveness property (separate from `Sufficient`): every
+contract state remains constructible through some enumerated path.
+The calculus
+imposes no universal reachability requirement (e.g., conservative
+parsers may have `Reach ⊊ C`). -/
+def ContractReachable {A : Artifact State Obs}
+    (ps : PathSet.{u, v, w} A) : Prop :=
+  A.C ⊆ Reach ps
+
+/-- Liveness refutation: an empty path set fails `ContractReachable`
+whenever the contract `A.C` is nonempty. -/
+theorem empty_paths_not_contract_reachable
+    {A : Artifact State Obs} (ps : PathSet.{u, v, w} A)
+    (hEmpty : IsEmpty ps.Paths)
+    {x : State} (hx : x ∈ A.C) :
+    ¬ ContractReachable ps := by
+  intro h
+  obtain ⟨p, _⟩ := h hx
+  exact hEmpty.false p
+
 /-- SKILL.md § "Inputs": a candidate mechanism `m` inducing `m(A)`.
 The contract pin `C(m(A)) = C(A)` is required via `BehaviorOK`. -/
 structure Mechanism (State : Type u) (Obs : Type v) where
