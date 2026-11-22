@@ -24,7 +24,8 @@
 #                          non-residual row). `check_claims` rebuilds
 #                          the env cache-disabled, prints the real
 #                          decl's type with `#check @<decl>` under
-#                          `pp.fullNames`, collapses whitespace, and
+#                          `pp.fullNames`, checks definitional equality,
+#                          collapses whitespace, and
 #                          compares it to this string. A mismatch FAILS
 #                          the gate — so gutting a headline to
 #                          `: True := trivial` changes its printed type

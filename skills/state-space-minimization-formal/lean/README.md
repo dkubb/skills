@@ -100,12 +100,11 @@ anti-vacuous. It fails (nonzero exit) on any of:
   cache-disabled (`LAKE_ARTIFACT_CACHE=false`) `lake build`, so every
   downstream check judges artifacts that match the current sources, not
   stale cached oleans.
-- **Type pin.** For every non-residual headline it prints the real
-  decl's type (`#check @decl` under `pp.fullNames`) and compares it to
-  the recorded `expected_type`; gutting a headline to `: True := trivial`
-  changes its printed type and fails. The only way to pass a gutted
-  headline is to also edit `expected_type` — a visible, reviewable
-  change.
+- **Type pin.** For every non-residual claim, Lean checks that the
+  declaration's type is definitionally equal to `expected_type`.
+  This catches changes to implicit arguments that print identically.
+  The gate also compares the printed type to the pin, including
+  binder names that callers can use for named arguments.
 - **Per-headline mutants (exact single-diagnostic pin).** Every headline
   claim carries a rejecting mutant in `mutants/` and a `mutant_error`
   diagnostic headline in `claims.toml`. Lean must resolve a direct import
@@ -170,6 +169,7 @@ This directory is a self-contained lake project:
 lake exe cache get   # once; downloads the mathlib build cache
 lake build           # type-checks the root module Ssm (all modules)
 ./check_claims       # the mechanical gate (needs elan on PATH)
+rust-script --test check_claims  # regression tests for the checker
 ```
 
 `Ssm.lean` is the root module: it imports every calculus module and is

@@ -22,7 +22,9 @@
 //! HEADLINE STATEMENTS ARE PINNED BY TYPE, NOT BY AN EDITABLE GUARD.
 //! For every non-residual row the gate prints the real decl's type
 //! (`#check @<decl>` under `pp.fullNames`), collapses whitespace, and
-//! compares it to the `expected_type` recorded in claims.toml. Gutting
+//! compares it to the `expected_type` recorded in claims.toml. Lean also
+//! elaborates that pin and checks definitional equality, including implicit
+//! arguments that the pretty-printer omits. Gutting
 //! a headline (e.g. to `: True := trivial`) changes its printed type,
 //! so the gate FAILS — and the ONLY way to make it pass is to also
 //! edit `expected_type` in claims.toml, a visible reviewable change.
@@ -684,29 +686,48 @@ fn probe_decls(dir: &Path, decls: &[&str]) -> std::io::Result<ProbeOut> {
     Ok(bad_axioms)
 }
 
-/// Print the type of every (id, decl, _) via `#check @<decl>` under
-/// `pp.fullNames true`, then attribute each printed record to its decl.
-/// Returns a map decl -> raw printed type (post-`: `, pre-normalize).
-///
-/// `#check @D` prints `@D : <type>` (or `D : <type>` for decls where
-/// `@` is a no-op, e.g. structures). Records can wrap across lines, so
-/// we flatten the whole output to a single space-separated string and
-/// slice each record from its `(@?)<decl> : ` marker to the start of
-/// the next decl's marker.
+#[test]
+fn type_pin_rejects_a_different_addition_instance() {
+    // Lean displays this proposition and Nat.zero_add as "∀ (n : Nat), 0 + n = n".
+    // The explicit instance returns one for every pair of operands.
+    let different_addition =
+        "∀ n : Nat, @HAdd.hAdd Nat Nat Nat ⟨fun _ _ => 1⟩ 0 n = n";
+    let pins = [("different_addition", "Nat.zero_add", different_addition)];
+    let error = probe_types(&lean_dir(), &pins).expect_err("the types must differ");
+    assert!(error.to_string().contains("type-pin mismatch for Nat.zero_add"));
+}
+
+/// Check each elaborated pin and collect the separate information record
+/// emitted by its `#check`. Lean warnings can appear between these records.
 fn probe_types(
     dir: &Path,
     pins: &[(&str, &str, &str)],
 ) -> std::io::Result<std::collections::BTreeMap<String, String>> {
-    let mut probe =
-        String::from("import Ssm\nset_option autoImplicit false\nset_option pp.fullNames true\n");
-    for (_, decl, _) in pins {
-        probe.push_str(&format!("#check @{decl}\n"));
+    let mut probe = String::from(r##"import Ssm
+set_option autoImplicit false
+set_option pp.fullNames true
+open Lean Elab Command Meta Term in
+elab "#pin_type " decl:ident " : " expected:term : command => liftTermElabM do
+  let info ← getConstInfo decl.getId
+  -- Use the same universe parameter names that #check prints in the pins.
+  let names := info.levelParams.zipIdx.map fun (_, i) => Name.mkSimple s!"u_{i + 1}"
+  Term.withLevelNames names do
+    let actual := info.instantiateTypeLevelParams (names.map Level.param)
+    let pinned ← Term.elabType expected
+    Term.synthesizeSyntheticMVarsNoPostponing
+    unless ← isDefEq actual pinned do
+      withOptions (fun opts => opts.setBool `pp.all true) do
+        throwErrorAt decl "type-pin mismatch for {decl}: expected {pinned}, got {actual}"
+"##);
+    for (_, decl, expected) in pins {
+        probe.push_str(&format!("#pin_type {decl} : {expected}\n#check @{decl}\n"));
     }
     let probe_path = dir.join(".check_claims_typeprobe.lean");
     fs::write(&probe_path, &probe)?;
     let out = Command::new("lake")
         .arg("env")
         .arg("lean")
+        .arg("--json")
         .arg(&probe_path)
         .env("LAKE_ARTIFACT_CACHE", "false")
         .current_dir(dir)
@@ -720,50 +741,35 @@ fn probe_types(
     if !out.status.success() {
         return Err(std::io::Error::other(format!("{}\n{combined}", out.status)));
     }
-    let flat = normalize_type(&combined);
-
-    // Marker for each decl, in either `@D : ` or `D : ` form. Compute
-    // every marker's byte position, then each record runs to the next.
-    let decls: Vec<&str> = pins.iter().map(|(_, d, _)| *d).collect();
-    // Collect (start_of_type, decl) for whichever marker form appears.
-    let mut hits: Vec<(usize, usize, &str)> = Vec::new(); // (marker_start, type_start, decl)
-    for d in &decls {
-        let m_at = format!("@{d} : ");
-        let m_plain = format!("{d} : ");
-        // Prefer the `@`-form; fall back to the plain form.
-        if let Some(i) = flat.find(&m_at) {
-            hits.push((i, i + m_at.len(), d));
-        } else if let Some(i) = flat.find(&m_plain) {
-            hits.push((i, i + m_plain.len(), d));
-        }
-    }
-    hits.sort_by_key(|h| h.0);
     let mut map = std::collections::BTreeMap::new();
-    for (idx, &(_, type_start, decl)) in hits.iter().enumerate() {
-        let end = hits.get(idx + 1).map(|h| h.0).unwrap_or(flat.len());
-        let ty = flat[type_start..end].trim().to_string();
-        map.insert(decl.to_string(), ty);
+    for diagnostic in serde_json::Deserializer::from_slice(&out.stdout).into_iter::<Diagnostic>() {
+        let diagnostic = diagnostic?;
+        if diagnostic.severity == "information" {
+            if let Some((decl, ty)) = diagnostic.data.split_once(" : ") {
+                map.insert(decl.trim_start_matches('@').to_owned(), ty.to_owned());
+            }
+        }
     }
     Ok(map)
 }
 
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Diagnostic {
+    severity: String,
+    file_name: String,
+    pos: Position,
+    data: String,
+}
+#[derive(Deserialize)]
+struct Position {
+    line: usize,
+    column: usize,
+}
+
 /// Read both named and anonymous errors from Lean's diagnostic stream.
 fn mutant_errors(output: &[u8]) -> Result<Vec<String>, serde_json::Error> {
-    #[derive(Deserialize)]
-    #[serde(rename_all = "camelCase")]
-    struct Diagnostic {
-        severity: String,
-        file_name: String,
-        pos: Position,
-        data: String,
-    }
-    #[derive(Deserialize)]
-    struct Position {
-        line: usize,
-        column: usize,
-    }
-
     let mut errors = Vec::new();
     for diagnostic in serde_json::Deserializer::from_slice(output).into_iter::<Diagnostic>() {
         let diagnostic = diagnostic?;
