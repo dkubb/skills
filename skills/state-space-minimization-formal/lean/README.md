@@ -99,9 +99,12 @@ anti-vacuous. It fails (nonzero exit) on any of:
   changes its printed type and fails. The only way to pass a gutted
   headline is to also edit `expected_type` — a visible, reviewable
   change.
-- **Per-headline mutants.** Every headline claim carries a rejecting
-  mutant in `mutants/` that is compiled and confirmed to FAIL; a
-  headline whose mutant compiles is presumed vacuous.
+- **Per-headline mutants (exact single-diagnostic pin).** Every headline
+  claim carries a rejecting mutant in `mutants/` and a `mutant_error`
+  diagnostic headline in `claims.toml`. The gate compiles each mutant and requires
+  non-zero exit with **exactly one** Lean error matching
+  `<mutant>:<mutant_error>` — catching both vacuous compiles and
+  contaminated/stale false kills.
 - **Residual-rank restriction.** A `residual=true` row may carry only an
   `evaluator-judgment`, `operator-policy`, or `honest-doc` rank — never
   a kernel rank, which would let a provable theorem be dodged as prose.

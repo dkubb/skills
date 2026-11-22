@@ -35,7 +35,13 @@
 #   headline               true if this claim carries a rejecting
 #                          mutant; corollary/definition rows set false
 #   mutant                 mutant file (headline rows only)
-#   mutant_result          the compile-failure excerpt (headline rows)
+#   mutant_error           expected single diagnostic headline
+#                          (`<line>:<col>: error: <kind>`) checked by
+#                          `check_claims` (headline rows only); mutant
+#                          must report exactly one Lean error
+#                          matching `<mutant>:<mutant_error>`
+#   mutant_result          prose explanation of the compile failure
+#                          (headline rows)
 #   residual               true when lean_decl is empty (allowlisted)
 #   residual_justification required iff residual=true
 #
@@ -158,6 +164,7 @@ lean_decl = "SSM.constructive_discharges_obl"
 expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs}, A.S = A.C → ∀ (f : SSM.Consumer State), f.D = A.S → ∀ (x : State), x ∈ f.D → x ∈ A.C"
 headline = true
 mutant = "mutants/mut_constructive_discharges_obl.lean"
+mutant_error = "29:2: error: Type mismatch"
 mutant_result = "mut_constructive_discharges_obl.lean:29:2: error: Type mismatch — dropping S(A)=C(A) (predicative A), a state in f.D need not be in C, so the discharge fails."
 residual = false
 
@@ -170,6 +177,7 @@ lean_decl = "SSM.trusted_boundary_reaches_valid"
 expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} {U : Type u_3} (bd : SSM.TrustedBoundary A U), SSM.R bd.toBoundary ⊆ A.C"
 headline = true
 mutant = "mutants/mut_trusted_reaches_valid.lean"
+mutant_error = "34:2: error: Type mismatch"
 mutant_result = "mut_trusted_reaches_valid.lean:34:2: error: Type mismatch — an ordinary boundary reaching false ∈ I_repr cannot satisfy R(b) ⊆ C(A)={true}."
 residual = false
 
@@ -295,6 +303,7 @@ lean_decl = "SSM.proofObligation_reconstitute"
 expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.ProofObligation g y P → ∀ (x : State), P (g.run x) ∧ g.run x = x"
 headline = true
 mutant = "mutants/mut_proofobl_drop_needs.lean"
+mutant_error = "28:2: error: Type mismatch"
 mutant_result = "mut_proofobl_drop_needs.lean:28:2: error: Type mismatch — dropping the `needs` premise, P x cannot be concluded for an input where P is false, so the reconstituted P(g.run x) is unprovable."
 residual = false
 
@@ -369,6 +378,7 @@ lean_decl = "SSM.Reception.admissibleRewrite_trans"
 expected_type = "∀ {Den : Type u_1} {Q : Type u_2} {Ctx : Type u_3} {Q_intended : Set Q} {t t' t'' : SSM.Reception.Text Den Q Ctx}, SSM.Reception.AdmissibleRewrite Q_intended t t' → SSM.Reception.AdmissibleRewrite Q_intended t' t'' → SSM.Reception.AdmissibleRewrite Q_intended t t''"
 headline = true
 mutant = "mutants/mut_admissible_drop_support.lean"
+mutant_error = "31:2: error: Type mismatch"
 mutant_result = "mut_admissible_drop_support.lean:31:2: error: Type mismatch — dropping the support-subset premise, a rewrite adding an unintended reading cannot satisfy the support bound."
 residual = false
 
@@ -432,6 +442,7 @@ lean_decl = "SSM.SelfSimilarity.missing_not_gap"
 expected_type = "∀ {Distinction : Type u_1} {Skill E : Set Distinction} {d : Distinction}, SSM.SelfSimilarity.MissingDistinction Skill E d → ¬d ∈ SSM.SelfSimilarity.Gap Skill E"
 headline = true
 mutant = "mutants/mut_selfsim_conflate.lean"
+mutant_error = "26:38: error: Type mismatch"
 mutant_result = "mut_selfsim_conflate.lean:26:38: error: Type mismatch — a distinction in Req\\K (false ∉ K skill) cannot be placed in the gap K\\Req; the conflation is unprovable."
 residual = false
 
@@ -474,6 +485,7 @@ lean_decl = "SSM.ContractPinned"
 expected_type = "{State : Type u_1} → {Obs : Type u_2} → Artifact State Obs → Artifact State Obs → Prop"
 headline = true
 mutant = "mutants/mut_strict_drop_pin.lean"
+mutant_error = "35:2: error: Tactic `rfl` failed: The left-hand side"
 mutant_result = "mut_strict_drop_pin.lean:35:2: error: Tactic `rfl` failed — widening C to univ cannot satisfy ContractPinned (univ ≠ {true})."
 residual = false
 
@@ -578,6 +590,7 @@ lean_decl = "SSM.sufficientWithPaths_imp_irepr_empty"
 expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} (cp : SSM.ConstructionPaths m A), SSM.SufficientWithPaths m A cp → SSM.I_repr (m.apply A) = ∅"
 headline = true
 mutant = "mutants/mut_sufficient_empty_paths.lean"
+mutant_error = "36:33: error: Type mismatch"
 mutant_result = "mut_sufficient_empty_paths.lean:36:33: error: Type mismatch — an empty path set cannot satisfy the coverage obligation for an artifact with S=univ, so it can no longer vacuously discharge sufficiency."
 residual = false
 
@@ -680,6 +693,7 @@ lean_decl = "SSM.Fn.shrink_codomain_keeps_range"
 expected_type = "∀ {D : Type u_1} {K : Type u_2} {f : D → K} {Dom : Set D} {K' : Set K}, SSM.Fn.Range f Dom ⊆ K' → ∀ (x : D), x ∈ Dom → f x ∈ K'"
 headline = true
 mutant = "mutants/mut_shrink_codomain_drop_value.lean"
+mutant_error = "26:2: error: Type mismatch"
 mutant_result = "mut_shrink_codomain_drop_value.lean:26:2: error: Type mismatch — shrinking the codomain below the range (dropping a produced value) leaves an output outside K'."
 residual = false
 

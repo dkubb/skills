@@ -40,9 +40,10 @@
 //!   * a non-residual row whose printed type does NOT match its
 //!     recorded `expected_type` — the TYPE PIN (subsumes the old
 //!     statement-binding guard) — HIGH-1.
-//!   * a headline row whose `mutant` file is missing, or whose mutant
-//!     COMPILES (a headline without a failing mutant is vacuous) —
-//!     Invariant 6.
+//!   * a headline row whose `mutant` file is missing, whose mutant
+//!     COMPILES, or whose mutant does not fail with EXACTLY ONE
+//!     Lean error diagnostic matching `<mutant>:<mutant_error>`
+//!     (prevents stale/contaminated false kills) — Invariant 6.
 //!   * a residual row with a non-empty lean_decl, an empty
 //!     residual_justification, or an unknown rank; a non-residual row
 //!     with an empty lean_decl or empty expected_type — Phase 0.
@@ -52,6 +53,7 @@
 //!
 //! ```cargo
 //! [dependencies]
+//! serde_json = "1"
 //! toml = "0.8"
 //! serde = { version = "1", features = ["derive"] }
 //! ```
@@ -113,6 +115,8 @@ struct Claim {
     headline: bool,
     #[serde(default)]
     mutant: String,
+    #[serde(default)]
+    mutant_error: String,
     #[serde(default)]
     residual: bool,
     #[serde(default)]
@@ -295,10 +299,37 @@ fn main() {
                 );
             }
         }
-        if c.headline && c.mutant.trim().is_empty() {
+        if c.headline {
+            if c.mutant.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!("headline claim {:?} must name a rejecting mutant", c.id),
+                );
+            }
+            if c.mutant_error.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!(
+                        "headline claim {:?} must record `mutant_error` (expected single diagnostic)",
+                        c.id
+                    ),
+                );
+            } else if !is_valid_mutant_error_shape(&c.mutant_error) {
+                fail(
+                    &mut errors,
+                    format!(
+                        "headline claim {:?}: `mutant_error` {:?} must match `<line>:<col>: error: <non-empty message>`",
+                        c.id, c.mutant_error
+                    ),
+                );
+            }
+        } else if !c.mutant_error.trim().is_empty() {
             fail(
                 &mut errors,
-                format!("headline claim {:?} must name a rejecting mutant", c.id),
+                format!(
+                    "non-headline claim {:?} must NOT carry `mutant_error`",
+                    c.id
+                ),
             );
         }
     }
@@ -433,7 +464,7 @@ fn main() {
         let status = Command::new("lake")
             .arg("env")
             .arg("lean")
-            .arg(&mpath)
+            .args(["--json", &c.mutant])
             .env("LAKE_ARTIFACT_CACHE", "false")
             .current_dir(&dir)
             .output();
@@ -447,6 +478,19 @@ fn main() {
                             c.id, c.mutant
                         ),
                     );
+                } else {
+                    let result = mutant_errors(&out.stdout);
+                    let expected = format!("{}:{}", c.mutant, c.mutant_error);
+                    match result {
+                        Ok(diagnostics) if diagnostics.as_slice() == [expected.as_str()] => {}
+                        Ok(diagnostics) => fail(&mut errors, format!(
+                            "headline {:?}: expected exactly one diagnostic {expected:?}, got {diagnostics:?}",
+                            c.id
+                        )),
+                        Err(error) => fail(&mut errors, format!(
+                            "headline {:?}: invalid Lean diagnostic output: {error}", c.id
+                        )),
+                    }
                 }
             }
             Err(e) => fail(
@@ -754,4 +798,54 @@ fn between(s: &str, open: char, close: char) -> Option<String> {
     let rest = &s[i + open.len_utf8()..];
     let j = rest.find(close)?;
     Some(rest[..j].to_string())
+}
+
+/// Read both named and anonymous errors from Lean's diagnostic stream.
+fn mutant_errors(output: &[u8]) -> Result<Vec<String>, serde_json::Error> {
+    #[derive(Deserialize)]
+    #[serde(rename_all = "camelCase")]
+    struct Diagnostic {
+        severity: String,
+        file_name: String,
+        pos: Position,
+        data: String,
+    }
+    #[derive(Deserialize)]
+    struct Position {
+        line: usize,
+        column: usize,
+    }
+
+    let mut errors = Vec::new();
+    for diagnostic in serde_json::Deserializer::from_slice(output).into_iter::<Diagnostic>() {
+        let diagnostic = diagnostic?;
+        if diagnostic.severity == "error" {
+            errors.push(format!(
+                "{}:{}:{}: error: {}",
+                diagnostic.file_name,
+                diagnostic.pos.line,
+                diagnostic.pos.column,
+                diagnostic.data.lines().next().unwrap_or_default()
+            ));
+        }
+    }
+    Ok(errors)
+}
+
+/// Validate `mutant_error` matches `^[0-9]+:[0-9]+: error: \S` so a
+/// weakened pin (like `"4"`) cannot match an unrelated diagnostic line.
+fn is_valid_mutant_error_shape(s: &str) -> bool {
+    let Some((line_str, rest)) = s.split_once(':') else {
+        return false;
+    };
+    if line_str.is_empty() || !line_str.bytes().all(|b| b.is_ascii_digit()) {
+        return false;
+    }
+    let Some((col_str, tail)) = rest.split_once(": error: ") else {
+        return false;
+    };
+    if col_str.is_empty() || !col_str.bytes().all(|b| b.is_ascii_digit()) {
+        return false;
+    }
+    tail.chars().next().is_some_and(|c| !c.is_whitespace())
 }
