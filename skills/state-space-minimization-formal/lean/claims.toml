@@ -256,11 +256,11 @@ residual = false
 
 [[claim]]
 id = "pp.erases"
-statement = "Erases(g, P(x)) — operation g maps (x,p:P x) ↦ x, discarding evidence; formal content is value-preservation g.run x = x. P names which evidence is dropped, not a constraint inside the predicate (the def is independent of P by construction); P's role is pinned via Needs in proofObligation_needs_holds."
+statement = "Erasing an input of type {x // P x} returns its underlying value."
 rank = "kernel-definition"
 lean_module = "ProofPreservation"
 lean_decl = "SSM.Erases"
-expected_type = "{State : Type u_1} → SSM.Operation State → (State → Prop) → Prop"
+expected_type = "{State : Type u_1} → {P : State → Prop} → SSM.Operation P → Prop"
 headline = false
 residual = false
 
@@ -270,7 +270,7 @@ statement = "Flows(g, y) — the output of g reaches consumer y."
 rank = "kernel-definition"
 lean_module = "ProofPreservation"
 lean_decl = "SSM.Flows"
-expected_type = "{State : Type u_1} → SSM.Operation State → SSM.Consumer State → Prop"
+expected_type = "{State : Type u_1} → {P : State → Prop} → SSM.Operation P → SSM.Consumer State → Prop"
 headline = false
 residual = false
 
@@ -280,7 +280,7 @@ statement = "Erases(g,P) ∧ Flows(g,y) ∧ Needs(y,P) ⇒ ProofObligation(y,P(x
 rank = "kernel-theorem"
 lean_module = "ProofPreservation"
 lean_decl = "SSM.proofObligation_intro"
-expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.Erases g P → SSM.Flows g y → SSM.Needs y P → SSM.ProofObligation g y P"
+expected_type = "∀ {State : Type u_1} {P : State → Prop} {g : SSM.Operation P} {y : SSM.Consumer State}, SSM.Erases g → SSM.Flows g y → SSM.Needs y P → SSM.ProofObligation g y"
 headline = false
 residual = false
 
@@ -290,21 +290,21 @@ statement = "Corollary (field projection of ProofObligation.needs): under the ob
 rank = "kernel-theorem"
 lean_module = "ProofPreservation"
 lean_decl = "SSM.proofObligation_needs_holds"
-expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.ProofObligation g y P → ∀ (x : State), x ∈ y.D → P x"
+expected_type = "∀ {State : Type u_1} {P : State → Prop} {g : SSM.Operation P} {y : SSM.Consumer State}, SSM.ProofObligation g y → ∀ (raw : State), raw ∈ y.D → P raw"
 headline = false
 residual = false
 
 [[claim]]
 id = "pp.reconstitute"
-statement = "The erased evidence must be reconstituted at the consumer: P(g.run x) holds and g.run x = x — load-bearing on all three obligation fields (erased, flows, needs)."
+statement = "A raw value from a value-preserving erasure satisfies the evidence predicate of its producer input."
 rank = "kernel-theorem"
 lean_module = "ProofPreservation"
 lean_decl = "SSM.proofObligation_reconstitute"
-expected_type = "∀ {State : Type u_1} {g : SSM.Operation State} {y : SSM.Consumer State} {P : State → Prop}, SSM.ProofObligation g y P → ∀ (x : State), P (g.run x) ∧ g.run x = x"
+expected_type = "∀ {State : Type u_1} {P : State → Prop} {g : SSM.Operation P}, SSM.Erases g → ∀ (raw : State), (∃ input, g input = raw) → P raw"
 headline = true
-mutant = "mutants/mut_proofobl_drop_needs.lean"
-mutant_error = "28:2: error: Type mismatch"
-mutant_result = "mut_proofobl_drop_needs.lean:28:2: error: Type mismatch — dropping the `needs` premise, P x cannot be concluded for an input where P is false, so the reconstituted P(g.run x) is unprovable."
+mutant = "mutants/mut_proofobl_drop_source.lean"
+mutant_error = "11:2: error: Type mismatch"
+mutant_result = "mut_proofobl_drop_source.lean:11:2: error: Type mismatch — a raw value requires a witness that the erasing producer returned it."
 residual = false
 
 # ─────────────────────── Reception semantics ──────────────────────────
