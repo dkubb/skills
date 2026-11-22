@@ -1,13 +1,9 @@
 ---
 name: state-space-minimization
 description: >-
-  Minimize invalid and redundant representations while preserving domain facts.
-  Parse, don't validate: replace primitive obsession with domain
-  types, smart constructors, and boundary parsing; bound every range
-  and cardinality; tighten test matchers; normalize so each fact has
-  one determinant; ratchet tooling thresholds so the state space only
-  narrows. Applies to types, signatures, tests, commits,
-  documentation, and tooling configuration.
+  Minimize invalid and redundant states in types, boundaries, tests, and
+  engineering artifacts while preserving domain facts. Use for parsing,
+  normalization, proof preservation, strict matchers, and ratchets.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
