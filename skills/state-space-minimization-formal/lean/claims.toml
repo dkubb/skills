@@ -777,6 +777,16 @@ headline = false
 residual = false
 
 [[claim]]
+id = "select.disjoint_choices"
+statement = "A fallback excludes an earliest-sufficient choice among the same candidates."
+rank = "kernel-theorem"
+lean_module = "Reflection"
+lean_decl = "SSM.fallback_excludes_earliest_sufficient"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {candidates : Set (SSM.Mechanism State Obs)} {A : Artifact State Obs} {target : Set State} {detects : SSM.Mechanism State Obs → Set State → Prop} {paths : SSM.PathSet A} {fallback chosen : SSM.Mechanism State Obs}, SSM.FallbackChoice candidates A paths target detects fallback → ¬SSM.EarliestSufficient candidates A paths chosen"
+headline = false
+residual = false
+
+[[claim]]
 id = "select.rank_metric_residual"
 statement = "The encoding-order table (type/constructor/adapter/schema/test/doc/runtime) is DERIVED per architecture by the governing-construction-paths metric, not an axiom."
 rank = "operator-policy"

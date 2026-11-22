@@ -371,6 +371,16 @@ def FallbackChoice
   ∀ n ∈ Candidates,
     DetectsRejectsOrDocuments n TargetInvalid → m.rank.index ≤ n.rank.index
 
+/-- A fallback and an earliest-sufficient choice cannot coexist for one
+candidate set. Both rules evaluate the same artifact and construction paths. -/
+theorem fallback_excludes_earliest_sufficient
+    {candidates : Set (Mechanism.{u, v, w} State Obs)} {A : Artifact State Obs}
+    {target : Set State} {detects : Mechanism.{u, v, w} State Obs → Set State → Prop}
+    {paths : PathSet.{u, v, w} A} {fallback chosen : Mechanism.{u, v, w} State Obs}
+    (found : FallbackChoice candidates A paths target detects fallback) :
+    ¬ EarliestSufficient candidates A paths chosen :=
+  fun earliest => found.1 chosen earliest.1.1 earliest.1.2.1
+
 /-- SKILL.md § "Constructive dominance at rank 1": `A_c ≺ A_p` when
 the constructive encoding of the same pinned contract exists. -/
 structure ConstructiveDominance
