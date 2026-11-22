@@ -319,11 +319,10 @@ pattern controls the accepted state space.
 
 Regex semantics shift under Unicode flags:
 
-- `\d` matches Devanagari, Arabic-Indic, Bengali, and several dozen
-  other digit scripts in PCRE-Unicode and JavaScript with `/u`. Rust's
-  `regex` crate matches `\d` to `\p{decimal_number}` by default
-  (Unicode-aware); use `(?-u:\d)` to restrict to ASCII when the
-  domain is ASCII-only
+- JavaScript's `\d` means `[0-9]` even with `/u`. Use
+  `/\p{Decimal_Number}/u` for Unicode decimal digits. Rust's `regex`
+  crate treats `\d` as Unicode by default, as does PCRE2 with UCP.
+  Use `[0-9]` for an ASCII-only domain across these engines
 - `\w` matches a much wider class under Unicode than under ASCII. If
   the domain is ASCII identifiers, write the class explicitly:
   `[A-Za-z0-9_]`
