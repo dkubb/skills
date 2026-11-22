@@ -234,6 +234,16 @@ headline = false
 residual = false
 
 [[claim]]
+id = "boundary.obl_valid"
+statement = "An input known to originate from the trusted boundary belongs to the artifact contract."
+rank = "kernel-theorem"
+lean_module = "ProofPreservation"
+lean_decl = "SSM.obligation_implies_contract"
+expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {A : Artifact State Obs} {f : SSM.Consumer State} {U : Type u_3} {bd : SSM.TrustedBoundary A U} {x : State}, SSM.Obl A f bd x → x ∈ A.C"
+headline = false
+residual = false
+
+[[claim]]
 id = "boundary.freshness_residual"
 statement = "Cache-safe rebuild is a freshness boundary: when a check consumes DERIVED state (compiled oleans), the derivation is a boundary b whose evidence P(u) is 'rebuilt from current sources'; a stale read is I_reach(verifier) != ∅."
 rank = "honest-doc"

@@ -83,4 +83,11 @@ theorem constructive_discharges_obl
   rw [hf, hCon] at hx
   exact hx
 
+/-- The provenance recorded for this particular input suffices to recover
+its contract membership even with a wider representable state space. -/
+theorem obligation_implies_contract {A : Artifact State Obs} {f : Consumer State}
+    {U : Type w} {bd : TrustedBoundary A U} {x : State}
+    (provenance : Obl A f bd x) : x ∈ A.C :=
+  trusted_boundary_reaches_valid bd provenance.2.2
+
 end SSM
