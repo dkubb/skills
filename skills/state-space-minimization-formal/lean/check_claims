@@ -525,7 +525,7 @@ fn main() {
                         }
                     }
                 }
-                Err(e) => fail(&mut errors, format!("type probe failed to run: {e}")),
+                Err(e) => fail(&mut errors, format!("type probe failed: {e}")),
             }
         }
     }
@@ -717,6 +717,9 @@ fn probe_types(
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );
+    if !out.status.success() {
+        return Err(std::io::Error::other(format!("{}\n{combined}", out.status)));
+    }
     let flat = normalize_type(&combined);
 
     // Marker for each decl, in either `@D : ` or `D : ` form. Compute
