@@ -25,7 +25,6 @@ def Abad : Artifact Bool Unit where
 def midemo : Mechanism Bool Unit where
   apply := fun _ => Abad
   rank := ⟨1, Nat.zero_lt_one⟩
-  cost := 0
 
 -- The empty path set cannot satisfy coverage of S = univ.
 def emptyPaths : ConstructionPaths midemo Abad where

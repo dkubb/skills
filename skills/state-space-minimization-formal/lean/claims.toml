@@ -578,7 +578,7 @@ lean_decl = "SSM.sufficientWithPaths_imp_irepr_empty"
 expected_type = "∀ {State : Type u_1} {Obs : Type u_2} {m : SSM.Mechanism State Obs} {A : Artifact State Obs} (cp : SSM.ConstructionPaths m A), SSM.SufficientWithPaths m A cp → SSM.I_repr (m.apply A) = ∅"
 headline = true
 mutant = "mutants/mut_sufficient_empty_paths.lean"
-mutant_result = "mut_sufficient_empty_paths.lean:37:33: error: Type mismatch — an empty path set cannot satisfy the coverage obligation for an artifact with S=univ, so it can no longer vacuously discharge sufficiency."
+mutant_result = "mut_sufficient_empty_paths.lean:36:33: error: Type mismatch — an empty path set cannot satisfy the coverage obligation for an artifact with S=univ, so it can no longer vacuously discharge sufficiency."
 residual = false
 
 [[claim]]
