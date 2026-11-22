@@ -237,6 +237,12 @@ ordinary refactoring).
   formal skill for the requested form. (For using it as a reasoning
   instrument when the output is informal, see § "Formal escalation".)
 
+For a new formal design, use [formal-design](../formal-design/SKILL.md)
+to choose an identity, representation, or interface before writing proofs.
+For an adversarial review of an existing specification or implementation,
+use [find-and-prove](../find-and-prove/SKILL.md) to test what a caller
+can observe and collect a witness.
+
 ## How to use this skill
 
 This skill uses **progressive disclosure**. SKILL.md is a router; load
