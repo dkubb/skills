@@ -699,27 +699,24 @@ fn probe_decls(dir: &Path, decls: &[&str]) -> std::io::Result<ProbeOut> {
         return Err(std::io::Error::other(combined));
     }
     let mut bad_axioms = Vec::new();
-
-    // Axiom cleanliness: lines like
-    //   'Name' depends on axioms: [propext, Quot.sound]
-    for line in combined.lines() {
-        let l = line.trim();
-        if let Some(rest) = l.strip_prefix('\'') {
-            if let Some(end) = rest.find('\'') {
-                let name = &rest[..end];
-                let tail = &rest[end + 1..];
-                if let Some(ax_list) = tail.split("depends on axioms:").nth(1) {
-                    let ax_list = ax_list.trim().trim_start_matches('[').trim_end_matches(']');
-                    for ax in ax_list.split(',') {
-                        let ax = ax.trim();
-                        if ax.is_empty() {
-                            continue;
-                        }
-                        if !ALLOWED_AXIOMS.contains(&ax) {
-                            bad_axioms.push((name.to_string(), ax.to_string()));
-                        }
-                    }
-                }
+    for d in decls {
+        let prefix = format!("'{d}' ");
+        let report = combined
+            .lines()
+            .find_map(|line| line.strip_prefix(&prefix))
+            .ok_or_else(|| std::io::Error::other(format!("missing axiom report for {d}")))?;
+        if report == "does not depend on any axioms" {
+            continue;
+        }
+        let axioms = report
+            .strip_prefix("depends on axioms: [")
+            .and_then(|list| list.strip_suffix(']'))
+            .ok_or_else(|| {
+                std::io::Error::other(format!("unexpected axiom report for {d}: {report}"))
+            })?;
+        for ax in axioms.split(", ") {
+            if !ALLOWED_AXIOMS.contains(&ax) {
+                bad_axioms.push((d.to_string(), ax.to_string()));
             }
         }
     }
