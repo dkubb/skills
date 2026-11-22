@@ -1,7 +1,7 @@
 /-
 Proof-preservation rules of the state-space-minimization calculus
 (SKILL.md § "Boundary Calculus", proof-obligation rule, and
-§ "Proof-preservation corollary"). Calculus version: 2026-06-v8.
+§ "Proof-preservation corollary"). Calculus version: 2026-06-v9.
 
 Formalizes the rule
 
@@ -23,93 +23,52 @@ namespace SSM
 
 variable {State : Type u} {Obs : Type v}
 
-/-- SKILL.md § "Core Notation": an operation `g` over states,
-together with the evidence predicate `P` it may erase and the
-consumer it may feed. Modeled abstractly: an operation is named by
-the data it carries about evidence flow, so the introduction rule is
-a structural fact rather than an assertion about opaque functions. -/
-structure Operation (State : Type u) where
-  /-- the underlying state transform `(x, p : P x) ↦ x` -/
-  run : State → State
+/-- The output of an operation on evidence-carrying inputs is a raw value.
+An identity-preserving operation forgets the evidence at its interface. -/
+abbrev Operation (P : State → Prop) := Subtype P → State
 
-/-- SKILL.md § "Core Notation": `Needs(y, P(x))` — consumer `y`'s
-contract depends on evidence `P(x)`. A consumer (from `Reflection`)
-needs `P` exactly when its declared domain `D` admits a state for
-which `P` must have held. Modeled as a relation over the evidence
-predicate the consumer requires on its inputs. -/
+/-- A consumer declares `P` as a necessary condition for admitting a value.
+Its domain alone says nothing about an arbitrary raw input. -/
 def Needs (y : Consumer State) (P : State → Prop) : Prop :=
   ∀ x ∈ y.D, P x
 
-/-- SKILL.md § "Core Notation": `Erases(g, P(x))` — operation `g`
-maps `(x, p : P x) ↦ x`, discarding the evidence. The formal content
-is the *value-preservation* `g.run x = x`: the erasure keeps the
-value in the same state where `P` held, so `P` could be reconstituted
-downstream (see `proofObligation_reconstitute`). `P` is a NAMED
-parameter identifying WHICH evidence is dropped — it is intentionally
-NOT a constraint inside this predicate (a `Prop`-irrelevant witness
-cannot be tracked by the value transform), so `Erases g P` is, by
-construction, independent of `P`. The load-bearing content (value
-preservation) is pinned by `proofObligation_reconstitute`; the role
-of `P` is pinned by `proofObligation_needs_holds` via `Needs`. A
-mutant that lets `g.run` move the value off its evidence-carrying
-state breaks the model. -/
-def Erases (g : Operation State) (_P : State → Prop) : Prop :=
-  ∀ x, g.run x = x
+/-- Erasing the proof component must preserve the underlying value. -/
+def Erases {P : State → Prop} (g : Operation P) : Prop :=
+  ∀ input, g input = input.val
 
-/-- SKILL.md § "Core Notation": `Flows(g, y)` — the output of `g`
-reaches consumer `y`: every post-state of `g` lands in `y.D`. -/
-def Flows (g : Operation State) (y : Consumer State) : Prop :=
-  ∀ x, g.run x ∈ y.D
+/-- Every output of this producer falls in the consumer's domain. -/
+def Flows {P : State → Prop} (g : Operation P) (y : Consumer State) : Prop :=
+  ∀ input, g input ∈ y.D
 
-/-- SKILL.md § "Boundary Calculus", proof-obligation rule:
-`ProofObligation(y, P(x))` — the consumer `y` carries a standing
-obligation that the erased evidence `P` held of its input. This is
-the *conclusion* of the introduction rule; carrying the three
-premises as fields makes the obligation a structural consequence,
-not a free assertion. -/
-structure ProofObligation
-    (g : Operation State) (y : Consumer State) (P : State → Prop)
-    where
-  erased : Erases g P
+/-- These premises identify a consumer obligation. Establishing the required
+predicate for a particular raw value still needs evidence of its provenance. -/
+structure ProofObligation {P : State → Prop} (g : Operation P)
+    (y : Consumer State) : Prop where
+  erased : Erases g
   flows : Flows g y
   needs : Needs y P
 
-/-- Proves SKILL.md § "Boundary Calculus": the proof-obligation
-introduction rule. From the three premises, the obligation is
-discharged structurally. -/
-theorem proofObligation_intro
-    {g : Operation State} {y : Consumer State} {P : State → Prop}
-    (hErase : Erases g P) (hFlow : Flows g y) (hNeed : Needs y P) :
-    ProofObligation g y P :=
-  ⟨hErase, hFlow, hNeed⟩
+theorem proofObligation_intro {P : State → Prop} {g : Operation P}
+    {y : Consumer State} (erased : Erases g) (flows : Flows g y)
+    (needs : Needs y P) : ProofObligation g y :=
+  ⟨erased, flows, needs⟩
 
-/-- Proves SKILL.md § "Proof-preservation corollary": when the
-obligation holds and the input actually flowed through `g`, the
-required evidence `P` holds of it. This is the content that pins the
-rule: the obligation is *about* `P` on the consumer's inputs. -/
-theorem proofObligation_needs_holds
-    {g : Operation State} {y : Consumer State} {P : State → Prop}
-    (ob : ProofObligation g y P)
-    (x : State) (hx : x ∈ y.D) :
-    P x :=
-  ob.needs x hx
+/-- This projection describes the declared consumer contract. It requires
+independent evidence that `raw` is admissible. -/
+theorem proofObligation_needs_holds {P : State → Prop} {g : Operation P}
+    {y : Consumer State} (ob : ProofObligation g y)
+    (raw : State) (admitted : raw ∈ y.D) : P raw :=
+  ob.needs raw admitted
 
-/-- Proves the full proof-preservation content (SKILL.md
-§ "Proof-preservation corollary"): the evidence `g` erased must be
-reconstituted at the consumer. Concretely, for any pre-state `x`,
-the erased post-state `g.run x` flows into `y.D` and the consumer
-requires `P` there — so `P (g.run x)` is an obligation that the
-erasure created. This theorem is load-bearing on all three fields:
-`flows` places `g.run x` in `y.D`, `needs` requires `P` on `y.D`,
-and `erased` identifies `g.run x` with the original value, so the
-reconstituted obligation is about the very value whose proof was
-dropped. -/
-theorem proofObligation_reconstitute
-    {g : Operation State} {y : Consumer State} {P : State → Prop}
-    (ob : ProofObligation g y P)
-    (x : State) :
-    P (g.run x) ∧ g.run x = x := by
-  refine ⟨ob.needs (g.run x) (ob.flows x), ob.erased x⟩
+/-- Knowing which verified input produced a raw value recovers its evidence.
+The consumer's contract is irrelevant to this step: the producer preserved
+the value, and the input carried a proof before its type erased it. -/
+theorem proofObligation_reconstitute {P : State → Prop} {g : Operation P}
+    (erased : Erases g) (raw : State) (source : ∃ input, g input = raw) :
+    P raw := by
+  obtain ⟨input, rfl⟩ := source
+  rw [erased input]
+  exact input.property
 
 /-- SKILL.md § "Proof-preservation corollary": for constructive `A`
 (`S(A) = C(A)`), the consumer obligation `Obl(f)` is discharged by
@@ -123,5 +82,12 @@ theorem constructive_discharges_obl
     x ∈ A.C := by
   rw [hf, hCon] at hx
   exact hx
+
+/-- The provenance recorded for this particular input suffices to recover
+its contract membership even with a wider representable state space. -/
+theorem obligation_implies_contract {A : Artifact State Obs} {f : Consumer State}
+    {U : Type w} {bd : TrustedBoundary A U} {x : State}
+    (provenance : Obl A f bd x) : x ∈ A.C :=
+  trusted_boundary_reaches_valid bd provenance.2.2
 
 end SSM

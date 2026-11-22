@@ -1,7 +1,7 @@
 #!/usr/bin/env rust-script
 //! Mechanical gate for the state-space-minimization-formal calculus.
 //!
-//! Run from the `lean/` directory:
+//! Run the script in `lean/` from any directory:
 //!     ./check_claims
 //! (needs elan on PATH: export PATH="$HOME/.elan/bin:$PATH")
 //!
@@ -22,7 +22,9 @@
 //! HEADLINE STATEMENTS ARE PINNED BY TYPE, NOT BY AN EDITABLE GUARD.
 //! For every non-residual row the gate prints the real decl's type
 //! (`#check @<decl>` under `pp.fullNames`), collapses whitespace, and
-//! compares it to the `expected_type` recorded in claims.toml. Gutting
+//! compares it to the `expected_type` recorded in claims.toml. Lean also
+//! elaborates that pin and checks definitional equality, including implicit
+//! arguments that the pretty-printer omits. Gutting
 //! a headline (e.g. to `: True := trivial`) changes its printed type,
 //! so the gate FAILS — and the ONLY way to make it pass is to also
 //! edit `expected_type` in claims.toml, a visible reviewable change.
@@ -40,9 +42,10 @@
 //!   * a non-residual row whose printed type does NOT match its
 //!     recorded `expected_type` — the TYPE PIN (subsumes the old
 //!     statement-binding guard) — HIGH-1.
-//!   * a headline row whose `mutant` file is missing, or whose mutant
-//!     COMPILES (a headline without a failing mutant is vacuous) —
-//!     Invariant 6.
+//!   * a headline row whose `mutant` file is missing, whose mutant
+//!     COMPILES, or whose mutant does not fail with EXACTLY ONE
+//!     Lean error diagnostic matching `<mutant>:<mutant_error>`
+//!     (prevents stale/contaminated false kills) — Invariant 6.
 //!   * a residual row with a non-empty lean_decl, an empty
 //!     residual_justification, or an unknown rank; a non-residual row
 //!     with an empty lean_decl or empty expected_type — Phase 0.
@@ -52,6 +55,7 @@
 //!
 //! ```cargo
 //! [dependencies]
+//! serde_json = "1"
 //! toml = "0.8"
 //! serde = { version = "1", features = ["derive"] }
 //! ```
@@ -106,6 +110,8 @@ struct Claim {
     statement: String,
     rank: String,
     #[serde(default)]
+    lean_module: String,
+    #[serde(default)]
     lean_decl: String,
     #[serde(default)]
     expected_type: String,
@@ -113,6 +119,8 @@ struct Claim {
     headline: bool,
     #[serde(default)]
     mutant: String,
+    #[serde(default)]
+    mutant_error: String,
     #[serde(default)]
     residual: bool,
     #[serde(default)]
@@ -124,8 +132,12 @@ fn fail(errors: &mut Vec<String>, msg: String) {
 }
 
 fn lean_dir() -> PathBuf {
-    // The script lives in lean/; run relative to its own directory.
-    std::env::current_dir().expect("cwd")
+    Path::new(env!("RUST_SCRIPT_PATH"))
+        .canonicalize()
+        .expect("resolve check_claims script")
+        .parent()
+        .expect("script directory")
+        .to_owned()
 }
 
 fn main() {
@@ -153,38 +165,11 @@ fn main() {
         errors.push("could not read formalization version from Reflection.lean header".into());
         String::new()
     });
-    // README.md must carry both internal stamps in its "Version parity"
-    // prose so it cannot silently drift (the v5/v6 drift the audit
-    // caught): the formalization stamp (2026-06-vN) == version_header,
-    // and the lakefile semver stamp (2026.6.N) == version_lakefile.
-    let (readme_header_ver, readme_lake_ver) = read_readme_versions(&dir);
-    match &readme_header_ver {
-        Some(v) if *v == doc.version_header => {}
-        Some(v) => fail(
-            &mut errors,
-            format!(
-                "version mismatch: README.md formalization stamp {v:?} != claims.toml version_header {:?}",
-                doc.version_header
-            ),
-        ),
-        None => fail(
-            &mut errors,
-            "could not find the formalization version stamp (2026-06-vN) in README.md".into(),
-        ),
-    }
-    match &readme_lake_ver {
-        Some(v) if *v == doc.version_lakefile => {}
-        Some(v) => fail(
-            &mut errors,
-            format!(
-                "version mismatch: README.md semver stamp {v:?} != claims.toml version_lakefile {:?}",
-                doc.version_lakefile
-            ),
-        ),
-        None => fail(
-            &mut errors,
-            "could not find the lakefile semver stamp (2026.6.N) in README.md".into(),
-        ),
+    let readme = fs::read_to_string(dir.join("README.md")).unwrap_or_default();
+    let version_line = format!("Version: `{}` (`{}`).", doc.version_header, doc.version_lakefile);
+    let release_lines = readme.lines().filter(|line| line.starts_with("Version: "));
+    if !release_lines.eq(std::iter::once(version_line.as_str())) {
+        fail(&mut errors, format!("README.md must contain one release line: {version_line}"));
     }
     if !lake_ver.is_empty() && lake_ver != doc.version_lakefile {
         fail(
@@ -204,18 +189,12 @@ fn main() {
             ),
         );
     }
-    // Cross-stamp: the formalization version (2026-06-vN) maps to the
-    // lakefile semver (2026.6.N). Both stamps live inside this project.
-    let mapped = doc.version_header.replace("-06-v", ".6.");
-    if !doc.version_header.is_empty()
-        && !doc.version_lakefile.is_empty()
-        && mapped != doc.version_lakefile
-    {
+    if lake_version(&doc.version_header).as_deref() != Some(doc.version_lakefile.as_str()) {
         fail(
             &mut errors,
             format!(
-                "version-map mismatch: formalization header {:?} maps to {:?} but lakefile is {:?}",
-                doc.version_header, mapped, doc.version_lakefile
+                "version-map mismatch: formalization header {:?} must encode lakefile version {:?}",
+                doc.version_header, doc.version_lakefile
             ),
         );
     }
@@ -295,10 +274,37 @@ fn main() {
                 );
             }
         }
-        if c.headline && c.mutant.trim().is_empty() {
+        if c.headline {
+            if c.mutant.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!("headline claim {:?} must name a rejecting mutant", c.id),
+                );
+            }
+            if c.mutant_error.trim().is_empty() {
+                fail(
+                    &mut errors,
+                    format!(
+                        "headline claim {:?} must record `mutant_error` (expected single diagnostic)",
+                        c.id
+                    ),
+                );
+            } else if !is_valid_mutant_error_shape(&c.mutant_error) {
+                fail(
+                    &mut errors,
+                    format!(
+                        "headline claim {:?}: `mutant_error` {:?} must match `<line>:<col>: error: <non-empty message>`",
+                        c.id, c.mutant_error
+                    ),
+                );
+            }
+        } else if !c.mutant_error.trim().is_empty() {
             fail(
                 &mut errors,
-                format!("headline claim {:?} must name a rejecting mutant", c.id),
+                format!(
+                    "non-headline claim {:?} must NOT carry `mutant_error`",
+                    c.id
+                ),
             );
         }
     }
@@ -388,23 +394,15 @@ fn main() {
     };
 
     // ── 5. lean_decl existence + axiom cleanliness (Inv 3 & 6) ──────
-    // `#print <decl>` proves existence for structures/defs/theorems;
-    // `#print axioms <decl>` (theorems only) proves axiom cleanliness.
-    let decls: Vec<(&str, bool)> = doc
+    let decls: Vec<&str> = doc
         .claims
         .iter()
         .filter(|c| !c.residual)
-        .map(|c| (c.lean_decl.as_str(), c.rank == "kernel-theorem"))
+        .map(|c| c.lean_decl.as_str())
         .collect();
     if build_ok && !decls.is_empty() {
         match probe_decls(&dir, &decls) {
-            Ok((missing, bad_axioms)) => {
-                for d in missing {
-                    fail(
-                        &mut errors,
-                        format!("lean_decl {d:?} not found in built environment"),
-                    );
-                }
+            Ok(bad_axioms) => {
                 for (d, ax) in bad_axioms {
                     fail(
                         &mut errors,
@@ -430,10 +428,27 @@ fn main() {
             );
             continue;
         }
+        let module = dir.join(".lake/build/lib/lean")
+            .join(c.lean_module.replace('.', "/")).with_extension("olean");
+        let deps = Command::new("lake")
+            .args(["env", "lean", "--deps", &c.mutant])
+            .current_dir(&dir)
+            .output();
+        let imports_module = deps.is_ok_and(|out| {
+            out.status.success() && String::from_utf8_lossy(&out.stdout)
+                .lines().any(|path| Path::new(path) == module)
+        });
+        if !imports_module {
+            fail(&mut errors, format!(
+                "headline {:?}: mutant {} must import local module {:?}",
+                c.id, c.mutant, c.lean_module
+            ));
+            continue;
+        }
         let status = Command::new("lake")
             .arg("env")
             .arg("lean")
-            .arg(&mpath)
+            .args(["--json", &c.mutant])
             .env("LAKE_ARTIFACT_CACHE", "false")
             .current_dir(&dir)
             .output();
@@ -447,6 +462,19 @@ fn main() {
                             c.id, c.mutant
                         ),
                     );
+                } else {
+                    let result = mutant_errors(&out.stdout);
+                    let expected = format!("{}:{}", c.mutant, c.mutant_error);
+                    match result {
+                        Ok(diagnostics) if diagnostics.as_slice() == [expected.as_str()] => {}
+                        Ok(diagnostics) => fail(&mut errors, format!(
+                            "headline {:?}: expected exactly one diagnostic {expected:?}, got {diagnostics:?}",
+                            c.id
+                        )),
+                        Err(error) => fail(&mut errors, format!(
+                            "headline {:?}: invalid Lean diagnostic output: {error}", c.id
+                        )),
+                    }
                 }
             }
             Err(e) => fail(
@@ -499,7 +527,7 @@ fn main() {
                         }
                     }
                 }
-                Err(e) => fail(&mut errors, format!("type probe failed to run: {e}")),
+                Err(e) => fail(&mut errors, format!("type probe failed: {e}")),
             }
         }
     }
@@ -545,40 +573,30 @@ fn read_lakefile_version(dir: &Path) -> Option<String> {
 
 fn read_header_version(dir: &Path) -> Option<String> {
     let s = fs::read_to_string(dir.join("Reflection.lean")).ok()?;
-    // Look for the token "2026-06-vN" anywhere in the header comment.
-    for line in s.lines() {
-        if !line.contains("version") {
-            continue;
-        }
-        for tok in line.split(|c: char| !(c.is_ascii_alphanumeric() || c == '-')) {
-            if tok.starts_with("2026-06-v") {
-                return Some(tok.to_string());
-            }
-        }
-    }
-    None
+    let (_, rest) = s.split_once("Formalization version: ")?;
+    rest.split_whitespace().next().map(str::to_owned)
 }
 
-/// Scan README.md for the formalization stamp (`2026-06-vN`) and the
-/// lakefile semver stamp (`2026.6.N`) so the README cannot silently
-/// drift from the live version (the v5/v6 drift the audit caught).
-/// Both stamps are LEAN-INTERNAL; neither is read from `../SKILL.md`.
-fn read_readme_versions(dir: &Path) -> (Option<String>, Option<String>) {
-    let Ok(s) = fs::read_to_string(dir.join("README.md")) else {
-        return (None, None);
-    };
-    let mut header_ver = None;
-    let mut lake_ver = None;
-    for tok in s.split(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '.')) {
-        if header_ver.is_none() && tok.starts_with("2026-06-v") && tok.len() > "2026-06-v".len() {
-            header_ver = Some(tok.to_string());
-        }
-        // semver stamp: 2026.6.<n> (avoid matching the toolchain etc.)
-        if lake_ver.is_none() && tok.starts_with("2026.6.") && tok.len() > "2026.6.".len() {
-            lake_ver = Some(tok.trim_end_matches('.').to_string());
-        }
+/// Convert YYYY-MM-vN to the corresponding YYYY.M.N Lake release.
+fn lake_version(header: &str) -> Option<String> {
+    let (date, revision) = header.split_once("-v")?;
+    let (year, month) = date.split_once('-')?;
+    let decimal = |s: &str| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit());
+    if year.len() != 4 || !decimal(year) || year.starts_with('0')
+        || month.len() != 2 || !decimal(month)
+        || !decimal(revision) || (revision.len() > 1 && revision.starts_with('0'))
+    {
+        return None;
     }
-    (header_ver, lake_ver)
+    let month = month.parse::<u8>().ok()?;
+    (1..=12).contains(&month).then(|| format!("{year}.{month}.{revision}"))
+}
+
+#[test]
+fn release_date_determines_lake_version() {
+    assert_eq!(lake_version("2027-11-v12").as_deref(), Some("2027.11.12"));
+    assert_eq!(lake_version("2027-01-v3").as_deref(), Some("2027.1.3"));
+    assert_eq!(lake_version("2027-13-v1"), None);
 }
 
 /// Canonical type normalization, applied identically to the printed
@@ -617,19 +635,12 @@ fn transitively_imported(dir: &Path, root: &str) -> BTreeSet<String> {
     seen
 }
 
-/// Probe every decl with `#print` (existence) and every theorem with
-/// `#print axioms` (cleanliness). Returns (missing decls, [(decl,
-/// non-allowlisted-axiom)]).
-type ProbeOut = (Vec<String>, Vec<(String, String)>);
-fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> {
+/// Ask Lean for the axiom dependencies of every registered declaration.
+type ProbeOut = Vec<(String, String)>;
+fn probe_decls(dir: &Path, decls: &[&str]) -> std::io::Result<ProbeOut> {
     let mut probe = String::from("import Ssm\nset_option autoImplicit false\n");
-    // Use a unique marker before each #print so we can attribute the
-    // "unknown" errors to a specific decl by line ordering.
-    for (d, is_thm) in decls {
-        probe.push_str(&format!("#print {d}\n"));
-        if *is_thm {
-            probe.push_str(&format!("#print axioms {d}\n"));
-        }
+    for d in decls {
+        probe.push_str(&format!("#print axioms {d}\n"));
     }
     let probe_path = dir.join(".check_claims_probe.lean");
     fs::write(&probe_path, &probe)?;
@@ -647,71 +658,76 @@ fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> 
         String::from_utf8_lossy(&out.stderr)
     );
 
-    let mut missing: Vec<String> = Vec::new();
-    let mut bad_axioms: Vec<(String, String)> = Vec::new();
-
-    // Existence: any "Unknown constant/identifier `Name`" names a
-    // missing decl. Collect the backtick-quoted names.
-    for line in combined.lines() {
-        let l = line.trim();
-        if l.contains("Unknown constant") || l.contains("Unknown identifier") {
-            if let Some(name) = between(l, '`', '`') {
-                if decls.iter().any(|(d, _)| *d == name) && !missing.contains(&name) {
-                    missing.push(name);
-                }
+    if !out.status.success() {
+        return Err(std::io::Error::other(combined));
+    }
+    let mut bad_axioms = Vec::new();
+    for d in decls {
+        let prefix = format!("'{d}' ");
+        let report = combined
+            .lines()
+            .find_map(|line| line.strip_prefix(&prefix))
+            .ok_or_else(|| std::io::Error::other(format!("missing axiom report for {d}")))?;
+        if report == "does not depend on any axioms" {
+            continue;
+        }
+        let axioms = report
+            .strip_prefix("depends on axioms: [")
+            .and_then(|list| list.strip_suffix(']'))
+            .ok_or_else(|| {
+                std::io::Error::other(format!("unexpected axiom report for {d}: {report}"))
+            })?;
+        for ax in axioms.split(", ") {
+            if !ALLOWED_AXIOMS.contains(&ax) {
+                bad_axioms.push((d.to_string(), ax.to_string()));
             }
         }
     }
-
-    // Axiom cleanliness: lines like
-    //   'Name' depends on axioms: [propext, Quot.sound]
-    for line in combined.lines() {
-        let l = line.trim();
-        if let Some(rest) = l.strip_prefix('\'') {
-            if let Some(end) = rest.find('\'') {
-                let name = &rest[..end];
-                let tail = &rest[end + 1..];
-                if let Some(ax_list) = tail.split("depends on axioms:").nth(1) {
-                    let ax_list = ax_list.trim().trim_start_matches('[').trim_end_matches(']');
-                    for ax in ax_list.split(',') {
-                        let ax = ax.trim();
-                        if ax.is_empty() {
-                            continue;
-                        }
-                        if !ALLOWED_AXIOMS.contains(&ax) {
-                            bad_axioms.push((name.to_string(), ax.to_string()));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    Ok((missing, bad_axioms))
+    Ok(bad_axioms)
 }
 
-/// Print the type of every (id, decl, _) via `#check @<decl>` under
-/// `pp.fullNames true`, then attribute each printed record to its decl.
-/// Returns a map decl -> raw printed type (post-`: `, pre-normalize).
-///
-/// `#check @D` prints `@D : <type>` (or `D : <type>` for decls where
-/// `@` is a no-op, e.g. structures). Records can wrap across lines, so
-/// we flatten the whole output to a single space-separated string and
-/// slice each record from its `(@?)<decl> : ` marker to the start of
-/// the next decl's marker.
+#[test]
+fn type_pin_rejects_a_different_addition_instance() {
+    // Lean displays this proposition and Nat.zero_add as "∀ (n : Nat), 0 + n = n".
+    // The explicit instance returns one for every pair of operands.
+    let different_addition =
+        "∀ n : Nat, @HAdd.hAdd Nat Nat Nat ⟨fun _ _ => 1⟩ 0 n = n";
+    let pins = [("different_addition", "Nat.zero_add", different_addition)];
+    let error = probe_types(&lean_dir(), &pins).expect_err("the types must differ");
+    assert!(error.to_string().contains("type-pin mismatch for Nat.zero_add"));
+}
+
+/// Check each elaborated pin and collect the separate information record
+/// emitted by its `#check`. Lean warnings can appear between these records.
 fn probe_types(
     dir: &Path,
     pins: &[(&str, &str, &str)],
 ) -> std::io::Result<std::collections::BTreeMap<String, String>> {
-    let mut probe =
-        String::from("import Ssm\nset_option autoImplicit false\nset_option pp.fullNames true\n");
-    for (_, decl, _) in pins {
-        probe.push_str(&format!("#check @{decl}\n"));
+    let mut probe = String::from(r##"import Ssm
+set_option autoImplicit false
+set_option pp.fullNames true
+open Lean Elab Command Meta Term in
+elab "#pin_type " decl:ident " : " expected:term : command => liftTermElabM do
+  let info ← getConstInfo decl.getId
+  -- Use the same universe parameter names that #check prints in the pins.
+  let names := info.levelParams.zipIdx.map fun (_, i) => Name.mkSimple s!"u_{i + 1}"
+  Term.withLevelNames names do
+    let actual := info.instantiateTypeLevelParams (names.map Level.param)
+    let pinned ← Term.elabType expected
+    Term.synthesizeSyntheticMVarsNoPostponing
+    unless ← isDefEq actual pinned do
+      withOptions (fun opts => opts.setBool `pp.all true) do
+        throwErrorAt decl "type-pin mismatch for {decl}: expected {pinned}, got {actual}"
+"##);
+    for (_, decl, expected) in pins {
+        probe.push_str(&format!("#pin_type {decl} : {expected}\n#check @{decl}\n"));
     }
     let probe_path = dir.join(".check_claims_typeprobe.lean");
     fs::write(&probe_path, &probe)?;
     let out = Command::new("lake")
         .arg("env")
         .arg("lean")
+        .arg("--json")
         .arg(&probe_path)
         .env("LAKE_ARTIFACT_CACHE", "false")
         .current_dir(dir)
@@ -722,36 +738,68 @@ fn probe_types(
         String::from_utf8_lossy(&out.stdout),
         String::from_utf8_lossy(&out.stderr)
     );
-    let flat = normalize_type(&combined);
-
-    // Marker for each decl, in either `@D : ` or `D : ` form. Compute
-    // every marker's byte position, then each record runs to the next.
-    let decls: Vec<&str> = pins.iter().map(|(_, d, _)| *d).collect();
-    // Collect (start_of_type, decl) for whichever marker form appears.
-    let mut hits: Vec<(usize, usize, &str)> = Vec::new(); // (marker_start, type_start, decl)
-    for d in &decls {
-        let m_at = format!("@{d} : ");
-        let m_plain = format!("{d} : ");
-        // Prefer the `@`-form; fall back to the plain form.
-        if let Some(i) = flat.find(&m_at) {
-            hits.push((i, i + m_at.len(), d));
-        } else if let Some(i) = flat.find(&m_plain) {
-            hits.push((i, i + m_plain.len(), d));
-        }
+    if !out.status.success() {
+        return Err(std::io::Error::other(format!("{}\n{combined}", out.status)));
     }
-    hits.sort_by_key(|h| h.0);
     let mut map = std::collections::BTreeMap::new();
-    for (idx, &(_, type_start, decl)) in hits.iter().enumerate() {
-        let end = hits.get(idx + 1).map(|h| h.0).unwrap_or(flat.len());
-        let ty = flat[type_start..end].trim().to_string();
-        map.insert(decl.to_string(), ty);
+    for diagnostic in serde_json::Deserializer::from_slice(&out.stdout).into_iter::<Diagnostic>() {
+        let diagnostic = diagnostic?;
+        if diagnostic.severity == "information" {
+            if let Some((decl, ty)) = diagnostic.data.split_once(" : ") {
+                map.insert(decl.trim_start_matches('@').to_owned(), ty.to_owned());
+            }
+        }
     }
     Ok(map)
 }
 
-fn between(s: &str, open: char, close: char) -> Option<String> {
-    let i = s.find(open)?;
-    let rest = &s[i + open.len_utf8()..];
-    let j = rest.find(close)?;
-    Some(rest[..j].to_string())
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct Diagnostic {
+    severity: String,
+    file_name: String,
+    pos: Position,
+    data: String,
+}
+#[derive(Deserialize)]
+struct Position {
+    line: usize,
+    column: usize,
+}
+
+/// Read both named and anonymous errors from Lean's diagnostic stream.
+fn mutant_errors(output: &[u8]) -> Result<Vec<String>, serde_json::Error> {
+    let mut errors = Vec::new();
+    for diagnostic in serde_json::Deserializer::from_slice(output).into_iter::<Diagnostic>() {
+        let diagnostic = diagnostic?;
+        if diagnostic.severity == "error" {
+            errors.push(format!(
+                "{}:{}:{}: error: {}",
+                diagnostic.file_name,
+                diagnostic.pos.line,
+                diagnostic.pos.column,
+                diagnostic.data.lines().next().unwrap_or_default()
+            ));
+        }
+    }
+    Ok(errors)
+}
+
+/// Validate `mutant_error` matches `^[0-9]+:[0-9]+: error: \S` so a
+/// weakened pin (like `"4"`) cannot match an unrelated diagnostic line.
+fn is_valid_mutant_error_shape(s: &str) -> bool {
+    let Some((line_str, rest)) = s.split_once(':') else {
+        return false;
+    };
+    if line_str.is_empty() || !line_str.bytes().all(|b| b.is_ascii_digit()) {
+        return false;
+    }
+    let Some((col_str, tail)) = rest.split_once(": error: ") else {
+        return false;
+    };
+    if col_str.is_empty() || !col_str.bytes().all(|b| b.is_ascii_digit()) {
+        return false;
+    }
+    tail.chars().next().is_some_and(|c| !c.is_whitespace())
 }

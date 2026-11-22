@@ -8,8 +8,8 @@ catalog and robust-writing habits stay in `references/lean-robustness.md`.
 ## H1 Mutation discipline
 
 **Mutate intentionally — execute, don't argue.** Reasoning "a bad mutant would
-surely fail" is how vacuity *survives* review; apply the mutant and recompile
-(`just compile`), let the compiler rule. *Vacuity* (is each stated theorem
+surely fail" is how vacuity *survives* review; recompile the mutant with the project's
+verification command and inspect the diagnostic. *Vacuity* (is each stated theorem
 real?): break ONE def *under* a headline (consume doesn't decrement; remaining
 is always original; canonical args ignore authority context; error returns the
 recorded head; child debits full allocation not used share); if it still proves,
@@ -56,26 +56,17 @@ a later rung" comment alone.
 
 ## Mutation operators — derive by least-power simplification
 
-Don't memorize a list; *generate* it. Every operator replaces an operation with
-one that has a **smaller state space** — a strictly less-powerful form the types
-still accept (`mutant`'s principle of least power: "use the most constrained
-primitive that satisfies the requirement"; `kind_of?`→`instance_of?` narrows to
-one exact class, `method`→`public_method` drops private access). When a mutant
-**survives** (every proof/test still passes), it forces a binary — and *both*
-answers improve the artifact:
+For a least-power mutant, substitute a simpler operation that the type
+still accepts. For example, replacing a subclass check with an exact-class
+check excludes subclasses. If the mutant survives, either adopt that simpler
+behavior or pin the required behavior with a test or theorem.
 
-- **Lower-power operator is sufficient** — nothing needed the extra power;
-  adopt the simpler form as the new source (shrink the state space; the code
-  was over-powered). Mutant's own disposition: accept the survivor.
-- **It is NOT sufficient** — the dropped behavior matters but no proof/test
-  forced it; **add the theorem/test that forces it** (pin it; our siblings case).
+A mutation can also widen a law, strengthen a premise, or exchange two
+values of the same type. For these mutants, identify the behavior the
+substitution adds or removes and decide whether the contract permits it.
+A survivor establishes a gap only when the contract rules out that behavior.
 
-There is no third option (rewriting to mask the mutant without coverage is mutant's
-explicit trap — same rule as the proof ladder). The catalog below is the common
-cross-language core + Lean specializations; the generator (smaller-state-space
-substitution) finds the artifact-specific operators a fixed list misses — survivors
-hide where the types DON'T already constrain (type-compatible value choices).
-Floor, not ceiling. Under budget, rank mutation targets the way oracle targets
+Under budget, rank mutation targets the way oracle targets
 are ranked: defs under strong-word headlines and defs feeding public
 observations first — and report the unswept remainder explicitly (a silent
 partial sweep reads as full adequacy).
@@ -90,8 +81,7 @@ partial sweep reads as full adequacy).
 - Deletion — drop a conjunct, a function argument, or a list element.
 - Return replacement — identity (return an argument unchanged); a default.
 
-**Lean / type-theory / proof-specific (the smaller-state-space form of a proof
-construct):**
+**Lean / type-theory / proof-specific:**
 
 - Weaken a carried witness — `g'.sub g`→`g'.sub g'` (`sub_refl`); `restrict_sub`→
   `sub_refl`; drop a `scope`/`drop` narrowing proof.
@@ -160,7 +150,8 @@ reasoning. Run these BEFORE any judgment lens:
   can shadow core symbols so a headline reads as one claim and elaborates as
   another (Wiedijk's Pollack-inconsistency: the printer/parser as attack
   surface — the system prints a statement that reads as a different claim
-  than it elaborates to). Re-elaborate every headline under `set_option pp.all true` (or
+  than it elaborates to). Re-elaborate every headline under `set_option
+  pp.all true` (or
   `#print`) and confirm no in-scope notation shadows `=`, `¬`, `→`, `∀`, `∃`.
   When the artifact author is untrusted (LLM-generated proofs included), add
   an external kernel pass (`lean4checker`) — elaborator exploits are outside

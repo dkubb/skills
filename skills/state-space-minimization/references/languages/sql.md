@@ -22,16 +22,20 @@ plus its `CHECK` clauses define exactly which values are inhabitants of
 the domain; every column of that type carries the proof.
 
 ```sql
--- src/lib/prisma/migrations/20260507000000_domain_label/migration.sql
 CREATE DOMAIN
   public.label
 AS
   text
-CONSTRAINT check_01_not_empty                         CHECK (VALUE <> '')
-CONSTRAINT check_02_max_length                        CHECK (char_length(VALUE) <= 256)
-CONSTRAINT check_03_only_printable_chars              CHECK (VALUE ~ '\A[[:print:]]*\Z')
-CONSTRAINT check_04_no_invisible_chars                CHECK (VALUE !~ '[​-‏ -  -⁯﻿]')
-CONSTRAINT check_05_no_leading_or_trailing_whitespace CHECK (VALUE = trim(VALUE))
+CONSTRAINT check_01_not_empty
+    CHECK (VALUE <> '')
+CONSTRAINT check_02_max_length
+    CHECK (char_length(VALUE) <= 256)
+CONSTRAINT check_03_only_printable_chars
+    CHECK (VALUE ~ '\A[[:print:]]*\Z')
+CONSTRAINT check_04_no_invisible_chars
+    CHECK (VALUE !~ U&'[\200B-\200F\2028-\202F\205F-\206F\FEFF]')
+CONSTRAINT check_05_no_leading_or_trailing_whitespace
+    CHECK (VALUE = trim(VALUE))
 ;
 ```
 
@@ -61,7 +65,6 @@ also gets a `COMMENT ON DOMAIN` for the narrowing intent.
 Define the wide type once, then layer specializations on top.
 
 ```sql
--- src/lib/prisma/migrations/20260507000020_domain_http_url/migration.sql
 CREATE DOMAIN
   public.http_url
 AS
@@ -72,7 +75,6 @@ CHECK
 ```
 
 ```sql
--- src/lib/prisma/migrations/20260507000050_domain_reason_text/migration.sql
 CREATE DOMAIN
   reason_text
 AS
@@ -92,14 +94,13 @@ more checks rather than re-stating the base ones.
 
 ## Bounded primitives
 
-Every domain has both a lower and upper bound. `principles.md` § "When
-replacing String or Vec, go directly to the bounded form" is law: a
+[Bound ranges and cardinality](../principles.md#bound-ranges-and-cardinality)
+applies to SQL domains as well. A
 `text` column that is `not_empty` only is a `NonEmptyString` —
 placeholder, not destination. Add the upper bound at the same time you
 add the lower bound, or record (in the `COMMENT`) why you cannot.
 
 ```sql
--- src/lib/prisma/migrations/20260507000030_domain_non_negative_int32/migration.sql
 CREATE DOMAIN
   public.non_negative_int32
 AS
@@ -110,7 +111,6 @@ CHECK
 ```
 
 ```sql
--- src/lib/prisma/migrations/20260507000040_domain_positive_int32/migration.sql
 CREATE DOMAIN
   public.positive_int32
 AS
@@ -132,8 +132,9 @@ For columns that further tighten a domain at the table level, attach
 the extra `CHECK` to the column definition:
 
 ```sql
--- src/lib/prisma/migrations/20260507000070_inference_tables/migration.sql
-gpu_provider  label NOT NULL CHECK (gpu_provider ~ '\A[A-Z](?:_?[A-Z]+)*\Z' AND char_length(gpu_provider) <= 32)
+gpu_provider  label NOT NULL
+    CHECK (gpu_provider ~ '\A[A-Z](?:_?[A-Z]+)*\Z'
+      AND char_length(gpu_provider) <= 32)
 provider_name label NOT NULL CHECK (char_length(provider_name) <= 64)
 ```
 
@@ -157,9 +158,9 @@ When the wire shape forces both fields to appear separately, encode the
 cross-field rule as a named table-level `CHECK`:
 
 ```sql
--- src/lib/prisma/migrations/20260507000070_inference_tables/migration.sql
 CONSTRAINT model_events_response_within_context CHECK
-  (max_response_tokens IS NULL OR max_context_length IS NULL OR max_response_tokens <= max_context_length)
+  (max_response_tokens IS NULL
+    OR max_context_length IS NULL OR max_response_tokens <= max_context_length)
 ```
 
 The two-`IS NULL` arms are the price of admitting nulls; reach this
@@ -198,7 +199,6 @@ nullable column would let it drift the moment a row is updated by code
 that forgets to refresh it.
 
 ```sql
--- src/lib/prisma/migrations/20260507000070_inference_tables/migration.sql
 slug label GENERATED ALWAYS AS (lower(replace(gpu_provider, '_', '-'))) STORED
 ```
 
@@ -221,7 +221,6 @@ value is named; misspelled inputs are rejected by the type checker, not
 by application code.
 
 ```sql
--- src/lib/prisma/migrations/20260507000067_inference_types/migration.sql
 CREATE TYPE
   route_hosting_tier
 AS ENUM
@@ -279,7 +278,8 @@ no FK accepts every 64-bit integer, valid or not, and downstream joins
 return spurious nothings instead of failing loudly.
 
 ```sql
-provider_id bigint NOT NULL REFERENCES provider_ids (provider_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+provider_id bigint NOT NULL REFERENCES provider_ids (provider_id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
 ```
 
 `ON DELETE`/`ON UPDATE` close the relational state space. Pick the
@@ -311,7 +311,6 @@ with constraint triggers; nothing else can express "this row may be
 inserted, but never updated or deleted".
 
 ```sql
--- src/lib/prisma/migrations/20260507000072_inference_triggers/migration.sql
 CREATE TRIGGER provider_events_are_append_only
 BEFORE UPDATE OR DELETE ON provider_events
 FOR EACH ROW
@@ -367,12 +366,13 @@ useful — the trigger either lets the row through or stops the whole
 transaction. Stop it with a typed error:
 
 ```sql
--- src/lib/prisma/migrations/20260507000071_inference_projection_functions/migration.sql
-RAISE EXCEPTION 'route config event created_at must be strictly greater than the last event for the same route_config_id'
+RAISE EXCEPTION 'route config event created_at must be strictly '
+          'greater than the last event for the same route_config_id'
   USING ERRCODE = '23514',
         CONSTRAINT = 'route_config_events_created_at_monotonic',
         DETAIL = format(
-          'New created_at %s is not strictly greater than last %s for route_config_id %s.',
+          'New created_at %s is not strictly greater than last %s '
+          'for route_config_id %s.',
           NEW.created_at, previous.created_at, NEW.route_config_id
         );
 ```
@@ -405,7 +405,6 @@ project's vocabulary; do not treat `public` and `inference` as
 canonical.
 
 ```sql
--- src/lib/prisma/migrations/20260507000050_domain_reason_text/migration.sql
 CREATE SCHEMA inference;
 
 SET LOCAL search_path TO inference, public;
@@ -429,7 +428,6 @@ Cross-context flow goes through *views* and *functions*, not direct
 table reads:
 
 ```sql
--- src/lib/prisma/migrations/20260507000071_inference_projection_functions/migration.sql
 CREATE FUNCTION providers (arg_effective_at timestamptz DEFAULT effective_time())
 RETURNS TABLE (provider_id bigint, created_at timestamptz, gpu_provider label,
                provider_name label, slug label, settings_payload inference_settings)
@@ -453,10 +451,10 @@ leak: every nullable column adds the `+ 1` of `Option<T>` and forces
 every consumer to handle "I don't know" alongside the real values.
 
 ```sql
--- src/lib/prisma/migrations/20260507000070_inference_tables/migration.sql
 created_at  timestamptz NOT NULL DEFAULT effective_time()
 reason      reason_text NOT NULL
-provider_id bigint      NOT NULL REFERENCES provider_ids (provider_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+provider_id bigint      NOT NULL REFERENCES provider_ids (provider_id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT
 ```
 
 A column is nullable only when NULL means something specific that no
@@ -467,7 +465,8 @@ attempted", "explicitly cleared by the operator". Document it:
 runner route_runner -- nullable: defaults to vllm in code when null
 ```
 
-For unique constraints over a nullable column, use `NULLS NOT DISTINCT` so two NULLs collide rather than slipping past the index:
+For unique constraints over a nullable column, use `NULLS NOT DISTINCT` so two
+NULLs collide rather than slipping past the index:
 
 ```sql
 CREATE UNIQUE INDEX route_config_events_identity_unique
@@ -504,13 +503,13 @@ that is a `bigint GENERATED ALWAYS AS IDENTITY` surrogate key per event
 row, plus a separate `_ids` table holding the logical identifier:
 
 ```sql
--- src/lib/prisma/migrations/20260507000070_inference_tables/migration.sql
 CREATE TABLE provider_ids
   ( provider_id bigint PRIMARY KEY GENERATED BY DEFAULT AS IDENTITY );
 
 CREATE TABLE provider_events
   ( provider_event_id bigint      PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-  , provider_id       bigint      NOT NULL REFERENCES provider_ids (provider_id) ...
+  , provider_id       bigint      NOT NULL
+    REFERENCES provider_ids (provider_id) ...
   , created_at        timestamptz NOT NULL DEFAULT effective_time()
   );
 ```
@@ -520,7 +519,8 @@ Two distinct keys, two invariants:
 - `provider_event_id` (`GENERATED ALWAYS`) is the surrogate event
   pointer. `ALWAYS` bans application-supplied values; the database is
   the only issuer.
-- `provider_id` (`GENERATED BY DEFAULT`) is the logical identity. `BY DEFAULT` admits explicit inserts so seed data and tests can reuse
+- `provider_id` (`GENERATED BY DEFAULT`) is the logical identity. `BY DEFAULT`
+  admits explicit inserts so seed data and tests can reuse
   stable ids; production lets the database assign.
 
 Use a natural key as `PRIMARY KEY` only when it is genuinely immutable
@@ -540,13 +540,12 @@ Test that bad rows are *rejected*, not just that good rows are
 accepted. The trusted boundary is the database engine; the test must
 feed it adversarial input and prove the engine refuses.
 
-The pattern from `db/test/domains/public/label.test.sql` wraps the cast
+The test wraps the cast
 in a plpgsql function that catches the failure and returns its
 SQLSTATE, then exercises every accept/reject case from the same fixture
 function:
 
 ```sql
--- db/test/domains/public/label.test.sql
 CREATE FUNCTION
   test.try_cast_label(arg_input text)
 RETURNS TABLE (ok boolean, sqlstate text, message text)
@@ -571,7 +570,7 @@ SELECT * FROM test.try_cast_label(repeat('a', 257)) \gx /dev/stdout
 SELECT * FROM test.try_cast_label('')         \gx /dev/stdout
 SELECT * FROM test.try_cast_label(E'a\tb')    \gx /dev/stdout
 SELECT * FROM test.try_cast_label(E'a\nb')    \gx /dev/stdout
-SELECT * FROM test.try_cast_label(E'a​b')    \gx /dev/stdout
+SELECT * FROM test.try_cast_label(U&'a\200Bb')    \gx /dev/stdout
 SELECT * FROM test.try_cast_label(' a')       \gx /dev/stdout
 
 -- NULL is documented because domain CHECKs do not fire on NULL;
@@ -579,8 +578,8 @@ SELECT * FROM test.try_cast_label(' a')       \gx /dev/stdout
 SELECT * FROM test.try_cast_label(NULL) \gx /dev/stdout
 ```
 
-Mirrors `testing.md` § "test the trusted boundary" — every invalid
-input class is asserted, the boundary value and boundary + 1 are both
+Following the [integration test guidance](../testing.md#integration-tests),
+every invalid input class is asserted, the bound and its successor are both
 tested, and the NULL case is recorded because it is *not* what naive
 readers expect.
 

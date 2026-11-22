@@ -1,15 +1,8 @@
 ---
 name: state-space-minimization-formal
 description: >-
-  Notation and inference rules for state-space minimization:
-  S/C/I_repr/I_reach state sets, boundary morphisms, strictness and
-  dominance rules, the encoding order, proof obligations, reception
-  semantics for text rewrites, and the skill-gap rules.
-  Two uses: the output layer when the deliverable is formal, and a
-  reasoning mode when it is not — working in the calculus activates
-  formal-methods reasoning and surfaces constraints that prose
-  analysis misses. Semantics live in the state-space-minimization
-  skill's reference modules.
+  Derive state-space invariants, boundary guarantees, and encoding choices
+  for a formal deliverable or as a proof step in a design or review.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -118,163 +111,23 @@ gate the output form, not the reasoning mode.
 
 ## Core Notation
 
-- `S(A)` — representable states (structural; what the type's shape permits).
-- `C(A)` — valid states (contract). ("Valid", matching
-  `principles.md`; "admissible" is reserved for judgments about
-  transformations and rewrites.)
-- `R(b)` — reachable states under a boundary constructor
-  `b: (u: U) × P(u) -> A`.
-- `I_repr(A)` — representable invalid: `S(A) \ C(A)`.
-- `I_reach(A,b)` — reachable invalid: `R(b) ∩ I_repr(A)`.
-- `B(A)` — contract behavior: the artifact's observable behavior as a
-  function of representable state `S(A)`. `B(A)|_C` restricts that
-  function to the states in `C`, where it does real work.
-- `D(f)`, `K(f)`, `R(f)`, `G(f)` — domain, codomain, range, gap.
-- `cost(m)` — the audit burden of mechanism `m`: the trusted surface it
-  adds plus its ergonomic and toolchain cost. Semantics:
-  `state-space-minimization` `references/principles.md` § "Core
-  principle" (audit cost and drift surface) and § "Encode invariants
-  into types" (ergonomic and toolchain cost per rung).
-- `supp(μ)` — the support of distribution `μ`: the outcomes with
-  nonzero probability. (`μ`, not `P`: `P(u)` is the boundary
-  evidence predicate.)
-- `Needs(y, P(x))` — consumer `y`'s contract depends on evidence
-  `P(x)`.
-- `Erases(g, P(x))` — operation `g` maps `(x, p: P(x)) ↦ x`,
-  discarding the evidence.
-- `Flows(g, y)` — the output of `g` reaches consumer `y`.
-- `[[t]]^D`, `[[t]]^O_{q,c}` — denotation, and operational reception
-  from prior state `q` in context `c`.
-- `c ∈ Ctx_0`, `q'` — a reception context, and the receiver state
-  after reading `t`.
-
-$$
-\begin{array}{rcl}
-S(A) &:=& \text{representable states (structural)} \\
-C(A) &\subseteq& S(A) \\
-R(b) &:=& \{\, b(u,p) \mid u \in U,\; p \in P(u) \,\} \subseteq S(A) \\
-I_{\mathrm{repr}}(A) &:=& S(A) \setminus C(A) \\
-I_{\mathrm{reach}}(A,b) &:=& R(b) \cap I_{\mathrm{repr}}(A)
-\end{array}
-$$
-
-Always subscript the invalid set. `I_repr` and `I_reach` answer
-different questions, and an unsubscripted `I` silently equates a
-predicative encoding with a constructive one.
-
-$$
-\begin{array}{rcl}
-R(f) &:=& \{\, f(x) \mid x \in D(f) \,\} \\
-G(f) &:=& K(f) \setminus R(f) \\
-f^{-1}(F) &:=& \{\, x \in D(f) \mid f(x) \in F \,\}
-\end{array}
-$$
+Define the representable, valid, and reachable sets before comparing encodings.
+[Read the rule](references/core-notation.md).
 
 ### Constructive vs predicative
 
-- **Constructive encoding**: `S(A) = C(A)`, so `I_repr(A) = ∅`. The proof
-  lives in the type's shape and is preserved across every consumer.
-- **Predicative encoding**: `S(A) ⊋ C(A)`, so `I_repr(A) ≠ ∅`. A trusted
-  boundary `b` restricts `R(b) ⊆ C(A)`, so `I_reach(A,b) = ∅`, but `I_repr`
-  remains and proof obligations must be reconstituted at every consumer
-  that reasons about `S(A)`.
-
-A smart constructor narrows `R(b)`, not `S`. Equating `I_reach = ∅` with
-`I_repr = ∅` is the most common slip in informal SSM analysis.
-
-Semantics: `state-space-minimization`
-`references/constructive-vs-predicative.md` (intrinsic vs extrinsic
-safety, the trusted-boundary audit, the hard-case fallbacks).
+Distinguish the shape of a representation from the values its constructors admit.
+[Read the rule](references/core-notation.md#constructive-vs-predicative).
 
 ### Proof-preservation corollary
 
-For predicative `A`, every consumer `f` with `D(f) = S(A)` whose
-contractual behavior is specified only on `C(A)` carries an
-obligation `Obl(f)` that the input came through `R(b)`. (`Obl(f)`, not `P_f`: `P` is the boundary
-evidence predicate.) Adding a second construction path `b' ≠ b` with
-`R(b') ⊄ C(A)` voids `Obl(f)` globally.
-
-For constructive `A`, `Obl(f)` is discharged by the type and survives
-the addition of arbitrary new construction paths.
-
-**The bad-lowerer test (is a claimed run output constructive or
-predicative?).** When a property `Q` is asserted of an artifact's
-*outputs* and one of the construction paths `b` is an authored lowering
-— program data the reducer reads but does not compute (an occurrence id,
-a template, a slot) — ask: *can a bad lowerer `b'` falsify `Q` while
-every reducer rule behaves correctly?* If yes, `Q` is established only
-through the trusted boundary `b`, so `R(b') ⊄ C(A)` voids it exactly as
-above: `Q` is predicative, conditional on lowering well-formedness, not a
-constructive (rule-level) theorem. State it with the conditional in the
-statement (`Q under LoweredOccUnique`), and keep `LoweredOccUnique` a
-hypothesis until the lowering relation is itself an artifact with its own
-`C`. A rule-level theorem quantifies over all programs; a property a bad
-program breaks is predicated on the program inhabiting `C`.
+Identify the evidence each consumer needs from its construction path.
+[Read the rule](references/core-notation.md#proof-preservation-corollary).
 
 ## Artifact Calculus
 
-- Minimization is contract-preserving invalidity reduction.
-- Strictness is admissible only as a contract-preserving transformation.
-- Mechanism choice is one lexicographic order: invalidity first, then
-  the encoding-order rank, then `cost(m)` as the final tiebreak.
-- A mechanism that detects, documents, or rejects invalid states does not
-  necessarily shrink `S(A)`. Smart constructors, validators, and
-  refinement-library wrappers narrow `R(b)`, not `S`.
-
-$$
-\begin{array}{c}
-C(A') = C(A)
-\qquad
-C(A) \subseteq S(A')
-\qquad
-I_{\mathrm{repr}}(A') \subsetneq I_{\mathrm{repr}}(A)
-\qquad
-B(A')|_{C(A)} = B(A)|_{C(A)}
-\\
-\hline
-\mathrm{Strict}(A,A')
-\end{array}
-$$
-
-The contract is pinned: `C(A') = C(A)` (up to the chosen embedding)
-forbids discharging the rule by widening the contract until nothing
-is invalid. `C(A) ⊆ S(A')` is the well-formedness obligation on the
-chosen embedding — every contract state must be carried into
-`S(A')`, so a strictness step cannot delete a state the contract
-requires. It is listed to be checked, not because it is independent
-of the other premises.
-
-$$
-\begin{array}{rl}
-\text{among } m \text{ with} & \mathrm{Sufficient}(m) \;\wedge\;
-B(m(A))|_{C(A)} = B(A)|_{C(A)}: \\
-\text{choose} & I_{\mathrm{repr}}(m(A)) \;\; \subseteq\text{-minimal} \\
-\text{then} & \text{earliest encoding-order rank} \\
-\text{then} & \mathrm{cost}(m) \text{ minimal among those}
-\end{array}
-$$
-
-Eligibility gates the whole selection, not just the rank step: an
-insufficient or behavior-breaking mechanism may not participate in —
-or block — the minimality comparison. When no mechanism is eligible,
-use the fallback rule in § "Encoding Order".
-
-Invalidity is ordered by inclusion, not cardinality: `m` dominates
-`m'` only when `I_repr(m(A)) ⊊ I_repr(m'(A))`. Incomparable
-residual sets are not ranked — a count would rank them, and could
-prefer the numerically smaller set that still contains the
-dangerous states. The inclusion order is taken up to a chosen
-embedding into a common universe of states (`S(NonEmptyString)` is
-not literally a subset of `S(String)`; the embedding is part of
-the analysis). Fix one embedding per candidate into one common
-universe before checking any premise; switching embeddings between
-premises is inadmissible.
-
-When several candidates are ⊆-minimal with incomparable residuals,
-no rule orders them — neither rank nor cost may break the tie. The
-choice is an open obligation: name the states in the symmetric
-difference, decide by which residual contains the more dangerous
-states, and record the decision with the residual gap in Outputs.
+Pin the contract and compare residual invalidity in a common state space.
+[Read the rule](references/selection.md#artifact-calculus).
 
 ## Operations
 
@@ -299,112 +152,13 @@ estimated bound may move the other way).
 
 ## Encoding Order
 
-The **encoding order** ranks mechanism classes. The table below is
-derived for an application-owned artifact, not an axiom — derive
-the ranks per architecture using the metric that follows it. Use
-the earliest sufficient mechanism:
-
-$$
-\begin{array}{c|c}
-k & \text{mechanism} \\
-\hline
-1 & \text{type or representation} \\
-2 & \text{constructor or parser} \\
-3 & \text{boundary adapter} \\
-4 & \text{schema constraint} \\
-5 & \text{test oracle} \\
-6 & \text{documentation claim} \\
-7 & \text{runtime assertion}
-\end{array}
-$$
-
-`Sufficient(m)` := `I_reach(m(A), b) = ∅` for every construction
-path `b`; for rank-1 mechanisms this strengthens to
-`I_repr(m(A)) = ∅`. Only sufficient mechanisms compete for rank:
-
-$$
-\begin{array}{c}
-\mathrm{Sufficient}(m_i)
-\qquad
-\mathrm{Sufficient}(m_j)
-\qquad
-I_{\mathrm{repr}}(m_i(A)) = I_{\mathrm{repr}}(m_j(A))
-\qquad
-B(m_i(A))|_{C(A)} = B(A)|_{C(A)}
-\qquad
-B(m_j(A))|_{C(A)} = B(A)|_{C(A)}
-\qquad
-i < j
-\\
-\hline
-m_i \prec m_j
-\end{array}
-$$
-
-When no mechanism is sufficient, choose the earliest mechanism that
-detects, documents, or rejects every targeted invalid state, and record what
-remains as the residual gap in Outputs. Ranks 5–7 are these
-fallback positions — a test oracle, documentation claim, or runtime
-assertion never makes `I_reach` empty by itself (semantics:
-`constructive-vs-predicative.md` § "Hard cases for constructive
-modeling", which falls back to lints, tests, and runtime
-configuration).
-
-The rank metric: a mechanism ranks earlier when it governs more of
-the artifact's construction paths; ties break by earlier detection
-phase. The table is the derived order for an
-application-owned artifact, not an axiom — derive the ranks per
-architecture. In a database-first system with multiple writers, a
-schema constraint governs every write path while an application
-boundary adapter governs one — the adapter fails `Sufficient`, so
-the schema constraint is the earliest sufficient mechanism. Rank order is
-least-power order under this metric: the earliest sufficient
-mechanism is the least powerful one that still removes the invalid
-set (`state-space-minimization` `references/least-power.md` owns
-the principle).
-
-The choice among rank-1 type-level mechanisms (enums, constructive
-datatypes, typestate, phantom tags, GADTs, refinement and
-dependent types) is ordered by the **mechanism ladder** in
-`state-space-minimization` `references/principles.md` § "Encode
-invariants into types"; that ladder's lowest rungs (runtime
-checks, smart constructors) correspond to this table's later
-ranks. The two ladders are distinct: the encoding order ranks
-mechanism classes, the mechanism ladder ranks concrete mechanisms
-by guarantee strength.
+Choose among sufficient mechanisms or record a fallback and its residual.
+[Read the rule](references/selection.md#encoding-order).
 
 ### Constructive dominance at rank 1
 
-Within rank 1, encodings are ordered by inclusion of `S` (up to
-the chosen embedding). A predicative scheme is a composite — a
-rank-1 representation whose sufficiency is supplied by its rank-2
-constructor; this rule compares the representations, not the
-mechanisms. A constructive encoding `A_c` with
-`S(A_c) = C(A)` strictly dominates any predicative encoding `A_p`
-with `S(A_p) ⊋ C(A)` — then `S(A_c) ⊊ S(A_p)` — even when every
-`I_reach(A_p, b)` is empty.
-
-$$
-\begin{array}{c}
-S(A_c) = C(A)
-\qquad
-S(A_p) \supsetneq C(A)
-\qquad
-B(A_c) = B(A_p)|_{C(A)}
-\\
-\hline
-A_c \prec A_p
-\end{array}
-$$
-
-Rationale: `A_c` discharges every consumer proof obligation `Obl(f)`
-structurally and is monotone under the addition of new construction
-paths. `A_p` discharges `Obl(f)` only through the trusted boundary `b`,
-and any new `b'` with `R(b') ⊄ C(A)` voids `Obl(f)`. A swap that holds `I_reach`
-constant while holding `S` and `R(b)` fixed (predicative-to-predicative
-mechanism swap, e.g., relocating the check from a hand-written
-constructor to a refinement library) is **not** a narrowing; it changes
-neither `S` nor `R(b)`.
+Compare the representable state sets of competing type-level encodings.
+[Read the rule](references/selection.md#constructive-dominance-at-rank-1).
 
 ## Invariants
 
@@ -424,230 +178,57 @@ Semantics: totality `references/total-functions.md`; exhaustiveness
 
 ## Boundary Calculus
 
-- Trust increases only through boundary morphisms.
-- Proof erasure is admissible only when no downstream consumer requires the
-  erased proof.
-
-$$
-\begin{array}{c}
-u \in U
-\qquad
-b: (u: U) \times P(u) \to A
-\qquad
-p: P(u)
-\\
-\hline
-b(u,p) \in C(A)
-\end{array}
-$$
-
-The evidence is what buys trust, and its strength matters: evidence
-that discharges the full contract lands the value in `C(A)`, giving
-`R(b) ⊆ C(A)` and `I_reach(A,b) = ∅` — only such a boundary is
-trust-increasing, and the rule above states that case. Evidence may
-also discharge representability only (`b(u,p) ∈ S(A)` with
-`R(b) ⊄ C(A)`); such a boundary is an ordinary construction path,
-not a trusted one — these are the paths through which `I_reach` can
-be nonempty. The evidence-free `b: U -> A` is the weakest case,
-trivial `P` discharging representability alone.
-
-$$
-\begin{array}{c}
-\mathrm{Erases}(g, P(x))
-\qquad
-\mathrm{Flows}(g, y)
-\qquad
-\mathrm{Needs}(y,P(x))
-\\
-\hline
-\mathrm{ProofObligation}(y,P(x))
-\end{array}
-$$
-
-Semantics: `state-space-minimization`
-`references/ingress-and-boundaries.md` (boundary parsing,
-capability tokens, temporal invariants) and
-`references/proof-preservation.md` (proofs that survive
-conversions).
+Track how evidence enters the system and where a consumer needs it again.
+[Read the rule](references/boundary-calculus.md).
 
 ### Transitions as boundary morphisms
 
-A rewrite / transition rule `t: A -> A` that mints state is a
-construction path, so it has a range `R(t)` and a reachable-invalid set
-`I_reach(A,t) = R(t) ∩ I_repr(A)` like any boundary. To find it,
-**enumerate each minted token against each uniqueness bound in `C(A)`**: a
-per-*key* freshness premise narrows `R(t)` on the by-key family but not on
-an owner-scoped family, so a pre-existing owner-scoped token plus the mint
-gives `R(t) ∩ I_repr(A) ≠ ∅` (mint `pending pid k` onto a strand already
-holding `pending pid k'`). Close it with a per-owner *phase* premise on
-`t`, never a contract widening and never a negative premise that couples
-the rule to global state.
-
-**Step-closure of a consumed premise.** A premise `φ` that `t` consumes is
-sound for one application; soundness of a *run* requires `φ` closed under
-the transition relation. If it is not, `φ` is predicative — held by a
-boundary/lowering, not by the carrier — and the run invariant that omits
-its preservation is under-scoped.
-
-$$
-\begin{array}{c}
-\varphi(A)
-\qquad
-t(A, A')
-\qquad
-\neg\,\mathrm{Preserves}(t, \varphi)
-\\
-\hline
-\varphi \text{ is a lowering/phase discipline, not a run invariant}
-\end{array}
-$$
-
-Discharge `Preserves(t, φ)` and fold `φ` into the run invariant, OR keep
-`φ` as a named admitted-code obligation and stop asserting the smaller run
-invariant is *sufficient*. Two consecutive minting `t` at the same owner
-is the canonical witness that a one-step premise is not step-closed.
-
-**Reachability is not arrival.** `x ∈ R(t)` says the state is *reachable*,
-not that a token *arrived* by `t`. In an unordered carrier a
-supposedly-later token may inhabit the initial state, so a reachability
-theorem `Reaches(A_0, A_f)` proves compatibility along a schedule, not
-causal sourcing: "`t` sources `y`" holds only for the `y` that `t` mints;
-exogenous start-state tokens are inputs, not outputs.
-
-**Composition is non-monotone (the union trap).** For a carrier
-composition `⊕` (append, union),
-
-$$
-\begin{array}{c}
-\varphi(A)
-\qquad
-\varphi(B)
-\qquad
-A, B \text{ independently constructed}
-\\
-\hline
-\varphi(A \oplus B) \text{ does not follow}
-\end{array}
-$$
-
-when `A` and `B` come from different worlds (recorded vs candidate run,
-two writers). The union needs a cross term `χ(A,B)` with
-`φ(A) ∧ φ(B) ∧ χ(A,B) → φ(A ⊕ B)`. Name `χ` before applying any
-per-component result; `χ` must be stronger than "the lossy projections
-agreed" (else it assumes the conclusion).
+Check step closure, causal origin, and the cross-component premise.
+[Read the rule](references/transitions.md).
 
 ## Reception Semantics
 
-- Text has denotational content and operational effect.
-- Prose, ordering, notation, omissions, and repetition are state controls.
-- Rewrite text only when denotation is preserved and no new
-  unintended reading is introduced; aim for strict reception
-  narrowing.
-
-$$
-\begin{array}{rcl}
-[[t]]^D &:=& \text{denotation of } t \\
-[[t]]^O_{q,c} &:=& \Pr(q' \mid q,t,c) \\
-t \equiv_D t' &:=& [[t]]^D = [[t']]^D
-\end{array}
-$$
-
-$$
-\begin{array}{c}
-t \equiv_D t'
-\qquad
-\forall q \in Q_0,\, c \in Ctx_0:\;
-\mathrm{supp}([[t']]^O_{q,c}) \setminus Q_{\mathrm{intended}}
-\subseteq \mathrm{supp}([[t]]^O_{q,c})
-\\
-\hline
-\mathrm{AdmissibleRewrite}(t,t')
-\end{array}
-$$
-
-The premise admits new *intended* readings (repairing a text no
-reader currently understands is admissible) while forbidding new
-unintended ones. Reception completeness —
-`supp([[t']]^O_{q,c}) ⊆ Q_intended` — is the discharge condition of
-the reception obligation, not an admissibility premise: when it
-fails, record the remaining unintended readings as the residual gap
-in Outputs.
-
-`ReceptionNarrowing(t, t')` strengthens admissibility with a strict
-witness: additionally `∃(q, c) ∈ Q_0 × Ctx_0` where
-`supp([[t']]^O_{q,c}) \ Q_intended ⊊ supp([[t]]^O_{q,c}) \ Q_intended`.
-A rewrite that leaves the unintended readings unchanged is
-admissible but is not a narrowing — the same standard as the
-predicative mechanism swap.
-
-The quantifiers forbid discharging the premises against one
-favorable prior reader or one favorable context; the rewrite must
-hold for every plausible `(q, c)` pair.
-
-The support premises are proof obligations like every other
-premise: discharged by argument about the plausible readings of
-`t'`, not computed. A rewrite is admissible only when it preserves
-denotation and introduces no new unintended readings; reception
-completeness — every remaining reading intended — is the
-obligation's discharge condition, not the admissibility bar.
-
-Semantics: `state-space-minimization`
-`references/documentation.md` (the reader's mental model as the
-state space a text constrains).
+Compare a text and its rewrite across plausible readers and contexts.
+[Read the rule](references/reception.md).
 
 ## Self-Similarity
 
-- The skill is an artifact.
-- Its rules are representable states.
-- Concrete cases reveal whether the codomain is too wide, too narrow, or
-  missing a distinction.
+Use accumulated evidence to distinguish missing rules from unexercised ones.
+[Read the rule](references/self-similarity.md).
 
-Semantics: `state-space-minimization` `references/principles.md`
-§ "Self-similarity"; the operational audit discipline is
-`references/skill-refinement.md`.
+## Outputs
 
-$$
-\begin{array}{rcl}
-\mathrm{Req}(E) &:=& \text{distinctions the evidence } E \text{ exercised or required} \\
-K(\mathrm{Skill}) &:=& \text{distinctions expressible by the skill}
-\end{array}
-$$
+In output-layer mode, emit the items below. In reasoning mode they
+are derived internally and translated into the deliverable's form.
 
-`Req(E)` is named apart from the range notation `R(f)` / `R(b)` —
-`R` stays reserved for ranges — but it plays the range's role in
-the gap analogy: with codomain `K(Skill)`, the set
-`K(Skill) \ Req(E)` is the gap `G` applied to the skill itself.
-The two directions differ: `Req(E) \ K(Skill)` is an
-expressiveness deficit (`MissingDistinction`), not a gap;
-`K(Skill) \ Req(E*)` is unexercised expressiveness
-(`SharpeningCandidate`) — only the latter is `G`.
+- Invalid-state sets: `I_repr`, and `I_reach` per boundary.
+- Chosen encoding and dominance reason.
+- Boundary morphisms.
+- Contract-preservation obligation.
+- Proof-preservation obligation.
+- Reception-narrowing obligation, when text is the artifact.
+- Normal form.
+- Residual gap, if nonempty.
 
-$$
-\begin{array}{c}
-d \in \mathrm{Req}(E) \setminus K(\mathrm{Skill})
-\\
-\hline
-\mathrm{MissingDistinction}(d)
-\end{array}
-$$
+## Utilities
 
-$$
-\begin{array}{c}
-d \in K(\mathrm{Skill})
-\qquad
-d \notin \mathrm{Req}(E^{\ast})
-\qquad
-E^{\ast} \text{ spans repeated use}
-\\
-\hline
-\mathrm{SharpeningCandidate}(d)
-\end{array}
-$$
+Run `./check_claims` from the [Lean project](lean/README.md) to verify
+the declarations, theorems, and residuals in its [manifest](lean/claims.toml).
+The prose rules also require evidence outside that manifest:
 
-A single case exercises few distinctions, so the premise must range
-over accumulated evidence `E*`, not one case — otherwise the rule
-fires vacuously on every use. Materiality and the report gate are
-owned by `references/skill-refinement.md`.
+- For equally ranked mechanisms with equal residuals, compare their audit
+  costs using the architecture and toolchain under review. The Lean
+  selection relation checks residuals and rank.
+- For confluence, prove that alternative reduction orders reach a common
+  normal form. Lean checks idempotence of a single normalizer, which
+  establishes that applying it again preserves its result.
+- For output guarantees that depend on a lowering, model the lowering or
+  carry its well-formedness as a hypothesis. The calculus gives the
+  bad-lowerer test as a review procedure.
+- For transitions and composition, supply a preservation argument for
+  each enabled step, identify the source of an arriving value, and
+  establish cross-component compatibility. The boundary theorems alone
+  do not prove these properties of a particular transition system.
 
 ## Process
 
@@ -672,20 +253,6 @@ owned by `references/skill-refinement.md`.
    obligations, and the selection justification (the dominance
    reason). In reasoning mode, translate the derivation into the
    deliverable's form; the notation remains as intermediate work.
-
-## Outputs
-
-In output-layer mode, emit the items below. In reasoning mode they
-are derived internally and translated into the deliverable's form.
-
-- Invalid-state sets: `I_repr`, and `I_reach` per boundary.
-- Chosen encoding and dominance reason.
-- Boundary morphisms.
-- Contract-preservation obligation.
-- Proof-preservation obligation.
-- Reception-narrowing obligation, when text is the artifact.
-- Normal form.
-- Residual gap, if nonempty.
 
 ## Validation Checklist
 

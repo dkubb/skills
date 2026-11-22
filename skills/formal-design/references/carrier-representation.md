@@ -5,10 +5,10 @@ payload, typed branch, replay key, or adapter-owned encoding.
 
 ## Route-vs-encode (the 8-question procedure)
 
-1. Who owns the SEMANTICS of construction? If the net concatenates /
-   encodes / normalizes to build a request, you rebuilt the rejected
-   in-core encoder; if an admitted adapter/template owns it and the net
-   only routes a typed value into a SEALED template, it stays routing.
+1. Who owns the semantics of construction? Trace one value from producer
+   to consumer. Concatenation, normalization and serialization construct a
+   representation. Passing a typed value unchanged to an adapter delegates
+   construction to that adapter.
 2. Is the routed value part of request IDENTITY? The typed payload lives IN
    the request's canonical args and IS part of replay equality — never a
    side-store reference (the intent stops being self-contained; replay can
@@ -39,47 +39,43 @@ Dependent-index encoding questions route to `state-space-minimization`
 
 ## Canonical tags + total clamp (bounded-count decoders)
 
-For a value-language → bounded-count decoder, raw `min n K` gives a second
-spelling of zero and can contradict the base case's policy; canonical tags
-(`0 ↦ [], j ↦ [j]`) with a total selector clamping nonempty atoms into
-`1..K` keep the reachable language exact and the selector total.
-**Soundness caveat (binding):** the CLAMP is sound only when the envelope
-DECLARES off-contract input in scope — clamping undeclared out-of-contract
-input violates fail-closed. Declare the envelope or reject, never silently
-clamp.
+Identify which external spellings the contract accepts for each value
+before choosing a decoder. For example, an empty list can be the unique
+encoding of zero, with `[j]` encoding a count between one and a positive
+bound `K`. Decide whether to reject an out-of-range singleton or clamp
+it. Clamping changes which inputs count as valid. An explicit acceptance
+policy is required even when the result always fits the internal type.
 
 ## Carrier-swap bridge (the 15-question set)
 
-Run before bridging a typed-carrier supply to an erased-carrier supply
-ahead of a carrier change:
+Run before changing the representation of a value consumed by an existing
+interface.
 
-1. What is the future proof-carrying carrier, and what is the current
-   erased carrier?
-2. What is the per-record projection into the future carrier?
-3. Is that projection pinned EXACTLY, including intent AND observation
-   ORDER (future-carrier-facing, not just via the raw erasure)?
-4. What is the per-record erasure back to the current carrier?
-5. Is the LIST projection pinned as a canonical map, not merely
-   demonstrated on a singleton?
-6. Is the LIST erasure pinned as a canonical map, including the empty list
-   AND multi-record lists?
-7. Does a raw-erasure-facing bridge accidentally HIDE a future-carrier bug?
-   Check INVERSE-PAIR mutants: a bad projection followed by a compensating
-   erasure cancels under the round-trip but delivers wrong content to the
-   new carrier — pin the projection's exact content in the FUTURE carrier's
-   vocabulary.
-8. Does the supply theorem quantify over ARBITRARY records, not one demo?
-9. Does the matched-head `next` theorem pin BOTH the returned observations
-   and the returned tail supply?
-10. Is the mismatch case genuinely new, or fixed by the kernel replay law
-    plus intent preservation?
-11. Is the exhausted case genuinely new, or already fixed by the
-    list-erasure map plus the kernel nil law?
-12. Did a concrete singleton demo sneak into the BASIS? Replace with a
-    parametric map theorem or demote to an example.
-13. Does the theorem stop at the supply boundary, without dragging in a
-    reducer run?
-14. Do names say "decoded supply erases to raw supply", not "the reducer
-    receives decoded observations"?
-15. Which transport/erasure lemma will the NEXT rung use to avoid
-    `cases h; rfl` constant-family shortcuts? Export it now.
+1. What are the old and new carriers, and which invariants does each
+   enforce?
+2. What maps an individual old value into the new carrier? If conversion
+   can fail, specify the accepted inputs and the failure result.
+3. What exact content must the new consumer receive, including field
+   identity, order and multiplicity where observable?
+4. What information survives the projection back to the old carrier?
+5. For collections, does the conversion agree with applying the individual
+   map to every element?
+6. Does the reverse projection preserve empty and multi-element inputs?
+7. Could an incorrect forward map and a compensating reverse map pass the
+   round-trip test? State a law on the new carrier that rejects that pair.
+8. Do the laws hold for arbitrary valid inputs? Use a singleton as an
+   example of the law.
+9. Which outputs *and* state changes must each successful operation
+   preserve? For a queue read, check both the item and the remaining queue.
+10. What happens on rejection? Identify any existing law that already pins
+    the error and successor state.
+11. What covers the empty case? Check whether it follows from a collection
+    law and the existing interface.
+12. Which examples distinguish a broken map, and which claims require a
+    quantified proof?
+13. At which operation does the bridge stop? Keep later consumers outside
+    its hypotheses unless the guarantee explicitly reaches them.
+14. Does the theorem name specify the direction and observations it
+    preserves? An erasure law alone says nothing about delivery to a client.
+15. Which transport or erasure lemma will the next consumer use? State
+    that lemma at the boundary to keep representation details private.

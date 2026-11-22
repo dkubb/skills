@@ -7,7 +7,7 @@ headlines that pin a caller instead of the helper. The class's core is the
 
 ## B1 The `_iff` pin family
 
-The highest-yield family in the harvest. Three FIRE-ONs:
+Check these three cases:
 
 - **Every new erasure/refinement RELATION on the mutable surface** — prove
   `R ↔ <explicit intended content>` as a headline, every field/conjunct
@@ -23,7 +23,8 @@ The highest-yield family in the harvest. Three FIRE-ONs:
 - **Every new wrapper `def P … : Prop` or `structure … : Prop` consumed
   downstream** — prove `P_iff : P ↔ <its definition body>` (often
   `Iff.rfl`). Witnesses plus projections leave four mutants alive:
-  hidden-extra-condition (`P := <real conjunct> ∧ <unrelated true-on-the-witness thing>`), drop-a-field (downstream theorems that don't
+  hidden-extra-condition (`P := <real conjunct> ∧ <unrelated
+  true-on-the-witness thing>`), drop-a-field (downstream theorems that don't
   project that field stay green), hidden-`False` field (every consumer goes
   vacuous while a sibling non-vacuity witness still passes), and
   field-type weakening (drops a sequential-consumption step; passes whenever
@@ -63,8 +64,8 @@ collide." When executing these mutants, apply detector isolation
 ## B3 Cardinality conjunct
 
 FIRE on every universal value claim over a linear/unique resource:
-`∀ x, P x → x = good` is forged by TWO copies of the right thing — the
-most-recurring forgery class in the harvest. `count = 1` is first-class,
+`∀ x, P x → x = good` is forged by TWO copies of the right thing. `count =
+1` is first-class,
 never derived from a `∀`-uniqueness reading; and the `∃ rest` decomposition
 form (`state = good :: rest`) needs an explicit not-in-rest clause
 (`good ∉ rest`), else the second copy hides in the rest. The deciding
@@ -102,8 +103,8 @@ theorem already demanded, so it is cheap) or descend the name to what the
 standalone bundle carries. Deciding witness: inhabit the record in the
 adversarial state the dropped hypothesis would have excluded, then exhibit
 two states — the name's reading TRUE in one, FALSE in the other — both
-carrying an instance the stored fields cannot distinguish (the harvest
-witness: two same-key replies, one sealed and one caller-forged, with the
+carrying an instance the stored fields cannot distinguish (for example, two
+same-key replies, one sealed and one caller-forged, with the
 record's public constructor admitting both). Auditing each disclaimer for
 honesty is NOT this check: reviewers who confirmed every disclaimer honest
 still missed that the disclaimed axis was the name's load-bearer.
@@ -134,7 +135,8 @@ helper term that happens to equal the witness (`∃ t, Reads t ∧ P (helper x)`
 where `helper x` equals `t` at the exhibited witness). Both forms are defeq
 AT THE WITNESS, so no mutant can distinguish them — the mutation gate is
 structurally blind here, and the defect and its fix are syntactic: rewrite
-each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧ P t`). A conjunct whose subject is a ground term binds the helper, not the
+each conjunct so it constrains the bound variable directly (`∃ t, Reads t ∧
+P t`). A conjunct whose subject is a ground term binds the helper, not the
 existential — a different witness satisfying `Reads` is left unconstrained.
 
 ## B6 Quantified-object coverage

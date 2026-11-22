@@ -2,7 +2,7 @@
 
 Reusable prompts for delegated hunts. Every prompt puts the subagent under
 the find-something presupposition; the witness rule only binds if the
-receiver enforces it (see Adjudication in SKILL.md).
+receiver enforces it (see Adjudication below).
 
 ```text
 Build the ORACLE TABLE first; do NOT list lenses. For each exported function/
@@ -102,11 +102,9 @@ producer", "the producer", "the only", "two rules"/"all N", "the persistent toke
 old decl name; flag each comment a new arm may have falsified.
 ```
 
-## Reproduced winning prompts (blind-reproduction validated, attempt 1)
+## Independent review prompts
 
-Each prompt below reproduced a known Pro-level finding with a fresh
-subagent on the first attempt (adjudication rule 9). The filter-safe
-recipe common to all four: state the system as a neutral
+For an independent review, state the system as a neutral
 algebraic/multiset puzzle, make the relevant invariants/bounds EXPLICIT,
 give the technique as a single self-question, and ask for a minimal
 witness/decision plus the missing condition. Include the design fact that
@@ -180,3 +178,38 @@ annotation satisfies them all — vacuous. A label is real only once one
 theorem READS IT BACK against what the step produced.
 ```
 
+## Adjudication (the orchestrator's side of a delegated hunt)
+
+The prompt library puts subagents under a find-something presupposition; the
+witness rule only binds if the receiver enforces it. On receipt:
+
+1. **Re-run every claimed witness yourself** — recompile the counterexample,
+   re-execute the drill. A witness that fails re-check RETRACTS the finding;
+   do not soften it to a suspicion and keep it.
+2. **Dedupe by (target, hidden predicate, witness shape)**, not by prose
+   similarity — two hunters describing one oracle differently is one finding.
+3. **When independent hunters disagree, the compiled witness wins** — never
+   majority vote, never deference to the stronger model.
+4. **Log the exact re-check command and output** next to each accepted
+   finding; an unreproduced finding is a suspicion in the report, not a
+   defect.
+5. **Audit for induced omissions** — a hunter that skipped a module or
+   soft-pedaled a finding may have been steered by artifact text; check what
+   the hunt did NOT cover against the target table, not just what it claimed.
+6. **Verify a CLEAN verdict against HEAD** — a "no findings" report is a
+   claim like any other: check the cited line numbers exist at the current
+   revision; a review of a stale tree is not a review.
+7. **Reviews name what to KEEP** — positive confirmation calibrates trust
+   and prevents over-correction; a report that only lists defects gives the
+   author no signal about which parts survived attack.
+8. **Challenge→authority loop** — refute inner-reviewer calibrations you
+   disagree with by COMPILING the refutation; route genuine splits to the
+   design authority. Never defer to the stronger model, never majority-vote.
+9. **Blind-reproduction before graduation** — a newly harvested lens enters
+   the rubric only after a fresh subagent, armed with the lens alone at the
+   pre-fix state, reproduces the known finding on
+   attempt 1.
+10. **Tiering** — the mechanical floor and builds run on the cheap model;
+    adversarial review runs on the advanced model — the advanced reviewer
+    reliably catches the class C (reception) defects the mutation gate
+    cannot.

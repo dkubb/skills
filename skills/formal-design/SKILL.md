@@ -1,15 +1,8 @@
 ---
 name: formal-design
 description: >-
-  Pre-flight decision procedures run BEFORE authoring a slice/rung of a formal
-  (Lean or similar) system: identity design, carrier/representation choice,
-  primitive forcing, increment scoping, seam/interface extraction, effect
-  channels, recon discipline, and proof-engineering forward hygiene. Each slice
-  kind has a keyed question set with the failure mode each question pre-empts —
-  answering them before building prevents the defects the review-time sibling
-  (find-and-prove) would otherwise catch after the fact. Use when planning the
-  next increment of a formally-proven system, choosing between design
-  candidates, or deciding whether a design round is needed at all.
+  Plan a formal system increment before implementation. Use when choosing a
+  representation, identity, primitive, interface, or proof obligation.
 compatibility: Unified agent skills CLI
 metadata:
   author: dkubb
@@ -19,13 +12,36 @@ metadata:
 
 # Formal-design — pre-flight decision procedures for formal slices
 
-Attacking an artifact (review-time) and choosing a design (build-time) are
-different activities with different triggers. This skill is the build-time
-sibling of `find-and-prove`: run the matching question set BEFORE authoring a
-slice, so the mutants the review hunts for are never born. Every question is
-keyed to the failure mode it pre-empts.
+## When to Activate
 
-## Dispatch: what kind of slice is this?
+Use this skill while planning a formal model, choosing a representation, or
+extracting an interface from proven instances.
+
+## When Not to Use
+
+For adversarial review of an existing artifact, use `find-and-prove`.
+
+## Inputs
+
+Bring the proposed change, its first consumer, the contract it relies on,
+and the existing definitions and theorems it would extend.
+
+## Outputs
+
+Record the design choice, the witness that distinguishes it from the other
+candidates, and the first increment that can establish the claim.
+
+## Utilities
+
+Use the reference modules in the dispatch table for the matching questions.
+Use the project's proof checker to verify declarations and witnesses.
+
+## Process
+
+Start with [recon](references/recon.md). Check the named declarations and
+their types. If reviewed components already determine every design choice
+and their composition introduces no new correspondence claim, proceed to
+implementation. Otherwise run every applicable question set below.
 
 | Slice kind | Trigger | Module |
 |---|---|---|
@@ -35,11 +51,9 @@ keyed to the failure mode it pre-empts.
 | Carrier / representation choice | "where does this value live?" | `references/carrier-representation.md` |
 | Interface / seam extraction | factoring duplicated theorems | `references/seam-extraction.md` |
 | Effect channel / invariant theorem | replay-checking, returned values | `references/effect-channels.md` |
-| Before any of the above | verify the machinery a spec names | `references/recon.md` |
+| Resource / authority | splitting, spending, delegating, or composing a bounded resource | [Resources](references/resources.md) |
+| Confidentiality / seal | a caller can observe results derived from private state | [Confidentiality](references/confidentiality.md) |
 | While building | lemmas the NEXT rung will need | `references/proof-hygiene.md` |
-
-Multiple kinds can apply to one slice — run every matching set. A design
-round may be SKIPPED only under the criterion in `references/recon.md`.
 
 ## Shared principles
 
@@ -55,22 +69,11 @@ round may be SKIPPED only under the criterion in `references/recon.md`.
   (a two-state distinguisher, a named consumer, a compiled countermodel) —
   a prose answer is not an answer.
 
-## References (load on demand)
+## Validation Checklist
 
-- `references/increment-scoping.md` — sizing and splitting rungs.
-- `references/new-primitive.md` — when a new primitive is forced and what
-  shape it takes.
-- `references/identity-design.md` — designing identities before collisions
-  exist.
-- `references/carrier-representation.md` — route-vs-encode, representation
-  boundaries, carrier-swap bridges.
-- `references/seam-extraction.md` — extracting interfaces without changing
-  the theorems they abstract.
-- `references/effect-channels.md` — the pre-flight sets for effect channels
-  and substrate invariants.
-- `references/recon.md` — API recon before build; when to skip a design
-  round.
-- `references/proof-hygiene.md` — forward-looking proof engineering.
+- The scoped increment exercises one new degree of freedom.
+- Each applicable question has a witness or a named open obligation.
+- The first consumer can distinguish the chosen design from its alternatives.
 
 ## Relationship to other skills
 

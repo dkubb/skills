@@ -1,7 +1,6 @@
 /-
-MUTANT (must FAIL to compile) for def `Strict` /
-`sufficientWithPaths_imp_irepr_empty` neighbourhood — the
-contract-pin premise `C(A') = C(A)`.
+MUTANT (must FAIL to compile) for def `Strict` / `Sufficient`
+neighbourhood — the contract-pin premise `C(A') = C(A)`.
 
 Mutation: discharge `Strict` by WIDENING the contract until nothing
 is invalid, instead of preserving it. The calculus forbids this:

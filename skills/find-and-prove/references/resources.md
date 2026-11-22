@@ -67,19 +67,19 @@ analysis.]
   The published rank ceiling is **fork consistency / fork-linearizability**
   (SUNDR): an untrusted store cannot be *prevented* from forking views, only
   forced to keep the fork forever — detection plus commitment, not prevention.
-- **Resource-or-fact (the dual of fork)** — fork *admits* invalid states by
-  treating a copyable value as affine; the dual *deletes* valid states by treating
-  a FACT as affine. A derived datum / SSA value with multiple legitimate readers
-  (a later call AND an audit/export step) is a fact, not a one-shot resource —
-  modeling it linear starves the second reader (an artificial consumer race that
-  the contract never asked for). Ask *"affine resource or fact?"* before imposing
-  linearity; a fact is persistent + owner-scoped with a write-once `≤1`
-  coherence bound, never consumed.
+- For a derived value with multiple legitimate readers, apply the
+  [resource-or-fact classification](../../state-space-minimization/references/proof-preservation.md#resource-or-fact-classify-before-imposing-linearity).
+  A witness for a mistaken linearity requirement has two permitted readers:
+  consuming the value for the first prevents the second from reading it.
 - **Best correct approximation / strongest postcondition** — merely *sound*, or
   the *most precise* sound one? Is the slack an authored choice or baked-in
   over-approximation?
 
-## Dynamics & composition — *across time, substitution, runtime*
+## F4 Composition battery
+
+Check the forkability of any affine guarantee under the authority checks
+above. For a check followed by use, establish that the checked state still
+holds at use. Then examine the relevant composition:
 
 - **Safety / liveness / fairness** (Alpern–Schneider) — is "authorization safety"
   silently assuming progress, freshness, cleanup, revocation?
@@ -111,7 +111,8 @@ analysis.]
   `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
   (recorded-run vs candidate-run frontiers; two writers; two sessions
   reusing an id). Any theorem over `A ++ B` needs a BRIDGE invariant
-  naming the cross term, and the certificate must be STRONGER than "the
+  naming the [cross term](../../state-space-minimization-formal/SKILL.md#transitions-as-boundary-morphisms),
+  and the certificate must be STRONGER than "the
   lossy projections matched" (else it assumes what it proves — the bridge
   must say prior facts matched at the real seam, not just that a lossy
   view agreed). State the bridge shape

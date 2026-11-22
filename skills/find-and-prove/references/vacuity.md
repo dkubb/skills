@@ -60,9 +60,7 @@ each level survives until you have built the killing mutant:
    mutation universe (`references/basis.md`, G1).
 
 [Anchors: specification mutation — Ammann–Black; spec coverage metrics —
-Chockler–Kupferman–Vardi.] The worked origin was a seven-round hunt on a
-decode-image predicate, one lattice level per round — walking the lattice up
-front replaces the rounds.
+Chockler–Kupferman–Vardi.]
 
 ## A3 Annotation / label vacuity (the all-constant sweep)
 
@@ -173,13 +171,13 @@ a valid transport corollary — demote it, docstring exactly what it does NOT
 claim, and move the new-kind headline to the statement whose new-kind path the
 wiring mutant actually reddens.
 
-The worked origin (W3.6a): a conjunction `decode req raw = some (.node n) ∧ unwrap n = some items ↔ Spec req raw (.node n) ∧ n.flatten? = some items` was
-advertised as join-kind boundary reception — but the landed decoder was
+For example, the conjunction `decode req raw = some (.node n) ∧
+unwrap n = some items ↔ Spec req raw (.node n) ∧ n.flatten? = some items`
+was advertised as join-kind boundary reception — but the landed decoder was
 leaf-only, so for every joined `n` both decoder-side conjuncts are FALSE: the
 join column is all-no and the "reception" holds as an equivalence of two false
-props. The sketch was the design authority's OWN, and all three inner-loop
-review tiers verified sketch-FIDELITY instead of activation — fidelity to a
-vacuous sketch propagates the vacuity. Fix: rename and demote the conjunction
+props. A theorem can faithfully implement a sketch whose
+advertised case is vacuous. Fix: rename and demote the conjunction
 to a non-headline transport corollary whose docstring states the decoder does
 not accept joins; the join-positive reception headline waits for the rung
 whose run actually routes a joined node.

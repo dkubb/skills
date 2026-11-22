@@ -1,6 +1,6 @@
 /-
 Self-similarity rules of the state-space-minimization calculus
-(SKILL.md § "Self-Similarity"). Calculus version: 2026-06-v8.
+(SKILL.md § "Self-Similarity"). Calculus version: 2026-06-v9.
 
 The set-difference structure is kernel rank: the skill is an
 artifact, its distinctions are states, and the gap analogy

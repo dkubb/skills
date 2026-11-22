@@ -2,7 +2,7 @@
 Function range/gap/preimage, the six operations, and the Invariants
 of the state-space-minimization calculus (SKILL.md § "Core Notation"
 `R(f)`/`G(f)`/`f⁻¹`, § "Operations", § "Invariants"). Calculus
-version: 2026-06-v8.
+version: 2026-06-v9.
 
 The structural content of each operation (domain/codomain narrowing,
 preimage, normalization determinants) is kernel rank. The operations'
@@ -124,5 +124,16 @@ vacuously (`True`) or be unfalsifiable, so exhaustiveness is carried
 as an allowlisted residual — `exhaustiveness_residual` in
 claims.toml — whose enforcement rank is the type checker, not a
 theorem. -/
+
+/-- Totality into a proposed codomain can be tested on the input side:
+every declared input must survive the preimage restriction. -/
+theorem total_iff_preimage_eq_domain {f : D → K} {Dom : Set D} {Cod : Set K} :
+    Total f Dom Cod ↔ Preimage f Dom Cod = Dom := by
+  constructor
+  · intro total
+    exact Set.Subset.antisymm (fun _ hx => hx.1) (fun x hx => ⟨hx, total x hx⟩)
+  · intro covers x hx
+    have accepted : x ∈ Preimage f Dom Cod := covers.symm ▸ hx
+    exact accepted.2
 
 end SSM.Fn

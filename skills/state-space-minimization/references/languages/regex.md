@@ -26,8 +26,9 @@ inputs. Anchor every full-match validator at both ends:
   newlines
 - `^...$` in JavaScript without `/m` — also true input bounds in JS
   because `$` matches end-of-input by default
-- `\A...\Z` in PostgreSQL `~` operator — accepts a trailing newline; use
-  `\z` if even that is forbidden
+- `\A...\Z` with PostgreSQL's `~` operator matches the absolute start
+  and end of the string, including in newline-sensitive modes
+- In Python, use `re.fullmatch(pattern, text)` for a whole-string test
 
 The single most common defect in domain regexes is `^[A-Z_]+$` or
 `/^[a-z0-9-]{1,64}/` (no `$`). Both let `___`, `FOO__BAR`, or any
@@ -175,9 +176,9 @@ Defenses, in order:
    surface usually evaporates.
 2. **Possessive quantifiers / atomic groups** — `(?>...)`, `a++`,
    `a*+` in PCRE / Java / Ruby refuse to backtrack into the group.
-   Use them on every loop whose contents are unambiguous. JavaScript
-   gained `(?>...)` and possessive quantifiers in ES2024; Rust's
-   `regex` crate is backtrack-free by construction.
+   Use these only when later terms never need a character consumed by
+   the group. ES2024 has neither construct. In JavaScript, rewrite
+   overlapping alternatives so each input has one way to match.
 3. **Switch engines** when the input is hostile. `regex` (Rust) and
    `re2` (C++, Go, Python via `pyre2`) guarantee linear time. Use
    `hyperscan` (Intel, BSD-3) for high-throughput multi-pattern
@@ -318,11 +319,10 @@ pattern controls the accepted state space.
 
 Regex semantics shift under Unicode flags:
 
-- `\d` matches Devanagari, Arabic-Indic, Bengali, and several dozen
-  other digit scripts in PCRE-Unicode and JavaScript with `/u`. Rust's
-  `regex` crate matches `\d` to `\p{decimal_number}` by default
-  (Unicode-aware); use `(?-u:\d)` to restrict to ASCII when the
-  domain is ASCII-only
+- JavaScript's `\d` means `[0-9]` even with `/u`. Use
+  `/\p{Decimal_Number}/u` for Unicode decimal digits. Rust's `regex`
+  crate treats `\d` as Unicode by default, as does PCRE2 with UCP.
+  Use `[0-9]` for an ASCII-only domain across these engines
 - `\w` matches a much wider class under Unicode than under ASCII. If
   the domain is ASCII identifiers, write the class explicitly:
   `[A-Za-z0-9_]`
@@ -333,10 +333,6 @@ Regex semantics shift under Unicode flags:
   `café` (NFD) are different inputs to the regex engine even
   though they render identically. Normalize before matching, or
   reject non-canonical forms at the parse boundary
-- escape sequences differ across engines: `\A` and `\z` exist in
-  Rust, Ruby, PCRE, Python, but not JavaScript pre-ES2018 named
-  groups. Verify the engine before assuming an anchor exists; the
-  `regex-review` skill's `--engine` flag is the gate
 
 When in doubt, restrict to ASCII and document the restriction. A
 domain regex that accidentally matches Devanagari digits is the same

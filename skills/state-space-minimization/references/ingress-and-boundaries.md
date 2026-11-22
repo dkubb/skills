@@ -85,7 +85,8 @@ counterpart to "parse, don't validate."
 
 ## Restructure data to remove the constraint
 
-When stacked refinements explode (`NonEmpty AND Sorted AND AllPositive AND Unique`), the answer is often *not* more refinement
+When stacked refinements explode (`NonEmpty AND Sorted AND AllPositive AND
+Unique`), the answer is often *not* more refinement
 machinery. It is restructuring the representation so the constraint
 disappears.
 
@@ -129,7 +130,8 @@ data leads to combinatorial explosions or types that lie.
 
 The standard answer is a **capability token**: a one-shot proof that all
 checks passed at the moment of issuance. The operation accepts the
-token, not the underlying facts. Make capability tokens affine by default — used at most once — so they
+token, not the underlying facts. Make capability tokens affine by default —
+used at most once — so they
 cannot be cached past their validity window. A reusable token requires
 an explicit validity model: expiration, revocation, scope, replay
 semantics, and tests proving stale or replayed tokens fail.

@@ -96,7 +96,8 @@ export const DestinationAddress  = EvmAddressHex.pipe(Schema.brand("DestinationA
 export const SpendPolicyAsset    = EvmAddressHex.pipe(Schema.brand("SpendPolicyAsset"));
 ```
 
-Both still parse as 0x-prefixed 40-hex strings, but `transfer(asset, destination)` cannot accidentally swap them at the call site.
+Both still parse as 0x-prefixed 40-hex strings, but
+`transfer(asset, destination)` cannot accidentally swap them at the call site.
 
 ### Name every downcast to a third-party type
 
@@ -338,7 +339,9 @@ class DbUnavailable extends Data.TaggedError("DbUnavailable")<{
   readonly cause: unknown;
 }> {}
 
-const findUser = (id: UserId): Effect.Effect<User, UserNotFound | DbUnavailable, Database> =>
+const findUser = (id: UserId): Effect.Effect<
+  User, UserNotFound | DbUnavailable, Database
+> =>
   Effect.gen(function* () {
     const db = yield* Database;
     const row = yield* db.queryOne(id);
@@ -358,6 +361,12 @@ When a module owns a closed family of tagged errors, declare the union
 type and a constructor object under the same exported name:
 
 ```ts
+class ParseError extends Data.TaggedError("ParseError")<ParseErrorPayload> {}
+class ConfigError extends Data.TaggedError("ConfigError")<ConfigErrorPayload> {}
+class PersistenceError extends Data.TaggedError("PersistenceError")<
+  PersistenceErrorPayload
+> {}
+
 export type AppError = ParseError | ConfigError | PersistenceError;
 
 export const AppError = {
@@ -370,9 +379,10 @@ export const isAppError = (v: unknown): v is AppError =>
   v instanceof ParseError || v instanceof ConfigError || v instanceof PersistenceError;
 ```
 
-Call sites read `AppError.Parse({ source, message })` and the original
-classes remain available for `Effect.catchTag("Parse", ...)`. Pair with
-the `isAppError` guard for FFI / unknown input.
+Call sites construct the error with `AppError.Parse({ source, message })`.
+Its `_tag` comes from `Data.TaggedError("ParseError")`, so the handler
+uses `Effect.catchTag("ParseError", ...)`. Use `isAppError` to narrow
+unknown input at an FFI boundary.
 
 ### `Effect.fn` for traced generator functions
 
@@ -673,7 +683,8 @@ export interface FreshBalanceProof
 const isFreshBalanceProof = (v: unknown): v is FreshBalanceProof =>
   typeof v === "object"
   && v !== null
-  && (v as Record<typeof freshBalanceProofSymbol, unknown>)[freshBalanceProofSymbol] === true;
+  && (v as Record<typeof freshBalanceProofSymbol, unknown>)
+    [freshBalanceProofSymbol] === true;
 
 export const FreshBalanceProof: Schema.Schema<FreshBalanceProof> =
   Schema.declare(isFreshBalanceProof);
@@ -811,7 +822,9 @@ runtime `Response`. Inside the wrapper:
 - parse body bytes through a byte-bound `ResponseBodyBytes` schema,
   after a `content-length` short-circuit so oversized payloads never
   allocate
-- parse each header pair through `Schema.Tuple(HttpHeaderName, HttpHeaderValue)`, canonicalize names to lowercase, and reject
+- parse each header pair through
+  `Schema.Tuple(HttpHeaderName, HttpHeaderValue)`, canonicalize names to
+  lowercase, and reject
   duplicates after canonicalization
 - freeze the resulting `Map` so headers cannot be mutated downstream
 - expose body via a getter that clones the `Uint8Array` so consumers
@@ -820,7 +833,9 @@ runtime `Response`. Inside the wrapper:
   (`AppError.Protocol({ profile: "http", ... })`); never let
   `Response`, `TypeError`, or `AbortError` escape the wrapper
 
-Pair with a generic `decodeHttpResponseJson<T>(response, schema, onFailure): Either<T, AppError>` so the *intermediate* `unknown` from a
+Pair with a generic
+`decodeHttpResponseJson<T>(response, schema, onFailure): Either<T, AppError>`
+so the *intermediate* `unknown` from a
 two-step "parse JSON then validate" never appears as a representable
 state in the call graph.
 
@@ -838,7 +853,9 @@ const transportOwnedHeaderNames = new Set([
   "authorization", "x-payment", "payment-required", /* ... */
 ]);
 
-const forbidTransportHeaders = (entries: readonly (readonly [string, string])[]) =>
+const forbidTransportHeaders = (
+  entries: readonly (readonly [string, string])[],
+) =>
   entries.some(([name]) => transportOwnedHeaderNames.has(name.toLowerCase()))
     ? Either.left(bridgeError("SDK forbids transport-owned headers"))
     : Either.right(entries);
@@ -861,7 +878,8 @@ type tells you whether `text_start` has been emitted. A `mergeFinish`
 helper keeps the first non-`Open` finish so a late `[DONE]` after
 `finish_reason` does not overwrite the real reason.
 
-Caveat: it is tempting to read the whole stream with `new Response(body).text()` before splitting frames, which sidesteps
+Caveat: it is tempting to read the whole stream with
+`new Response(body).text()` before splitting frames, which sidesteps
 partial-frame edge cases by eliminating streaming. The frame-by-frame
 discipline above survives a port to incremental SSE / chunked
 transfer; the buffered shortcut does not. Decide which trade-off you

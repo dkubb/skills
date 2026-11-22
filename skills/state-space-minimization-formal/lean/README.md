@@ -26,7 +26,7 @@ proves it.
   to invent or disambiguate is a finding fed back into `../SKILL.md`.
 - **It proves the skill.** The inference rules are Lean declarations;
   a green `lake build` is machine-checked evidence that the calculus
-  is coherent, and `#print axioms` on every headline theorem shows it
+  is coherent, and `#print axioms` on every registered declaration shows it
   rests only on the allowlisted standard axioms. That allowlist is
   ratcheted to the minimal set the calculus actually uses: `propext`
   and `Quot.sound` only. `Classical.choice` was removed as dead
@@ -35,13 +35,17 @@ proves it.
   needs choice the gate flags the non-allowlisted axiom, which is the
   ratchet working.
 
-## Scope — the full calculus
+## Scope of the Lean model
 
-The **full** calculus is now reflected. Formalized: state sets and the
-trust theorems; `Strict` and the refinement order; the selection
-objective (`Sufficient` with a coverage-witnessed construction-path
-set, eligibility, ⊆-minimality, rank, and the theorem that the chosen
-mechanism is admissible) and the fallback; constructive dominance;
+The reflection covers the claims listed in `claims.toml`. The skill also
+specifies costs, confluence, lowering checks, and transition closure. See
+[Utilities](../SKILL.md#utilities) for their verification scope.
+
+The model covers state sets and the trust theorems, strict refinement, and the
+selection objective (eligibility requiring path sufficiency with rank-1 strengthening,
+⊆-minimality, rank, and admissibility of the selected mechanism) and the
+fallback when no candidate satisfies the same path predicate; optional
+liveness (`ContractReachable`); constructive dominance;
 `Obl` and the proof-preservation rules (`Needs`/`Erases`/`Flows` ⇒
 `ProofObligation`); reception semantics (denotation, support-subset
 `AdmissibleRewrite`, `ReceptionNarrowing`, completeness);
@@ -62,6 +66,9 @@ Allowlisted residuals (claims no command can enforce; see
 - `selfsim.spans_repeated_use_residual` — "`E*` spans repeated use" is
   empirical; carried as an abstract hypothesis and proved
   load-bearing.
+- `select.path_enumeration_residual` — whether the supplied `PathSet`
+  (and `m.paths`) enumerates every construction path of real code
+  (deserializers, FFI, derives) is an operator audit obligation.
 - `select.rank_metric_residual` — the encoding-order table is derived
   per architecture, not an axiom.
 - `select.rank_vocabularies_residual` — the encoding-order rank
@@ -93,23 +100,27 @@ anti-vacuous. It fails (nonzero exit) on any of:
   cache-disabled (`LAKE_ARTIFACT_CACHE=false`) `lake build`, so every
   downstream check judges artifacts that match the current sources, not
   stale cached oleans.
-- **Type pin.** For every non-residual headline it prints the real
-  decl's type (`#check @decl` under `pp.fullNames`) and compares it to
-  the recorded `expected_type`; gutting a headline to `: True := trivial`
-  changes its printed type and fails. The only way to pass a gutted
-  headline is to also edit `expected_type` — a visible, reviewable
-  change.
-- **Per-headline mutants.** Every headline claim carries a rejecting
-  mutant in `mutants/` that is compiled and confirmed to FAIL; a
-  headline whose mutant compiles is presumed vacuous.
+- **Type pin.** For every non-residual claim, Lean checks that the
+  declaration's type is definitionally equal to `expected_type`.
+  This catches changes to implicit arguments that print identically.
+  The gate also compares the printed type to the pin, including
+  binder names that callers can use for named arguments.
+- **Per-headline mutants (exact single-diagnostic pin).** Every headline
+  claim carries a rejecting mutant in `mutants/` and a `mutant_error`
+  diagnostic headline in `claims.toml`. Lean must resolve a direct import
+  of the claim’s local module in that mutant. The gate requires a non-zero
+  exit with exactly one Lean error matching
+  `<mutant>:<mutant_error>` — catching both vacuous compiles and
+  contaminated/stale false kills.
 - **Residual-rank restriction.** A `residual=true` row may carry only an
   `evaluator-judgment`, `operator-policy`, or `honest-doc` rank — never
   a kernel rank, which would let a provable theorem be dodged as prose.
 - **Orphan-module check.** Every `*.lean` under `lean/` (except the root
   and the checker) must be transitively imported by the root module
   `Ssm`.
-- **Axiom allowlist.** Every headline theorem rests only on `propext`
-  and `Quot.sound`.
+- **Axiom allowlist.** Every registered definition and theorem uses only
+  `propext` and `Quot.sound` from the axiom allowlist. A definition check
+  audits its dependencies. Semantic properties need their own proofs.
 
 All of these checks operate on the Lean only.
 
@@ -129,30 +140,26 @@ are not silently carried as dead values.
 Lean identifiers mirror the calculus names wherever the calculus names
 a thing (`I_repr`, `I_reach`, `R`, `Strict`, `Sufficient`, `Obl`,
 `Needs`, `Erases`, `Flows`, `Req`, `K`). Where Lean coins a name for
-an implicit calculus concept (`ContractPinned`, `ConstructionPaths`,
+an implicit calculus concept (`ContractPinned`, `PathSet`,
 `ReceptionComplete`), the coined name is back-ported into `../SKILL.md`
 prose. Renames on either side are vocabulary drift and must land on
 both sides or not at all.
 
 ## Version parity
 
-The reflection is **versioned independently** of `../SKILL.md`. Its
-formalization version (currently `2026-06-v8`, semver `2026.6.8`) is a
-Lean-internal stamp: it tracks `../SKILL.md`'s calculus by **content
-and review**, not by a shared stamp the gate enforces. `check_claims`
-cross-checks only the Lean-internal stamps — the `lakefile.toml`
-`version` (`2026.6.8`), the `Reflection.lean` header (`2026-06-v8`),
-`claims.toml`, and these README literals — and it **does not read
-`../SKILL.md`**. Matching internal stamps are the signal that the Lean
-files are connected to each other; the connection to the skill is by
-review, not by a stamp.
+Version: `2026-06-v9` (`2026.6.9`).
+
+The reflection is versioned independently of `../SKILL.md`. Reviewers
+check its correspondence with the skill's calculus. `check_claims`
+compares the release above with the `lakefile.toml` version, the
+`Reflection.lean` header and `claims.toml`.
 
 ## Provenance
 
 Originally a Codex (GPT-class) reflection probe of `../SKILL.md` on
 2026-06-12, graded by compilation under Lean 4.30.0 + mathlib.
-Subsequently expanded to the full calculus and adversarially hardened;
-the refinement and hardening iterations are logged in `ITERATIONS.md`.
+[The iteration history](ITERATIONS.md) records which claims and checks
+were added after the initial probe.
 
 ## Building and checking
 
@@ -162,6 +169,7 @@ This directory is a self-contained lake project:
 lake exe cache get   # once; downloads the mathlib build cache
 lake build           # type-checks the root module Ssm (all modules)
 ./check_claims       # the mechanical gate (needs elan on PATH)
+rust-script --test check_claims  # regression tests for the checker
 ```
 
 `Ssm.lean` is the root module: it imports every calculus module and is

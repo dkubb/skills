@@ -341,10 +341,10 @@ compounding holes:
 1. `StatementBinding.lean` was NOT in the build graph (not imported by
    `Ssm`, an explicit orphan-check exception), so `lake build` never
    compiled the guard — a gutted headline kept the build green.
-2. `check_claims` verified the guard and mutants with `lake env lean <file>`, which loads PREBUILT oleans and does not recompile changed
-   sources; with the cross-worktree artifact cache restoring stale
-   project oleans even across `lake build`, the gate judged STALE
-   artifacts (the old, real theorem) after a source edit.
+2. `check_claims` verified the guard and mutants with `lake env lean <file>`,
+   which loads PREBUILT oleans and does not recompile changed sources.
+   The cross-worktree artifact cache restored stale project oleans even
+   across `lake build`, so the gate judged the old theorem after a source edit.
 
 Fix (make the gate self-contained and cache-safe):
 
@@ -484,16 +484,40 @@ Counts: rows 68→67, headlines 11→8, kernel-theorems 19→18, residuals
 unchanged at 8. All stamps bumped v6 → v7 because gate semantics
 changed.
 
+## Iteration 13 — construction paths and mutant diagnostics (2026-06-v9)
+
+The previous coverage premise required every representable value to be
+constructible. As a result, any sufficient mechanism had to eliminate every
+invalid representable value. That excluded a smart constructor that keeps
+an underlying representation and rejects invalid values at its boundary.
+
+`Sufficient` now checks the paths a mechanism retains. Rank one requires
+an encoding with no invalid representable values. A rank-two constructor
+may keep those values in its representation when every retained path is
+clean. The separation theorem exhibits such a constructor over `Bool`: it
+accepts `true` and cannot construct `false`. Eligibility and fallback use
+the same predicate. The operator still has to identify every real
+construction path and justify any path the mechanism removes.
+
+`ContractReachable` expresses a separate liveness obligation. An empty set
+of paths satisfies path safety but cannot reach a nonempty contract. The
+selection rules permit conservative parsers that accept a strict subset of
+the contract. A consumer that requires every contract value to be
+constructible must establish `ContractReachable`.
+
+A stale field in the old empty-path mutant produced an unrelated compiler
+error. The mutation gate now checks that Lean resolves the claimed module
+and reports exactly one error with the recorded source position and message
+headline. The rejection fixtures cover both a leaky path and a rank-one
+mechanism that leaves invalid values representable.
+
 ---
 
-## Current state (authoritative)
+## Reading the verification counts
 
-Each iteration above logs its own delta, so an intermediate "Net surface
-change" line (e.g. the v5 `rows 73→68, headlines 11`) is a snapshot of
-that iteration, not the present total. The authoritative counts are
-whatever `./check_claims` prints; as of v8 that is **rows=70,
-kernel-theorems=18, headlines=8, residuals=11** (version `2026-06-v8` /
-lakefile `2026.6.8`).
+`./check_claims` reports the current counts. At the close of iteration 13
+it reported 80 rows, 23 kernel theorems, 9 headline mutants, and 12
+residuals for version `2026-06-v9` (lakefile `2026.6.9`).
 
 ---
 
@@ -504,9 +528,9 @@ Part of this work trialed making the **Lean project canonical**: rewriting
 the README to "Lean is normative", and coupling the gate to SKILL.md via a
 claim-id↔row bijection. That trial was **reverted**. The decision:
 
-- `../SKILL.md` stays the **normative prose calculus**, byte-identical to
-  `main`. The Lean project is a **non-normative, full, hardened reflection**
-  of it, and `check_claims` is **Lean-internal** (it does not read SKILL.md;
+- At the end of the trial, `../SKILL.md` matched `main` and remained the
+  normative prose calculus. The Lean project models the claims recorded in
+  `claims.toml`, and `check_claims` is **Lean-internal** (it does not read SKILL.md;
   the bijection is gone, the anti-vacuity machinery — type pin, per-headline
   mutants, residual-rank, orphan, axioms, cache-safe rebuild — stays).
 
@@ -517,8 +541,7 @@ claim-id↔row bijection. That trial was **reverted**. The decision:
   effectiveness — its payoff is the formalization's own machine-checked
   correctness, not sharper per-task output. So the readable prose stays the
   primary artifact; the Lean is kept because it is genuinely improved
-  (full-calculus, vacuity closed, adversarially hardened) and worth locking
-  in.
+  by the additional proofs and regression checks.
 
 The canonicalization is reproducible if retried: the driving prompt is
 `CANONICALIZE_PROMPT.md` (kept on disk, gitignored). This log is retained as

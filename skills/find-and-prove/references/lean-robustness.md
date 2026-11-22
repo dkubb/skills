@@ -15,7 +15,9 @@ single-constructor inductives; fields are constructor parameters; the recursor
 eliminates by giving a branch that receives those parameters. So:
 
 1. **Recursors.** `T.rec`/`T.recOn`/`T.casesOn`/`T.brecOn` are PUBLIC even under
-   `private mk ::` / `private field`. `T.rec (motive := fun _ => Secret) (fun s => s) h` recovers the field downstream (often `noncomputable`; exact
+   `private mk ::` / `private field`. `T.rec (motive := fun _ => Secret)
+   (fun s => s) h` recovers the field downstream (often `noncomputable`;
+   exact
    generated names vary by version). A `def T := PrivateStruct` alias does NOT
    seal — it can be `unfold`ed to the recursor.
 2. **Projections.** A projection per field, plus positional `.1`/`.2`, parent
@@ -67,7 +69,8 @@ eliminates by giving a branch that receives those parameters. So:
     Wiedijk). The sibling channel `pp.all` cannot catch: **Trojan Source /
     homoglyphs** (Boucher–Anderson) — bidi controls and confusable code
     points make source render as a different statement than elaborates.
-    Scan headline statements and exported names for non-ASCII/confusables. Re-elaborate headlines under
+    Scan headline statements and exported names for non-ASCII/confusables.
+    Re-elaborate headlines under
     `set_option pp.all true` / `#print` before trusting what they say.
 
 ## The adversary-import drill (write it BEFORE the implementation is finished)
@@ -94,7 +97,10 @@ eliminates by giving a branch that receives those parameters. So:
 
 ## Writing robust Lean — habits
 
-- **Seal by capability, not by data.** Not `structure H where private mk :: private tape : …`. Closer to `structure H where step : EffectIntent -> StepResult`, with the trusted constructor closing over the secret. A recursor
+- **Seal by capability, not by data.** Not `structure H where private mk ::
+  private tape : …`. Closer to `structure H where step : EffectIntent ->
+  StepResult`, with the trusted constructor closing over the secret. A
+  recursor
   can expose `step`, but `step` is exactly the authority the caller was meant to
   have. If `step` is reusable, the seal is not done — make the API **terminal on
   divergence** and enforce single-use by an indexed transition / runtime

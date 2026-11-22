@@ -82,8 +82,7 @@ The skill-refinement report is one of:
 - **Modifications follow the skill's own rules.** When approved,
   edits are atomic per `commits.md`, prose follows
   `documentation.md`, module introductions follow the
-  self-similarity pattern in `ratchet.md`. The skill governs its
-  own modifications.
+  [self-similarity principle](principles.md#self-similarity).
 
 ## Validation probes
 

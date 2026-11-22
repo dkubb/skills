@@ -4,7 +4,7 @@ Load when a claim is true but enforced at the wrong boundary, rank, or run
 position: kernel theorems that are really lowering obligations, invariants
 that are not step-closed, properties stated over the wrong slice of the run.
 The rank classifier itself (assign every claim exactly one enforcement rank)
-lives in SKILL.md.
+is in [the target table guide](target-table.md#the-rank-classifier-assign-every-claim-exactly-one).
 
 ## D1 The bad-lowerer test (kernel theorem vs lowering obligation)
 

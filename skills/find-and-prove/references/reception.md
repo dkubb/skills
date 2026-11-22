@@ -51,6 +51,11 @@ says), never keep the aspirational name with a clarifying docstring alone —
 the name is what readers carry. The deciding witness is the satisfying
 violator; building it is cheap and settles the argument.
 
+For a claim about causal arrival, apply the
+[transition distinction](../../state-space-minimization-formal/SKILL.md#transitions-as-boundary-morphisms).
+A run can reach the named state through another transition. If that run
+satisfies the predicate, the predicate establishes reachability alone.
+
 ## C4 Frame honesty ("no X" claims in redex ++ frame systems)
 
 FIRE on every "no X" / "contains no X" claim in a `redex ++ frame` rewrite
@@ -58,7 +63,8 @@ system: disambiguate THREE readings — (a) the RHS-PRODUCED block has no X;
 (b) no NEW X appears; (c) the WHOLE output bag has no X. Reading (c) is
 almost always FALSE without an explicit frame-absence hypothesis: the frame
 may already carry an X, especially for PERSISTENT accumulating facts. The
-honest forms: a frame-clean IMPLICATION (`frame has no X → output has no X`) or a claim scoped to the produced residue. Prose for a bare local
+honest forms: a frame-clean IMPLICATION (`frame has no X → output has no X`)
+or a claim scoped to the produced residue. Prose for a bare local
 rewrite says "residue block", never "in G′". [Anchor: small-footprint /
 tight specifications — a rule's spec talks only about the footprint it
 touches; whole-bag claims need the frame made explicit.] The

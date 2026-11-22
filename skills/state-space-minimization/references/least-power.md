@@ -26,7 +26,9 @@ actually requires, and signal that fact in its types and call sites.
 
 The state-space framing:
 
-> When two or more primitives are equally capable for the task, choose the one that, in aggregate, accepts the **fewest input states**, returns the **fewest output states**, and uses the **fewest internal state transitions**.
+> When two or more primitives are equally capable for the task, choose the one
+> that, in aggregate, accepts the **fewest input states**, returns the **fewest
+> output states**, and uses the **fewest internal state transitions**.
 
 The "for the task" qualifier is load-bearing in two directions, not
 one.
@@ -53,7 +55,8 @@ Examples of the symmetric failure:
 - Chaining `.map(...).map(...).map(...)` when one transformation
   expresses the composition cleanly. Each intermediate collection is
   a representation that did not exist in the single-step form.
-- Hand-composing `git write-tree && git commit-tree && git update-ref` when porcelain `git commit` already bundles them with
+- Hand-composing `git write-tree && git commit-tree && git update-ref` when
+  porcelain `git commit` already bundles them with
   hook execution and reflog update. The hand-rolled form admits
   states the porcelain forbids (e.g. skipping a hook).
 - Re-implementing `flatMap` as `map` followed by manual flatten when
@@ -118,8 +121,7 @@ remains representable. Tightening the input collapses the branches.
 - **Closed match without a wildcard arm** — input enum exhausted, no
   defensive `_ => ...`. If a wildcard arm exists, ask whether splitting
   the enum into live and terminal variants would delete it. See
-  `principles.md` § "Encode invariants into types" and the dead-arm
-  pattern in `proof-preservation.md`.
+  [Encode invariants into types](principles.md#encode-invariants-into-types).
 - **No null/empty/zero guards** at the top of the function — the input
   type already excluded those values.
 - **No re-validation** of an input that was already parsed at the
@@ -345,9 +347,8 @@ shape, applied at the API rather than the data level.
   belong at the boundary parser, not inside the function.
 - `testing.md` § "Mutation testing" — the verification mechanism for
   this principle.
-- `proof-preservation.md` — split live and terminal sums so the
-  transition function's input excludes the terminal cases and the
-  dead arms compile away.
+- [Closed sums in Rust](languages/rust.md#closed-sums-with-enum) shows
+  how an exhaustive match exposes changes to the set of cases.
 - `languages/rust.md`, `languages/typescript.md`, `languages/sql.md`,
   `languages/regex.md` — concrete simplification pairs per language.
 - `normalization.md` — under-power with composition is the

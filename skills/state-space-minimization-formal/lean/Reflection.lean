@@ -1,6 +1,6 @@
 /-
 Lean formalization of the state-space-minimization calculus that
-`../SKILL.md` OWNS. Formalization version: 2026-06-v8 — versioned
+`../SKILL.md` OWNS. Formalization version: 2026-06-v9 — versioned
 INDEPENDENTLY of `../SKILL.md`; it tracks the skill's calculus by
 content and review, not by a shared stamp (the `check_claims` version
 gate cross-checks only the Lean-internal stamps and never reads
@@ -17,7 +17,7 @@ set_option autoImplicit false
 
 open Set
 
-universe u v w
+universe u v w z
 
 /-- SKILL.md § "Core Notation": `S(A)`, `C(A)` with `C(A) ⊆ S(A)`
 structural, and `B(A)` as behavior over representable state. One
@@ -129,139 +129,257 @@ structure Rank where
   index : Nat
   positive : 0 < index
 
-/-- SKILL.md § "Inputs": a candidate mechanism `m` inducing `m(A)`.
-The contract pin `C(m(A)) = C(A)` is required via `BehaviorOK`. -/
+/-- SKILL.md § "Inputs": "The construction paths of `A`: the set of
+all boundary morphisms that can produce values of `A`. Quantifiers
+`∀b` range over this set; it must be enumerated, not assumed."
+An enumerated path set is an analysis INPUT (so a sufficiency proof
+cannot substitute a different path domain than `m.paths A ps`; any
+leaky path retained by `m.paths A ps` cannot be omitted). Whether `ps`
+and `m.paths A ps` faithfully reflect every path of real code (including
+any paths `m` claims to remove) is an operator-policy residual
+(`select.path_enumeration_residual`). -/
+structure PathSet (A : Artifact State Obs) where
+  Paths : Type w
+  path : Paths → Σ U : Type w, Boundary A U
+
+/-- Total reachable state set across all enumerated construction paths. -/
+def Reach {A : Artifact State Obs} (ps : PathSet.{u, v, w} A) : Set State :=
+  {x | ∃ p : ps.Paths, x ∈ R (ps.path p).2}
+
+/-- SKILL.md § "Inputs": a candidate mechanism `m` inducing both the
+re-encoded artifact `m(A)` and its transformed construction paths
+`m.paths A ps`. A rank-2 smart constructor holds `S` fixed while
+narrowing `paths` to trusted boundaries. The contract pin
+`C(m(A)) = C(A)` is required via `BehaviorOK`. -/
 structure Mechanism (State : Type u) (Obs : Type v) where
   apply : Artifact State Obs → Artifact State Obs
+  paths : (A : Artifact State Obs) →
+    PathSet.{u, v, w} A → PathSet.{u, v, w} (apply A)
   rank : Rank
 
-def Residual (m : Mechanism State Obs) (A : Artifact State Obs) : Set State :=
+def Residual (m : Mechanism.{u, v, w} State Obs) (A : Artifact State Obs) :
+    Set State :=
   I_repr (m.apply A)
 
-def BehaviorOK (m : Mechanism State Obs) (A : Artifact State Obs) : Prop :=
+def BehaviorOK (m : Mechanism.{u, v, w} State Obs) (A : Artifact State Obs) :
+    Prop :=
   ContractPinned A (m.apply A) ∧
   ∃ h : A.C ⊆ (m.apply A).S,
     ContractBehaviorPreserved A (m.apply A) h
 
 /-- SKILL.md § "Encoding Order": `Sufficient(m)` strengthened for
 rank-1 mechanisms to `I_repr(m(A)) = ∅`. -/
-def SufficientRank1 (m : Mechanism State Obs) (A : Artifact State Obs) : Prop :=
+def SufficientRank1 (m : Mechanism.{u, v, w} State Obs)
+    (A : Artifact State Obs) : Prop :=
   I_repr (m.apply A) = ∅
 
-/-- SKILL.md § "Inputs": "The construction paths of `A`: the set of
-all boundary morphisms that can produce values of `A`. Quantifiers
-`∀b` range over this set; it must be enumerated, not assumed." This
-structure ties the path set to the artifact's *actual* constructors:
-`covers` is the coverage witness requiring that every representable
-state of `m(A)` is reachable through some enumerated path. Without
-this field, `Paths` was caller-supplied and `Paths = Empty`
-discharged sufficiency vacuously (the closed defect). -/
-structure ConstructionPaths
-    (m : Mechanism State Obs) (A : Artifact State Obs) where
-  Paths : Type w
-  path : Paths → Σ U : Type w, Boundary (m.apply A) U
-  /-- Coverage: each representable state of `m(A)` is the value of
-  some enumerated construction path. This is what makes `∀b` over
-  this set meaningful — an under-enumerated set (e.g. `Empty`) is
-  rejected unless `S(m(A))` is itself empty. -/
-  covers :
-    ∀ x ∈ (m.apply A).S, ∃ p : Paths, x ∈ R (path p).2
+/-- Every enumerated construction path of `m(A)` reaches no invalid
+state (`I_reach(m(A), b) = ∅` for every path `b` in `m.paths A ps`). -/
+def PathsClean (m : Mechanism.{u, v, w} State Obs) (A : Artifact State Obs)
+    (ps : PathSet.{u, v, w} A) : Prop :=
+  ∀ p : (m.paths A ps).Paths, I_reach ((m.paths A ps).path p).2 = ∅
 
-/-- SKILL.md § "Encoding Order": `Sufficient(m)` — `I_reach = ∅` for
-every *enumerated, covering* construction path. The quantifier
-ranges over `cp.Paths`, and `cp.covers` ties that set to the
-artifact's constructors, so the predicate is no longer vacuously
-dischargeable by a convenient (e.g. empty) subset. -/
-def SufficientWithPaths
-    (m : Mechanism State Obs) (A : Artifact State Obs)
-    (cp : ConstructionPaths m A) : Prop :=
-  ∀ p : cp.Paths, I_reach (cp.path p).2 = ∅
+/-- SKILL.md § "Encoding Order": `Sufficient(m)` := `I_reach(m(A), b) = ∅`
+for every enumerated construction path `b` (given by `m.paths A ps`);
+for rank-1 mechanisms (`m.rank.index = 1`) this strengthens to
+`I_repr(m(A)) = ∅`. For rank ≥ 2 (e.g., smart constructors), `I_repr`
+may remain nonempty while `Sufficient` holds. -/
+def Sufficient (m : Mechanism.{u, v, w} State Obs) (A : Artifact State Obs)
+    (ps : PathSet.{u, v, w} A) : Prop :=
+  (m.rank.index = 1 → SufficientRank1 m A) ∧ PathsClean m A ps
 
-/-- Coverage makes `SufficientWithPaths` non-vacuous: over a covering
-path set, `I_reach = ∅` on every path forces `I_repr(m(A)) = ∅`.
-This is the theorem an empty/subset path set cannot satisfy when
-`I_repr(m(A)) ≠ ∅` — it is the kernel content the old definition
-lacked. -/
-theorem sufficientWithPaths_imp_irepr_empty
-    {m : Mechanism State Obs} {A : Artifact State Obs}
-    (cp : ConstructionPaths m A)
-    (h : SufficientWithPaths m A cp) :
-    I_repr (m.apply A) = ∅ := by
+/-- Optional liveness property (separate from `Sufficient`): every
+contract state remains constructible through some enumerated path.
+Not baked into `Sufficient` or `EligibleMechanisms` because SKILL.md
+imposes no universal reachability requirement (e.g., conservative
+parsers may have `Reach ⊊ C`). -/
+def ContractReachable {A : Artifact State Obs}
+    (ps : PathSet.{u, v, w} A) : Prop :=
+  A.C ⊆ Reach ps
+
+/-- Proves `PathsClean` is equivalent to the aggregate reachable set
+being disjoint from `I_repr(m(A))`. -/
+theorem pathsClean_iff_reach_inter
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    {ps : PathSet.{u, v, w} A} :
+    PathsClean m A ps ↔ Reach (m.paths A ps) ∩ I_repr (m.apply A) = ∅ := by
+  constructor
+  · intro h
+    ext x
+    constructor
+    · rintro ⟨⟨p, hx⟩, hI⟩
+      have hmem : x ∈ I_reach ((m.paths A ps).path p).2 := ⟨hx, hI⟩
+      rw [h p] at hmem
+      exact Set.notMem_empty x hmem
+    · intro hx
+      exact (Set.notMem_empty x hx).elim
+  · intro h p
+    ext x
+    constructor
+    · rintro ⟨hx, hI⟩
+      have hmem : x ∈ Reach (m.paths A ps) ∩ I_repr (m.apply A) := ⟨⟨p, hx⟩, hI⟩
+      rw [h] at hmem
+      exact Set.notMem_empty x hmem
+    · intro hx
+      exact (Set.notMem_empty x hx).elim
+
+/-- Constructive sufficiency (`I_repr(m(A)) = ∅`) implies `Sufficient`
+for EVERY input path set `ps` — constructive encodings survive the
+addition of arbitrary construction paths. -/
+theorem rank1_sufficient_any_paths
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    (h : SufficientRank1 m A) (ps : PathSet.{u, v, w} A) :
+    Sufficient m A ps := by
+  refine ⟨fun _ => h, ?_⟩
+  intro p
   ext x
   constructor
-  · intro hx
-    -- `x` is representable-and-invalid; coverage gives a path that
-    -- reaches it; sufficiency on that path empties `I_reach`,
-    -- contradiction.
-    have hxS : x ∈ (m.apply A).S := hx.1
-    obtain ⟨p, hxR⟩ := cp.covers x hxS
-    have hmem : x ∈ I_reach (cp.path p).2 := ⟨hxR, hx⟩
-    rw [h p] at hmem
-    exact (Set.notMem_empty x hmem)
+  · rintro ⟨_, hI⟩
+    rw [show I_repr (m.apply A) = ∅ from h] at hI
+    exact Set.notMem_empty x hI
   · intro hx
     exact (Set.notMem_empty x hx).elim
+
+/-- SKILL.md § "Encoding Order": for rank-1 mechanisms, `Sufficient`
+is equivalent to `SufficientRank1` (`I_repr(m(A)) = ∅`). -/
+theorem rank1_sufficient_iff
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    {ps : PathSet.{u, v, w} A} (hr1 : m.rank.index = 1) :
+    Sufficient m A ps ↔ SufficientRank1 m A :=
+  ⟨fun h => h.1 hr1, fun h => rank1_sufficient_any_paths h ps⟩
+
+/-- Anti-vacuity refutation: if ANY enumerated path in `m.paths A ps`
+reaches ANY invalid state `x ∈ I_repr(m(A))`, then `m` is NOT
+sufficient — a leaky path cannot be hidden or dropped. -/
+theorem leaky_path_not_sufficient
+    {m : Mechanism.{u, v, w} State Obs} {A : Artifact State Obs}
+    {ps : PathSet.{u, v, w} A}
+    (p : (m.paths A ps).Paths)
+    {x : State}
+    (hxR : x ∈ R ((m.paths A ps).path p).2)
+    (hxI : x ∈ I_repr (m.apply A)) :
+    ¬ Sufficient m A ps := by
+  intro h
+  have hmem : x ∈ I_reach ((m.paths A ps).path p).2 := ⟨hxR, hxI⟩
+  rw [h.2 p] at hmem
+  exact Set.notMem_empty x hmem
+
+/-- Liveness refutation: an empty path set fails `ContractReachable`
+whenever the contract `A.C` is nonempty. -/
+theorem empty_paths_not_contract_reachable
+    {A : Artifact State Obs} (ps : PathSet.{u, v, w} A)
+    (hEmpty : IsEmpty ps.Paths)
+    {x : State} (hx : x ∈ A.C) :
+    ¬ ContractReachable ps := by
+  intro h
+  obtain ⟨p, _⟩ := h hx
+  exact hEmpty.false p
+
+/-- Non-collapse separation witness (SKILL.md § "Constructive vs
+predicative"): there exists a rank-2 predicative mechanism (`I_repr ≠ ∅`)
+that is `Sufficient` (and `ContractReachable`) for every input path set.
+Proves `Sufficient` does NOT collapse into `SufficientRank1`. -/
+theorem predicative_sufficient_separation :
+    ∃ (A : Artifact Bool Unit) (m : Mechanism.{0, 0, 0} Bool Unit),
+      m.rank.index = 2 ∧
+      I_repr (m.apply A) ≠ ∅ ∧
+      ∀ (ps : PathSet.{0, 0, 0} A),
+        Sufficient m A ps ∧ ContractReachable (m.paths A ps) := by
+  let Apred : Artifact Bool Unit :=
+    { S := Set.univ
+      C := {true}
+      C_subset_S := fun _ _ => trivial
+      B := fun _ => () }
+  let trusted : TrustedBoundary Apred Unit :=
+    { P := fun _ => True
+      b := fun _ _ => ⟨true, rfl⟩ }
+  let smart : Mechanism.{0, 0, 0} Bool Unit :=
+    { apply := fun _ => Apred
+      paths := fun _ _ =>
+        { Paths := Unit
+          path := fun _ => ⟨Unit, trusted.toBoundary⟩ }
+      rank := ⟨2, Nat.zero_lt_two⟩ }
+  refine ⟨Apred, smart, rfl, ?_, ?_⟩
+  · intro hEmpty
+    have hFalse : false ∈ I_repr Apred := ⟨trivial, fun h => by cases h⟩
+    rw [hEmpty] at hFalse
+    exact Set.notMem_empty false hFalse
+  · intro ps
+    refine ⟨⟨fun h => (by cases h), ?_⟩, ?_⟩
+    · intro _
+      exact trusted_boundary_no_reachable_invalid trusted
+    · intro x hx
+      exact ⟨(), (), trivial, (show x = true from hx).symm⟩
 
 /-- SKILL.md § "Artifact Calculus": ⊆-minimality of the residual —
 inclusion, never cardinality; incomparable residuals stay
 unordered. -/
 def SubsetMinimalOn
-    {M : Type w} (Candidates : Set M) (resid : M → Set State) (m : M) : Prop :=
+    {M : Type z} (Candidates : Set M) (resid : M → Set State) (m : M) : Prop :=
   m ∈ Candidates ∧
   ∀ n ∈ Candidates, resid n ⊆ resid m → resid m ⊆ resid n
 
 /-- SKILL.md § "Encoding Order": "Only sufficient mechanisms compete
-for rank" — eligibility gates the whole selection. -/
+for rank" — eligibility gates the whole selection, wired directly to
+the concrete `Sufficient` predicate over the input `PathSet`. -/
 def EligibleMechanisms
-    (Candidates : Set (Mechanism State Obs))
+    (Candidates : Set (Mechanism.{u, v, w} State Obs))
     (A : Artifact State Obs)
-    (Sufficient : Mechanism State Obs → Prop) :
-    Set (Mechanism State Obs) :=
-  {n | n ∈ Candidates ∧ Sufficient n ∧ BehaviorOK n A}
+    (ps : PathSet.{u, v, w} A) :
+    Set (Mechanism.{u, v, w} State Obs) :=
+  {n | n ∈ Candidates ∧ Sufficient n A ps ∧ BehaviorOK n A}
 
 /-- SKILL.md § "Artifact Calculus": the selection objective — among
-eligible mechanisms, ⊆-minimal residual then earliest rank. This is
-the whole lexicographic order the calculus selects by. -/
+eligible mechanisms, ⊆-minimal residual then earliest rank. -/
 def EarliestSufficient
-    (Candidates : Set (Mechanism State Obs))
+    (Candidates : Set (Mechanism.{u, v, w} State Obs))
     (A : Artifact State Obs)
-    (Sufficient : Mechanism State Obs → Prop)
-    (m : Mechanism State Obs) : Prop :=
-  m ∈ EligibleMechanisms Candidates A Sufficient ∧
+    (ps : PathSet.{u, v, w} A)
+    (m : Mechanism.{u, v, w} State Obs) : Prop :=
+  m ∈ EligibleMechanisms Candidates A ps ∧
   SubsetMinimalOn
-    (EligibleMechanisms Candidates A Sufficient) (fun n => Residual n A) m ∧
-  ∀ n ∈ EligibleMechanisms Candidates A Sufficient,
+    (EligibleMechanisms Candidates A ps) (fun n => Residual n A) m ∧
+  ∀ n ∈ EligibleMechanisms Candidates A ps,
     Residual n A = Residual m A → m.rank.index ≤ n.rank.index
 
-/-- Proves the lattice is normatively sound: the selected mechanism is
-always one the calculus admits — it is sufficient AND preserves
-behavior. The eligibility gate is load-bearing: `EarliestSufficient`
-cannot return an insufficient or behavior-breaking mechanism. This is
-the kernel content that justifies the whole selection lattice's
-presence (without it the definitions would model an order with no
-guaranteed property of its chosen element). -/
+/-- Proves the selection lattice is normatively sound: an
+`EarliestSufficient` mechanism is genuinely `Sufficient` (over `ps`)
+and preserves behavior (`BehaviorOK`). -/
 theorem earliestSufficient_admissible
-    {Candidates : Set (Mechanism State Obs)}
+    {Candidates : Set (Mechanism.{u, v, w} State Obs)}
     {A : Artifact State Obs}
-    {Sufficient : Mechanism State Obs → Prop}
-    {m : Mechanism State Obs}
-    (h : EarliestSufficient Candidates A Sufficient m) :
-    Sufficient m ∧ BehaviorOK m A :=
+    {ps : PathSet.{u, v, w} A}
+    {m : Mechanism.{u, v, w} State Obs}
+    (h : EarliestSufficient Candidates A ps m) :
+    Sufficient m A ps ∧ BehaviorOK m A :=
   ⟨h.1.2.1, h.1.2.2⟩
 
 /-- SKILL.md § "Encoding Order": the fallback when no mechanism is
 sufficient — earliest mechanism that detects, documents, or rejects
 the targeted invalid states; the remainder is the residual gap. -/
 def FallbackChoice
-    (Candidates : Set (Mechanism State Obs))
+    (Candidates : Set (Mechanism.{u, v, w} State Obs))
+    (A : Artifact State Obs)
+    (ps : PathSet.{u, v, w} A)
     (TargetInvalid : Set State)
-    (DetectsRejectsOrDocuments : Mechanism State Obs → Set State → Prop)
-    (Sufficient : Mechanism State Obs → Prop)
-    (m : Mechanism State Obs) : Prop :=
-  (∀ n ∈ Candidates, ¬ Sufficient n) ∧
+    (DetectsRejectsOrDocuments :
+      Mechanism.{u, v, w} State Obs → Set State → Prop)
+    (m : Mechanism.{u, v, w} State Obs) : Prop :=
+  (∀ n ∈ Candidates, ¬ Sufficient n A ps) ∧
   m ∈ Candidates ∧
   DetectsRejectsOrDocuments m TargetInvalid ∧
   ∀ n ∈ Candidates,
     DetectsRejectsOrDocuments n TargetInvalid → m.rank.index ≤ n.rank.index
+
+/-- A fallback and an earliest-sufficient choice cannot coexist for one
+candidate set. Both rules evaluate the same artifact and construction paths. -/
+theorem fallback_excludes_earliest_sufficient
+    {candidates : Set (Mechanism.{u, v, w} State Obs)} {A : Artifact State Obs}
+    {target : Set State} {detects : Mechanism.{u, v, w} State Obs → Set State → Prop}
+    {paths : PathSet.{u, v, w} A} {fallback chosen : Mechanism.{u, v, w} State Obs}
+    (found : FallbackChoice candidates A paths target detects fallback) :
+    ¬ EarliestSufficient candidates A paths chosen :=
+  fun earliest => found.1 chosen earliest.1.1 earliest.1.2.1
 
 /-- SKILL.md § "Constructive dominance at rank 1": `A_c ≺ A_p` when
 the constructive encoding of the same pinned contract exists. -/
@@ -297,5 +415,43 @@ def Obl
     (bd : TrustedBoundary A U)
     (x : State) : Prop :=
   f.D = A.S ∧ x ∈ f.D ∧ x ∈ R bd.toBoundary
+
+/-- Pinning the contract supplies the embedding for its previous states. -/
+theorem contractPinned_preserves_states {A A' : Artifact State Obs}
+    (pinned : ContractPinned A A') : ContractStatesPreserved A A' := by
+  intro x hx
+  exact A'.C_subset_S (pinned.symm ▸ hx)
+
+/-- A caller observing a contract value gets the same result after a strict
+refinement. The pinned contract transports its membership proof. -/
+theorem strict_preserves_restricted_behavior {A A' : Artifact State Obs}
+    (step : Strict A A') (input : {x // x ∈ A.C}) :
+    B_restrict A' ⟨input.val, step.1.symm ▸ input.property⟩ =
+      B_restrict A input := by
+  obtain ⟨_, _, _, preserves⟩ := step
+  exact preserves input.val input.property
+
+/-- Constructive dominance supplies a strict step from the wider
+predicative carrier to the constructive carrier when contract membership
+is decidable. This supplies the case split without a classical axiom. -/
+theorem constructiveDominance_strict {Ac Ap : Artifact State Obs}
+    (decideContract : DecidablePred (· ∈ Ac.C)) (dom : ConstructiveDominance Ac Ap) :
+    Strict Ap Ac := by
+  letI := decideContract
+  have pinned : ContractPinned Ap Ac := dom.contract_pinned.symm
+  refine ⟨pinned, contractPinned_preserves_states pinned, ?_, ?_⟩
+  · have empty : ∀ x, x ∉ I_repr Ac := fun _ invalid =>
+      invalid.2 (dom.constructive ▸ invalid.1)
+    constructor
+    · intro x invalid
+      exact (empty x invalid).elim
+    · intro reverse
+      apply dom.predicative_wider.2
+      intro x hx
+      if valid : x ∈ Ac.C then exact valid else
+        have invalid : x ∈ I_repr Ap := ⟨hx, fun h => valid (dom.contract_pinned ▸ h)⟩
+        exact (empty x (reverse invalid)).elim
+  · intro x hx
+    exact dom.behavior_eq x (dom.contract_pinned ▸ hx)
 
 end SSM
