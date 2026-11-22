@@ -421,13 +421,11 @@ fn main() {
     };
 
     // ── 5. lean_decl existence + axiom cleanliness (Inv 3 & 6) ──────
-    // `#print <decl>` proves existence for structures/defs/theorems;
-    // `#print axioms <decl>` (theorems only) proves axiom cleanliness.
-    let decls: Vec<(&str, bool)> = doc
+    let decls: Vec<&str> = doc
         .claims
         .iter()
         .filter(|c| !c.residual)
-        .map(|c| (c.lean_decl.as_str(), c.rank == "kernel-theorem"))
+        .map(|c| c.lean_decl.as_str())
         .collect();
     if build_ok && !decls.is_empty() {
         match probe_decls(&dir, &decls) {
@@ -674,16 +672,12 @@ fn transitively_imported(dir: &Path, root: &str) -> BTreeSet<String> {
     seen
 }
 
-/// Probe every decl with `#print` (existence) and every theorem with
-/// `#print axioms` (cleanliness). Compilation errors include the offending declaration.
+/// Ask Lean for the axiom dependencies of every registered declaration.
 type ProbeOut = Vec<(String, String)>;
-fn probe_decls(dir: &Path, decls: &[(&str, bool)]) -> std::io::Result<ProbeOut> {
+fn probe_decls(dir: &Path, decls: &[&str]) -> std::io::Result<ProbeOut> {
     let mut probe = String::from("import Ssm\nset_option autoImplicit false\n");
-    for (d, is_thm) in decls {
-        probe.push_str(&format!("#print {d}\n"));
-        if *is_thm {
-            probe.push_str(&format!("#print axioms {d}\n"));
-        }
+    for d in decls {
+        probe.push_str(&format!("#print axioms {d}\n"));
     }
     let probe_path = dir.join(".check_claims_probe.lean");
     fs::write(&probe_path, &probe)?;

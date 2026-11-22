@@ -26,7 +26,7 @@ proves it.
   to invent or disambiguate is a finding fed back into `../SKILL.md`.
 - **It proves the skill.** The inference rules are Lean declarations;
   a green `lake build` is machine-checked evidence that the calculus
-  is coherent, and `#print axioms` on every headline theorem shows it
+  is coherent, and `#print axioms` on every registered declaration shows it
   rests only on the allowlisted standard axioms. That allowlist is
   ratcheted to the minimal set the calculus actually uses: `propext`
   and `Quot.sound` only. `Classical.choice` was removed as dead
@@ -119,8 +119,9 @@ anti-vacuous. It fails (nonzero exit) on any of:
 - **Orphan-module check.** Every `*.lean` under `lean/` (except the root
   and the checker) must be transitively imported by the root module
   `Ssm`.
-- **Axiom allowlist.** Every headline theorem rests only on `propext`
-  and `Quot.sound`.
+- **Axiom allowlist.** Every registered definition and theorem uses only
+  `propext` and `Quot.sound` from the axiom allowlist. A definition check
+  audits its dependencies. Semantic properties need their own proofs.
 
 All of these checks operate on the Lean only.
 
