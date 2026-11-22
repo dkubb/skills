@@ -111,7 +111,8 @@ holds at use. Then examine the relevant composition:
   `Inv A ∧ Inv B ⇏ Inv (A ++ B)` when A and B live in different worlds
   (recorded-run vs candidate-run frontiers; two writers; two sessions
   reusing an id). Any theorem over `A ++ B` needs a BRIDGE invariant
-  naming the cross term, and the certificate must be STRONGER than "the
+  naming the [cross term](../../state-space-minimization-formal/SKILL.md#transitions-as-boundary-morphisms),
+  and the certificate must be STRONGER than "the
   lossy projections matched" (else it assumes what it proves — the bridge
   must say prior facts matched at the real seam, not just that a lossy
   view agreed). State the bridge shape
