@@ -361,6 +361,12 @@ When a module owns a closed family of tagged errors, declare the union
 type and a constructor object under the same exported name:
 
 ```ts
+class ParseError extends Data.TaggedError("ParseError")<ParseErrorPayload> {}
+class ConfigError extends Data.TaggedError("ConfigError")<ConfigErrorPayload> {}
+class PersistenceError extends Data.TaggedError("PersistenceError")<
+  PersistenceErrorPayload
+> {}
+
 export type AppError = ParseError | ConfigError | PersistenceError;
 
 export const AppError = {
@@ -373,9 +379,10 @@ export const isAppError = (v: unknown): v is AppError =>
   v instanceof ParseError || v instanceof ConfigError || v instanceof PersistenceError;
 ```
 
-Call sites read `AppError.Parse({ source, message })` and the original
-classes remain available for `Effect.catchTag("Parse", ...)`. Pair with
-the `isAppError` guard for FFI / unknown input.
+Call sites construct the error with `AppError.Parse({ source, message })`.
+Its `_tag` comes from `Data.TaggedError("ParseError")`, so the handler
+uses `Effect.catchTag("ParseError", ...)`. Use `isAppError` to narrow
+unknown input at an FFI boundary.
 
 ### `Effect.fn` for traced generator functions
 
