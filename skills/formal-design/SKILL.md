@@ -19,13 +19,31 @@ metadata:
 
 # Formal-design — pre-flight decision procedures for formal slices
 
-Attacking an artifact (review-time) and choosing a design (build-time) are
-different activities with different triggers. This skill is the build-time
-sibling of `find-and-prove`: run the matching question set BEFORE authoring a
-slice, so the mutants the review hunts for are never born. Every question is
-keyed to the failure mode it pre-empts.
+## When to Activate
 
-## Dispatch: what kind of slice is this?
+Use this skill while planning a formal model, choosing a representation, or
+extracting an interface from proven instances.
+
+## When Not to Use
+
+For adversarial review of an existing artifact, use `find-and-prove`.
+
+## Inputs
+
+Bring the proposed change, its first consumer, the contract it relies on,
+and the existing definitions and theorems it would extend.
+
+## Outputs
+
+Record the design choice, the witness that distinguishes it from the other
+candidates, and the first increment that can establish the claim.
+
+## Utilities
+
+Use the reference modules in the dispatch table for the matching questions.
+Use the project's proof checker to verify declarations and witnesses.
+
+## Process
 
 | Slice kind | Trigger | Module |
 |---|---|---|
@@ -55,22 +73,11 @@ round may be SKIPPED only under the criterion in `references/recon.md`.
   (a two-state distinguisher, a named consumer, a compiled countermodel) —
   a prose answer is not an answer.
 
-## References (load on demand)
+## Validation Checklist
 
-- `references/increment-scoping.md` — sizing and splitting rungs.
-- `references/new-primitive.md` — when a new primitive is forced and what
-  shape it takes.
-- `references/identity-design.md` — designing identities before collisions
-  exist.
-- `references/carrier-representation.md` — route-vs-encode, representation
-  boundaries, carrier-swap bridges.
-- `references/seam-extraction.md` — extracting interfaces without changing
-  the theorems they abstract.
-- `references/effect-channels.md` — the pre-flight sets for effect channels
-  and substrate invariants.
-- `references/recon.md` — API recon before build; when to skip a design
-  round.
-- `references/proof-hygiene.md` — forward-looking proof engineering.
+- The scoped increment exercises one new degree of freedom.
+- Each applicable question has a witness or a named open obligation.
+- The first consumer can distinguish the chosen design from its alternatives.
 
 ## Relationship to other skills
 
